@@ -14,6 +14,7 @@ public class Activity {
     private final Date creationDate;
     private Date completionDate;
     private List<Activity> subTasks;
+    private boolean completed;
 
     public Activity() {
         this("New Activity");
@@ -68,5 +69,9 @@ public class Activity {
         } else {
             addSubTask(subTask);
         }
+    }
+
+    public void setCompleted(boolean completed) {
+        this.completed = completed;
     }
 }
