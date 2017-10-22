@@ -1,5 +1,7 @@
 package be.doji.productivity.TrackMeUp.model.tasks;
 
+import be.doji.productivity.TrackMeUp.TrackMeConstants;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -17,6 +19,7 @@ public class Activity {
     private boolean completed;
     private List<String> tags = new ArrayList<>();
     private List<Project> projects = new ArrayList<>();
+    private Date deadline;
 
     public Activity() {
         this("New Activity");
@@ -53,6 +56,14 @@ public class Activity {
 
     public void setCompletionDate(Date completionDate) {
         this.completionDate = new Date(completionDate.getTime());
+    }
+
+    public Date getDeadline() {
+        return deadline;
+    }
+
+    public void setDeadline(Date deadline) {
+        this.deadline = deadline;
     }
 
     public List<Activity> getSubTasks() {
@@ -101,12 +112,33 @@ public class Activity {
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
+        if (this.isCompleted()) {
+            sb.append("X");
+            sb.append(" ");
+        }
+
         sb.append("(").append(this.getPriority()).append(")");
         sb.append(" ");
         sb.append(this.getName());
+        sb.append(" ");
+        for (Project project : this.getProjects()) {
+            sb.append("+").append(project.getName());
+            sb.append(" ");
+        }
+
+        for (String tag : this.getTags()) {
+            sb.append("+").append(tag);
+            sb.append(" ");
+        }
+
+        if (deadline != null) {
+            sb.append("due:");
+            sb.append(TrackMeConstants.DATA_DATE_FORMAT.format(deadline));
+            sb.append(" ");
+        }
 
         //TODO: add other fields
 
-        return  sb.toString();
+        return sb.toString();
     }
 }

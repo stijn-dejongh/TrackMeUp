@@ -1,5 +1,6 @@
 package be.doji.productivity.TrackMeUp.managers;
 
+import be.doji.productivity.TrackMeUp.TrackMeConstants;
 import be.doji.productivity.TrackMeUp.model.tasks.Activity;
 import be.doji.productivity.TrackMeUp.model.tasks.Project;
 import be.doji.productivity.TrackMeUp.utils.TrackerUtils;
@@ -9,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +26,7 @@ public class ActivityManager {
     private final String NAME_REGEX = "\\b([a-zA-Z\\s][a-zA-Z0-9\\s]*)\\s\\+";
     private final String TAG_REGEX = "\\@([a-zA-Z0-9]*)\\s";
     private final String PROJECT_REGEX = "\\+([a-zA-Z0-9]*)\\s";
+    private final String DUE_DATE_REGEX = "due:[0-9\\-\\:\\.]*\\s";
 
     private List<Activity> activities = new ArrayList<>();
     private Map<String, Project> projects = new HashMap<>();
@@ -33,13 +36,13 @@ public class ActivityManager {
         this.todoFile = Paths.get(fileLocation);
     }
 
-    public void readActivitiesFromFile() throws IOException {
+    public void readActivitiesFromFile() throws IOException, ParseException {
         for (String line : Files.readAllLines(this.todoFile)) {
             activities.add(mapStringToActivity(line));
         }
     }
 
-    protected Activity mapStringToActivity(String line) {
+    protected Activity mapStringToActivity(String line) throws ParseException {
         Activity activity = new Activity();
         List<String> matchedCompleted = TrackerUtils.findAllMatches(COMPLETED_REGEX, line);
         if (!matchedCompleted.isEmpty()) {
@@ -67,6 +70,12 @@ public class ActivityManager {
             activity.addProject(getProjectForName(projectName));
         }
 
+        List<String> dueDateMatches = TrackerUtils.findAllMatches(DUE_DATE_REGEX, line);
+        for (String dueDateMatch : dueDateMatches) {
+            String dueDateString = dueDateMatch.replace("due:", "").trim();
+            activity.setDeadline(TrackMeConstants.DATA_DATE_FORMAT.parse(dueDateString));
+        }
+
         return activity;
     }
 
@@ -81,7 +90,7 @@ public class ActivityManager {
         return project;
     }
 
-    public void addActivityToFile(String activity) throws IOException {
+    public void addActivityToFile(String activity) throws IOException, ParseException {
         addActivityToFile(mapStringToActivity(activity));
     }
 

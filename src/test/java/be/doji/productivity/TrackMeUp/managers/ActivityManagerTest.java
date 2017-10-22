@@ -10,6 +10,10 @@ import org.springframework.util.ResourceUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.ParseException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 /**
@@ -17,9 +21,9 @@ import java.util.List;
  */
 public class ActivityManagerTest {
 
-    private static final String ACTIVITY_DATA_LINE = "(A) 2017-10-21:14:13:0000 TaskTitle  +OverarchingProject @Tag @Tag2 due:2017-12-21:16:15:0000 index:0 blocksNext:yes skill:SkillName";
+    private static final String ACTIVITY_DATA_LINE = "(A) 2017-10-21:14:13.000 TaskTitle  +OverarchingProject @Tag @Tag2 due:2017-12-21:16:15:00.000 index:0 blocksNext:yes skill:SkillName";
 
-    @Test public void testReadAcitvities() throws IOException {
+    @Test public void testReadAcitvities() throws IOException, ParseException {
         ActivityManager am = new ActivityManager(getTestPath("data/testOneTask.txt"));
         am.readActivitiesFromFile();
         List<Activity> readActivities = am.getActivities();
@@ -27,7 +31,7 @@ public class ActivityManagerTest {
         Assert.assertEquals(1, readActivities.size());
     }
 
-    @Test public void testmapStringToActivity() throws IOException {
+    @Test public void testmapStringToActivity() throws IOException, ParseException {
         ActivityManager am = new ActivityManager(getTestPath("data/testOneTask.txt"));
         Activity activity = am.mapStringToActivity(ACTIVITY_DATA_LINE);
         Assert.assertNotNull(activity);
@@ -44,6 +48,14 @@ public class ActivityManagerTest {
         List<Project> projects = activity.getProjects();
         Assert.assertEquals(1, projects.size());
         Assert.assertEquals("OverarchingProject", projects.get(0).getName());
+
+        Date deadline = activity.getDeadline();
+        Assert.assertNotNull(deadline);
+        Calendar calendarWrapper = new GregorianCalendar();
+        calendarWrapper.setTime(deadline);
+        Assert.assertEquals(21, calendarWrapper.get(Calendar.DAY_OF_MONTH));
+        Assert.assertEquals(11, calendarWrapper.get(Calendar.MONTH));
+        Assert.assertEquals(2017, calendarWrapper.get(Calendar.YEAR));
 
 
     }
