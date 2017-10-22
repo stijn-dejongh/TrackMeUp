@@ -12,9 +12,9 @@ of TODO lists, manage and organize tasks.
 Some ideas I'd like to visit are:
 
 * Webservice based application design
-** This allows for easy portability accross multiple devices without the need for 'synching' or installations
+    * This allows for easy portability accross multiple devices without the need for 'synching' or installations
 * Plain text data storage
-** Follow Todo.txt guidelines and design (https://github.com/todotxt/todo.txt)
+    * Follow Todo.txt guidelines and design (https://github.com/todotxt/todo.txt)
 * Learning paths and skill trees
 * Task/occupation suggestions based on amount of free time
 
