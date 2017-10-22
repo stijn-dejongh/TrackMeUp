@@ -1,4 +1,4 @@
-package main.java.be.doji.productivity.TrackMeUp.model.tasks;
+package be.doji.productivity.TrackMeUp.model.tasks;
 
 /**
  * Created by Doji on 22/10/2017.

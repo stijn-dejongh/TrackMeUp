@@ -1,4 +1,4 @@
-package main.java.be.doji.productivity.TrackMeUp.model.tasks;
+package be.doji.productivity.TrackMeUp.model.tasks;
 
 import java.util.ArrayList;
 import java.util.Date;
