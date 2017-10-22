@@ -39,7 +39,7 @@ public class ActivityManagerTest {
         Assert.assertTrue(tags.contains("Tag"));
         Assert.assertTrue(tags.contains("Tag2"));
 
-        
+
     }
 
     public String getTestPath(String path) throws FileNotFoundException {
