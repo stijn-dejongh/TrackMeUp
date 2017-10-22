@@ -11,11 +11,12 @@ public class Activity {
 
     private String name;
     private String priority;
-    private final Date creationDate;
+    private final Date creationDate = new Date();
     private Date completionDate;
-    private List<Activity> subTasks;
+    private List<Activity> subTasks = new ArrayList<>();
     private boolean completed;
-    private List<String> tags;
+    private List<String> tags = new ArrayList<>();
+    private List<Project> projects = new ArrayList<>();
 
     public Activity() {
         this("New Activity");
@@ -24,9 +25,6 @@ public class Activity {
     public Activity(String taskName) {
         this.name = taskName;
         this.priority = PriorityConstants.PRIORITY_MEDIUM;
-        this.creationDate = new Date();
-        this.subTasks = new ArrayList<>();
-        this.tags = new ArrayList<>();
     }
 
     public String getName() {
@@ -91,5 +89,24 @@ public class Activity {
 
     public void addTag(String tag) {
         this.tags.add(tag);
+    }
+
+    public List<Project> getProjects() {
+        return new ArrayList<>(projects);
+    }
+
+    public void addProject(Project project) {
+        this.projects.add(project);
+    }
+
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("(").append(this.getPriority()).append(")");
+        sb.append(" ");
+        sb.append(this.getName());
+
+        //TODO: add other fields
+
+        return  sb.toString();
     }
 }

@@ -1,14 +1,18 @@
 package be.doji.productivity.TrackMeUp.managers;
 
 import be.doji.productivity.TrackMeUp.model.tasks.Activity;
+import be.doji.productivity.TrackMeUp.model.tasks.Project;
 import be.doji.productivity.TrackMeUp.utils.TrackerUtils;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Doji on 22/10/2017.
@@ -19,17 +23,23 @@ public class ActivityManager {
     private final String PRIORITY_REGEX = "\\([a-zA-Z]\\)";
     private final String NAME_REGEX = "\\b([a-zA-Z\\s][a-zA-Z0-9\\s]*)\\s\\+";
     private final String TAG_REGEX = "\\@([a-zA-Z0-9]*)\\s";
+    private final String PROJECT_REGEX = "\\+([a-zA-Z0-9]*)\\s";
 
     private List<Activity> activities = new ArrayList<>();
+    private Map<String, Project> projects = new HashMap<>();
+    private Path todoFile;
 
-    public void readActivitiesFromFile(String fileLocation) throws IOException {
-        Path filePath = Paths.get(fileLocation);
-        for (String line : Files.readAllLines(filePath)) {
+    public ActivityManager(String fileLocation) {
+        this.todoFile = Paths.get(fileLocation);
+    }
+
+    public void readActivitiesFromFile() throws IOException {
+        for (String line : Files.readAllLines(this.todoFile)) {
             activities.add(mapStringToActivity(line));
         }
     }
 
-    private Activity mapStringToActivity(String line) {
+    protected Activity mapStringToActivity(String line) {
         Activity activity = new Activity();
         List<String> matchedCompleted = TrackerUtils.findAllMatches(COMPLETED_REGEX, line);
         if (!matchedCompleted.isEmpty()) {
@@ -51,7 +61,35 @@ public class ActivityManager {
             activity.addTag(tag.replace("@", "").trim());
         }
 
+        List<String> projectMatches = TrackerUtils.findAllMatches(PROJECT_REGEX, line);
+        for (String projectMatch : projectMatches) {
+            String projectName = projectMatch.replace("+", "").trim();
+            activity.addProject(getProjectForName(projectName));
+        }
+
         return activity;
+    }
+
+    private Project getProjectForName(String projectName) {
+        Project project;
+        if (this.projects.containsKey(projectName)) {
+            project = this.projects.get(projectName);
+        } else {
+            project = new Project(projectName);
+            this.projects.put(projectName, project);
+        }
+        return project;
+    }
+
+    public void addActivityToFile(String activity) throws IOException {
+        addActivityToFile(mapStringToActivity(activity));
+    }
+
+    public void addActivityToFile(Activity activity) throws IOException {
+        this.activities.add(activity);
+        Files.write(this.todoFile, (activity.toString() + System.lineSeparator()).getBytes(),
+                StandardOpenOption.APPEND);
+
     }
 
     public List<Activity> getActivities() {
