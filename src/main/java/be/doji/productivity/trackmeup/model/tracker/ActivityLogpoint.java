@@ -1,7 +1,7 @@
-package main.java.be.doji.productivity.trackmeup.model.tracker;
+package main.java.be.doji.productivity.TrackMeUp.model.tracker;
 
 import main.java.be.doji.productivity.trackmeup.TrackMeConstants;
-import main.java.be.doji.productivity.trackmeup.model.tasks.Activity;
+import main.java.be.doji.productivity.TrackMeUp.model.tasks.Activity;
 
 import java.util.Date;
 

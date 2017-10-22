@@ -1,4 +1,4 @@
-package main.java.be.doji.productivity.trackmeup;
+package main.java.be.doji.productivity.TrackMeUp;
 
 import java.text.SimpleDateFormat;
 
