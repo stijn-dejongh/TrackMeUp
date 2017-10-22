@@ -8,10 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Created by Doji on 22/10/2017.
@@ -20,13 +17,14 @@ public class ActivityManager {
 
     private final String COMPLETED_REGEX = "^[Xx]";
     private final String PRIORITY_REGEX = "\\([a-zA-Z]\\)";
-    private final String NAME_REGEX = "\\b([a-zA-Z\\s]*)\\s\\+";
+    private final String NAME_REGEX = "\\b([a-zA-Z\\s][a-zA-Z0-9\\s]*)\\s\\+";
+    private final String TAG_REGEX = "\\@([a-zA-Z0-9]*)\\s";
 
     private List<Activity> activities = new ArrayList<>();
 
     public void readActivitiesFromFile(String fileLocation) throws IOException {
         Path filePath = Paths.get(fileLocation);
-        for(String line : Files.readAllLines(filePath)) {
+        for (String line : Files.readAllLines(filePath)) {
             activities.add(mapStringToActivity(line));
         }
     }
@@ -34,18 +32,23 @@ public class ActivityManager {
     private Activity mapStringToActivity(String line) {
         Activity activity = new Activity();
         List<String> matchedCompleted = TrackerUtils.findAllMatches(COMPLETED_REGEX, line);
-        if(!matchedCompleted.isEmpty()) {
+        if (!matchedCompleted.isEmpty()) {
             activity.setCompleted(true);
         }
 
         List<String> nameMatches = TrackerUtils.findAllMatches(NAME_REGEX, line);
-        if(!nameMatches.isEmpty()) {
-            activity.setName(nameMatches.get(0).replace("+", ""));
+        if (!nameMatches.isEmpty()) {
+            activity.setName(nameMatches.get(0).replace("+", "").trim());
         }
 
         List<String> priorityMatches = TrackerUtils.findAllMatches(PRIORITY_REGEX, line);
-        if(!priorityMatches.isEmpty()) {
-            activity.setName(priorityMatches.get(0).replace("(", "").replace(")", ""));
+        if (!priorityMatches.isEmpty()) {
+            activity.setPriority(priorityMatches.get(0).replace("(", "").replace(")", "").trim());
+        }
+
+        List<String> tagMatches = TrackerUtils.findAllMatches(TAG_REGEX, line);
+        for (String tag : tagMatches) {
+            activity.addTag(tag.replace("@", "").trim());
         }
 
         return activity;

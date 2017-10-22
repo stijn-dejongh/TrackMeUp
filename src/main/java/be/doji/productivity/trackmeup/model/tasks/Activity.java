@@ -15,6 +15,7 @@ public class Activity {
     private Date completionDate;
     private List<Activity> subTasks;
     private boolean completed;
+    private List<String> tags;
 
     public Activity() {
         this("New Activity");
@@ -25,6 +26,7 @@ public class Activity {
         this.priority = PriorityConstants.PRIORITY_MEDIUM;
         this.creationDate = new Date();
         this.subTasks = new ArrayList<>();
+        this.tags = new ArrayList<>();
     }
 
     public String getName() {
@@ -73,5 +75,21 @@ public class Activity {
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
+    }
+
+    public boolean isCompleted() {
+        return completed;
+    }
+
+    public List<String> getTags() {
+        return new ArrayList<>(tags);
+    }
+
+    public void addTags(List<String> tags) {
+        this.tags.addAll(tags);
+    }
+
+    public void addTag(String tag) {
+        this.tags.add(tag);
     }
 }
