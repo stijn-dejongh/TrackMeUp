@@ -51,7 +51,7 @@ public class Activity {
     }
 
     public Date getCompletionDate() {
-        return new Date(completionDate.getTime());
+        return this.completionDate == null ? null :new Date(completionDate.getTime());
     }
 
     public void setCompletionDate(Date completionDate) {

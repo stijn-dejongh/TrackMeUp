@@ -21,12 +21,13 @@ import java.util.Map;
  */
 public class ActivityManager {
 
+    private final String DATE_REGEX = "[0-9\\-\\:\\.]*";
     private final String COMPLETED_REGEX = "^[Xx]";
     private final String PRIORITY_REGEX = "\\([a-zA-Z]\\)";
-    private final String NAME_REGEX = "\\b([a-zA-Z\\s][a-zA-Z0-9\\s]*)\\s\\+";
+    private final String NAME_REGEX = "\\b[a-zA-Z]([\\w\\s\\.\\- && [^\\+]])*\\s\\+";
     private final String TAG_REGEX = "\\@([a-zA-Z0-9]*)\\s";
     private final String PROJECT_REGEX = "\\+([a-zA-Z0-9]*)\\s";
-    private final String DUE_DATE_REGEX = "due:[0-9\\-\\:\\.]*\\s";
+    private final String DUE_DATE_REGEX = "due:"+ DATE_REGEX +"\\s";
 
     private List<Activity> activities = new ArrayList<>();
     private Map<String, Project> projects = new HashMap<>();

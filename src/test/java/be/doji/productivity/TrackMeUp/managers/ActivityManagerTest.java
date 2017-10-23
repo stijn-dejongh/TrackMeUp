@@ -22,6 +22,8 @@ import java.util.List;
 public class ActivityManagerTest {
 
     private static final String ACTIVITY_DATA_LINE = "(A) 2017-10-21:14:13.000 TaskTitle  +OverarchingProject @Tag @Tag2 due:2017-12-21:16:15:00.000 index:0 blocksNext:yes skill:SkillName";
+    private static final String NO_PREFIX_DATA_LINE = "Write my own todo.txt webapp +imnu +java +programming @development";
+    private static final String NO_PREFIX_DATA_LINE_WITH_NUMBERS = "Write my own 123-todo.txt webapp +imnu +java +programming @development";
 
     @Test public void testReadAcitvities() throws IOException, ParseException {
         ActivityManager am = new ActivityManager(getTestPath("data/testOneTask.txt"));
@@ -56,8 +58,22 @@ public class ActivityManagerTest {
         Assert.assertEquals(21, calendarWrapper.get(Calendar.DAY_OF_MONTH));
         Assert.assertEquals(11, calendarWrapper.get(Calendar.MONTH));
         Assert.assertEquals(2017, calendarWrapper.get(Calendar.YEAR));
+    }
 
+    @Test
+    public void testMapNoPrefixLine() throws FileNotFoundException, ParseException {
+        ActivityManager am = new ActivityManager(getTestPath("data/testOneTask.txt"));
+        Activity activity = am.mapStringToActivity(NO_PREFIX_DATA_LINE);
+        Assert.assertNotNull(activity);
+        Assert.assertEquals("Write my own todo.txt webapp", activity.getName());
+    }
 
+    @Test
+    public void testMapNoPrefixLineWithNumbers() throws FileNotFoundException, ParseException {
+        ActivityManager am = new ActivityManager(getTestPath("data/testOneTask.txt"));
+        Activity activity = am.mapStringToActivity(NO_PREFIX_DATA_LINE_WITH_NUMBERS);
+        Assert.assertNotNull(activity);
+        Assert.assertEquals("Write my own 123-todo.txt webapp", activity.getName());
     }
 
     public String getTestPath(String path) throws FileNotFoundException {
