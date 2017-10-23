@@ -1,4 +1,4 @@
-package be.doji.productivity.TrackMeUp.presentation;
+package be.doji.productivity.TrackMeUp.presentation.cli;
 
 import be.doji.productivity.TrackMeUp.managers.ActivityManager;
 import be.doji.productivity.TrackMeUp.model.tasks.Activity;

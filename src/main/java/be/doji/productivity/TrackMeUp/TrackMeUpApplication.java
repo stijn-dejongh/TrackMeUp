@@ -1,6 +1,6 @@
 package be.doji.productivity.TrackMeUp;
 
-import be.doji.productivity.TrackMeUp.presentation.TrackMeCLI;
+import be.doji.productivity.TrackMeUp.presentation.cli.TrackMeCLI;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -9,10 +9,6 @@ import org.springframework.context.annotation.Bean;
 
     public static void main(String[] args) {
         SpringApplication.run(TrackMeUpApplication.class, args);
-    }
-
-    @Bean public TrackMeCLI schedulerRunner() {
-        return new TrackMeCLI();
     }
 
 }
