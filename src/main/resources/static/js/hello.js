@@ -12,9 +12,9 @@ angular.module('hello', ['ui.bootstrap'])
 
         $scope.getDone = function(isDone) {
             if(isDone == true) {
-                return '[DONE]';
+                return 'fa fa-calendar-check-o';
             } else {
-                return '[TODO]';
+                return 'fa fa-calendar-times-o';
             }
         };
     });
