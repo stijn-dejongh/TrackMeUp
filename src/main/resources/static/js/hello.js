@@ -1,4 +1,4 @@
-angular.module('hello', [])
+angular.module('hello', ['ui.bootstrap'])
     .controller('home', function ($scope, $http) {
         $http.get('/getActivities').then(function (response) {
                 console.log(response);
@@ -9,4 +9,12 @@ angular.module('hello', [])
                 deferred.reject(errResponse);
                 $scope.error = 'error getting'
             });
+
+        $scope.getDone = function(isDone) {
+            if(isDone == true) {
+                return '[DONE]';
+            } else {
+                return '[TODO]';
+            }
+        };
     });
