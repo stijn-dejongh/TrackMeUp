@@ -30,7 +30,7 @@ angular.module('hello', ['ui.bootstrap'])
 
         $scope.getHeaderTemplate = function (isDone) {
             if (isDone == true) {
-                return "color: #1b6d85;";
+                return "color: #4cae4c;";
             } else {
                 return "";
             }
@@ -77,6 +77,33 @@ angular.module('hello', ['ui.bootstrap'])
                 }
             }
         };
+
+        $scope.getPanelStyle = function (name) {
+            if ($scope.isUrgent(name)) {
+                return "panel-danger";
+            } else {
+                return "panel-default";
+            }
+        }
+
+        $scope.isUrgent = function (name) {
+            var today = new Date();
+            for (i in $scope.activities) {
+                if ($scope.activities[i].name == name) {
+                    let activity = $scope.activities[i];
+                    if (activity.deadline != undefined) {
+                        var deadlineDate = new Date(activity.deadline);
+                        var warningDate = new Date(deadlineDate.getFullYear(), deadlineDate.getMonth(), deadlineDate.getDay() - 1);
+                        if (today >= warningDate && !activity.completed) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                }
+            }
+            return false;
+        }
 
         $scope.addActivity = function () {
             var tagList = $scope.tags.split(",");

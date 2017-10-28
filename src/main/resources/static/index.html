@@ -51,7 +51,7 @@
         <hr/>
         <br/>
         <uib-accordion close-others="oneAtATime">
-            <div uib-accordion-group class="panel-default" ng-repeat="activity in activities"
+            <div uib-accordion-group class="{{getPanelStyle(activity.name)}}" ng-repeat="activity in activities"
                  is-open="status.isCustomHeaderOpen">
                 <div uib-accordion-heading>
                     <div style="{{getHeaderTemplate(activity.completed)}}">
