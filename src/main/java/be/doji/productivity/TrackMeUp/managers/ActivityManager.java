@@ -4,6 +4,7 @@ import be.doji.productivity.TrackMeUp.TrackMeConstants;
 import be.doji.productivity.TrackMeUp.model.tasks.Activity;
 import be.doji.productivity.TrackMeUp.model.tasks.Project;
 import be.doji.productivity.TrackMeUp.utils.TrackerUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -89,11 +90,11 @@ public class ActivityManager {
         return project;
     }
 
-    public void addActivityToFile(String activity) throws IOException, ParseException {
-        addActivityToFile(mapStringToActivity(activity));
+    public void addActivityAndSaveToFile(String activity) throws IOException, ParseException {
+        addActivityAndSaveToFile(mapStringToActivity(activity));
     }
 
-    public void addActivityToFile(Activity activity) throws IOException {
+    public void addActivityAndSaveToFile(Activity activity) throws IOException {
         int lineNumber = Files.readAllLines(this.todoFile).size();
         this.activities.put(activity, lineNumber);
         Files.write(this.todoFile, (activity.toString() + System.lineSeparator()).getBytes(),
@@ -115,12 +116,21 @@ public class ActivityManager {
                 writeActivityToFile(activity, this.activities.get(savedActivity));
             }
         }
-        if (matchingActivity == null) {
-            this.addActivityToFile(activity);
+        if (matchingActivity == null && !containsActivityWithName(activity.getName())) {
+            this.addActivityAndSaveToFile(activity);
             matchingActivity = activity;
         }
 
         return matchingActivity;
+    }
+
+    private boolean containsActivityWithName(String name) {
+        for (Activity savedActivity : this.activities.keySet()) {
+            if (StringUtils.equals(savedActivity.getName(), name)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void writeActivityToFile(Activity activity, Integer lineNumber) throws IOException {
@@ -158,6 +168,7 @@ public class ActivityManager {
             if (savedActivity.getId().equals(activity.getId())) {
                 this.activities.remove(savedActivity);
                 writeAllToFile();
+                return;
             }
         }
     }
