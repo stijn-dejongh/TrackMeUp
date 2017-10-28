@@ -28,6 +28,7 @@
             border-radius: 32px;
             color: black;
         }
+
         .partially button span {
             background-color: orange;
             border-radius: 32px;
@@ -57,6 +58,7 @@
                         <i class="{{getDone(activity.completed)}}" aria-hidden="true" style="float: left;"></i>
                         <div class="indent"></div>
                         {{activity.name}}
+                        <div class="indent"></div>
                         <i class="pull-right glyphicon"
                            ng-class="{'glyphicon-chevron-down': status.isCustomHeaderOpen, 'glyphicon-chevron-right': !status.isCustomHeaderOpen}"></i>
                     </div>
@@ -75,11 +77,15 @@
                     {{tag}}
                 </button></pre>
                 <pre ng-show='activity.projects.length > 0'>Activity contained in projects: <button type="button"
-                                                                                                    class="btn btn-sm btn-success"
+                                                                                                    class="btn btn-sm"
                                                                                                     ng-repeat="project in activity.projects"
                                                                                                     style="margin-right: 10px;">
                     {{project.name}}
                 </button></pre>
+                <br/>
+                <button type="button" class="btn btn-danger" style="float: right" ng-click="delete(activity.name)">
+                    Delete
+                </button>
             </div>
         </uib-accordion>
         <button type="button"
@@ -105,10 +111,11 @@
                         <input type="text" class="form-control" name="projects"
                                ng-model="projects" placeholder="Projects (comma separated):"/>
                     </div>
-                    <br />
+                    <br/>
                     <div>
                         <p class="input-group">
-                            <input type="text" class="form-control" uib-datepicker-popup ng-model="deadline" placeholder="Activity deadline"
+                            <input type="text" class="form-control" uib-datepicker-popup ng-model="deadline"
+                                   placeholder="Activity deadline"
                                    is-open="popup2.opened" datepicker-options="dateOptions" ng-required="true"
                                    close-text="Close"/>
                             <span class="input-group-btn">

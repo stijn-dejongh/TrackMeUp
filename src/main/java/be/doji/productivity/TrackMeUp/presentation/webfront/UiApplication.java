@@ -38,6 +38,13 @@ public class UiApplication {
         return true;
     }
 
+    @RequestMapping(value = { "/delete" }, method = { RequestMethod.POST }) public @ResponseBody boolean deleteActivity(
+            @RequestBody Activity activity) throws IOException, ParseException {
+        System.out.println("Trying to delete activity");
+        am.delete(activity);
+        return true;
+    }
+
     public static void main(String[] args) {
         SpringApplication.run(UiApplication.class, args);
     }

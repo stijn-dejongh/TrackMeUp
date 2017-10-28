@@ -51,6 +51,33 @@ angular.module('hello', ['ui.bootstrap'])
                 }
             }
         };
+
+        $scope.delete = function (name) {
+            for (i in $scope.activities) {
+                if ($scope.activities[i].name == name) {
+                    let activity = $scope.activities[i];
+                    if (activity.deadline == undefined) {
+                        delete activity.deadline;
+                    }
+                    if (activity.completionDate == undefined) {
+                        delete activity.completionDate;
+                    }
+                    $http.post('/delete', activity).then(function (response) {
+                        $http.get('/getActivities').then(function (response) {
+                                console.log(response);
+                                $scope.activities = response.data;
+                            },
+                            function (errResponse) {
+                                console.error('Error while fetching Users');
+                                deferred.reject(errResponse);
+                                $scope.error = 'error getting'
+                            });
+                    });
+
+                }
+            }
+        };
+
         $scope.addActivity = function () {
             var tagList = $scope.tags.split(",");
             var projectList = $scope.projects.split(",");
@@ -66,17 +93,17 @@ angular.module('hello', ['ui.bootstrap'])
             $scope.save(activity.name);
         }
 
-        $scope.togglediv = function(id) {
+        $scope.togglediv = function (id) {
             var div = document.getElementById(id);
             div.style.display = div.style.display == "none" ? "block" : "none";
         }
 
-        $scope.today = function() {
+        $scope.today = function () {
             $scope.dt = new Date();
         };
         $scope.today();
 
-        $scope.clear = function() {
+        $scope.clear = function () {
             $scope.dt = null;
         };
 
@@ -102,22 +129,22 @@ angular.module('hello', ['ui.bootstrap'])
             return false;
         }
 
-        $scope.toggleMin = function() {
+        $scope.toggleMin = function () {
             $scope.inlineOptions.minDate = $scope.inlineOptions.minDate ? null : new Date();
             $scope.dateOptions.minDate = $scope.inlineOptions.minDate;
         };
 
         $scope.toggleMin();
 
-        $scope.open1 = function() {
+        $scope.open1 = function () {
             $scope.popup1.opened = true;
         };
 
-        $scope.open2 = function() {
+        $scope.open2 = function () {
             $scope.popup2.opened = true;
         };
 
-        $scope.setDate = function(year, month, day) {
+        $scope.setDate = function (year, month, day) {
             $scope.dt = new Date(year, month, day);
         };
 
@@ -152,10 +179,10 @@ angular.module('hello', ['ui.bootstrap'])
             var date = data.date,
                 mode = data.mode;
             if (mode === 'day') {
-                var dayToCheck = new Date(date).setHours(0,0,0,0);
+                var dayToCheck = new Date(date).setHours(0, 0, 0, 0);
 
                 for (var i = 0; i < $scope.events.length; i++) {
-                    var currentDay = new Date($scope.events[i].date).setHours(0,0,0,0);
+                    var currentDay = new Date($scope.events[i].date).setHours(0, 0, 0, 0);
 
                     if (dayToCheck === currentDay) {
                         return $scope.events[i].status;

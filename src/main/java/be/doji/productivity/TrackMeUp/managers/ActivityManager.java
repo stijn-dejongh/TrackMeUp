@@ -6,15 +6,10 @@ import be.doji.productivity.TrackMeUp.model.tasks.Project;
 import be.doji.productivity.TrackMeUp.utils.TrackerUtils;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by Doji on 22/10/2017.
@@ -29,7 +24,7 @@ public class ActivityManager {
     private final String PROJECT_REGEX = "\\+([a-zA-Z0-9]*)(\\s|$)";
     private final String DUE_DATE_REGEX = "due:" + DATE_REGEX + "\\s";
 
-    private Map<Activity, Integer> activities = new HashMap<>();
+    private Map<Activity, Integer> activities = new ConcurrentHashMap<>();
     private Map<String, Project> projects = new HashMap<>();
     private Path todoFile;
 
@@ -62,7 +57,6 @@ public class ActivityManager {
         if (!nameMatches.isEmpty()) {
             activity.setName(nameMatches.get(0).replace("+", "").replace("@", "").trim());
         }
-
 
         List<String> tagMatches = TrackerUtils.findAllMatches(TAG_REGEX, line);
         for (String tag : tagMatches) {
@@ -129,6 +123,7 @@ public class ActivityManager {
 
     private void writeActivityToFile(Activity activity, Integer lineNumber) throws IOException {
         System.out.println(">> Updating TODO.txt");
+        backUpTodoFile();
         List<String> fileLines = Files.readAllLines(this.todoFile);
         Files.write(this.todoFile, new String().getBytes());
         for (int i = 0; i < fileLines.size(); i++) {
@@ -141,5 +136,32 @@ public class ActivityManager {
             Files.write(this.todoFile, (lineToWrite + System.lineSeparator()).getBytes(), StandardOpenOption.APPEND);
         }
         System.out.println(">> TODO.txt was updated");
+    }
+
+    private void writeAllToFile() throws IOException, ParseException {
+        System.out.println(">> Updating TODO.txt");
+        backUpTodoFile();
+        Files.write(this.todoFile, new String().getBytes());
+        for (Activity activity : this.getActivities()) {
+            Files.write(this.todoFile, (activity.toString() + System.lineSeparator()).getBytes(),
+                    StandardOpenOption.APPEND);
+        }
+        System.out.println(">> TODO.txt was updated");
+        this.readActivitiesFromFile();
+    }
+
+    public void delete(Activity activity) throws IOException, ParseException {
+        Set<Activity> activityCopy = this.activities.keySet();
+        for (Activity savedActivity : activityCopy) {
+            if (savedActivity.getId().equals(activity.getId())) {
+                this.activities.remove(savedActivity);
+                writeAllToFile();
+            }
+        }
+    }
+
+    private void backUpTodoFile() throws IOException {
+        Files.copy(this.todoFile, this.todoFile.resolveSibling(this.todoFile.getFileName() + "_BAK"),
+                StandardCopyOption.REPLACE_EXISTING);
     }
 }
