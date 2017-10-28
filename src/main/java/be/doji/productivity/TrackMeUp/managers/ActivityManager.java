@@ -24,12 +24,12 @@ public class ActivityManager {
     private final String DATE_REGEX = "[0-9\\-\\:\\.]*";
     private final String COMPLETED_REGEX = "^[Xx]";
     private final String PRIORITY_REGEX = "\\([a-zA-Z]\\)";
-    private final String NAME_REGEX = "\\b[a-zA-Z]([\\w\\s\\.\\- && [^\\+]])*\\s\\+";
-    private final String TAG_REGEX = "\\@([a-zA-Z0-9]*)\\s";
-    private final String PROJECT_REGEX = "\\+([a-zA-Z0-9]*)\\s";
-    private final String DUE_DATE_REGEX = "due:"+ DATE_REGEX +"\\s";
+    private final String NAME_REGEX = "\\b[a-zA-Z]([\\w\\s\\.\\- && [^\\+]])*(\\s\\+|$|\\s\\@)";
+    private final String TAG_REGEX = "\\@([a-zA-Z0-9]*)(\\s|$)";
+    private final String PROJECT_REGEX = "\\+([a-zA-Z0-9]*)(\\s|$)";
+    private final String DUE_DATE_REGEX = "due:" + DATE_REGEX + "\\s";
 
-    private List<Activity> activities = new ArrayList<>();
+    private Map<Activity, Integer> activities = new HashMap<>();
     private Map<String, Project> projects = new HashMap<>();
     private Path todoFile;
 
@@ -38,8 +38,10 @@ public class ActivityManager {
     }
 
     public void readActivitiesFromFile() throws IOException, ParseException {
+        int lineNumber = 0;
         for (String line : Files.readAllLines(this.todoFile)) {
-            activities.add(mapStringToActivity(line));
+            activities.put(mapStringToActivity(line), lineNumber);
+            lineNumber += 1;
         }
     }
 
@@ -48,17 +50,19 @@ public class ActivityManager {
         List<String> matchedCompleted = TrackerUtils.findAllMatches(COMPLETED_REGEX, line);
         if (!matchedCompleted.isEmpty()) {
             activity.setCompleted(true);
-        }
-
-        List<String> nameMatches = TrackerUtils.findAllMatches(NAME_REGEX, line);
-        if (!nameMatches.isEmpty()) {
-            activity.setName(nameMatches.get(0).replace("+", "").trim());
+            line = line.replaceFirst(COMPLETED_REGEX + "\\s", "");
         }
 
         List<String> priorityMatches = TrackerUtils.findAllMatches(PRIORITY_REGEX, line);
         if (!priorityMatches.isEmpty()) {
             activity.setPriority(priorityMatches.get(0).replace("(", "").replace(")", "").trim());
         }
+
+        List<String> nameMatches = TrackerUtils.findAllMatches(NAME_REGEX, line);
+        if (!nameMatches.isEmpty()) {
+            activity.setName(nameMatches.get(0).replace("+", "").replace("@", "").trim());
+        }
+
 
         List<String> tagMatches = TrackerUtils.findAllMatches(TAG_REGEX, line);
         for (String tag : tagMatches) {
@@ -96,13 +100,46 @@ public class ActivityManager {
     }
 
     public void addActivityToFile(Activity activity) throws IOException {
-        this.activities.add(activity);
+        int lineNumber = Files.readAllLines(this.todoFile).size();
+        this.activities.put(activity, lineNumber);
         Files.write(this.todoFile, (activity.toString() + System.lineSeparator()).getBytes(),
                 StandardOpenOption.APPEND);
 
     }
 
     public List<Activity> getActivities() {
-        return new ArrayList<>(this.activities);
+        return new ArrayList<>(this.activities.keySet());
+    }
+
+    public Activity save(Activity activity) throws IOException {
+        Activity matchingActivity = null;
+        for (Activity savedActivity : this.activities.keySet()) {
+            if (savedActivity.getId().equals(activity.getId())) {
+                matchingActivity = savedActivity;
+                writeActivityToFile(activity, this.activities.get(savedActivity));
+            }
+        }
+        if (matchingActivity == null) {
+            this.addActivityToFile(activity);
+            matchingActivity = activity;
+        }
+
+        return matchingActivity;
+    }
+
+    private void writeActivityToFile(Activity activity, Integer lineNumber) throws IOException {
+        System.out.println(">> Updating TODO.txt");
+        List<String> fileLines = Files.readAllLines(this.todoFile);
+        Files.write(this.todoFile, new String().getBytes());
+        for (int i = 0; i < fileLines.size(); i++) {
+            String lineToWrite;
+            if (i != lineNumber) {
+                lineToWrite = fileLines.get(i);
+            } else {
+                lineToWrite = activity.toString();
+            }
+            Files.write(this.todoFile, (lineToWrite + System.lineSeparator()).getBytes(), StandardOpenOption.APPEND);
+        }
+        System.out.println(">> TODO.txt was updated");
     }
 }

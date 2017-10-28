@@ -7,6 +7,7 @@
         [ng\:cloak], [ng-cloak], .ng-cloak {
             display: none !important;
         }
+
     </style>
     <style>div.indent {
         float: left;
@@ -14,6 +15,25 @@
         height: 1px;
         width: 12px;
     }</style>
+    <style>
+        div.form-group {
+            width: 45%;
+            float: left;
+        }
+
+    </style>
+    <style>
+        .full button span {
+            background-color: limegreen;
+            border-radius: 32px;
+            color: black;
+        }
+        .partially button span {
+            background-color: orange;
+            border-radius: 32px;
+            color: black;
+        }
+    </style>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-animate.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-sanitize.js"></script>
@@ -30,24 +50,85 @@
         <hr/>
         <br/>
         <uib-accordion close-others="oneAtATime">
-            <div uib-accordion-group class="panel-default" ng-repeat="activity in activities">
+            <div uib-accordion-group class="panel-default" ng-repeat="activity in activities"
+                 is-open="status.isCustomHeaderOpen">
                 <div uib-accordion-heading>
-                    <i class="{{getDone(activity.completed)}}" aria-hidden="true" style="float: left;"></i>
-                    <div class="indent"></div>
-                    {{activity.name}}
+                    <div style="{{getHeaderTemplate(activity.completed)}}">
+                        <i class="{{getDone(activity.completed)}}" aria-hidden="true" style="float: left;"></i>
+                        <div class="indent"></div>
+                        {{activity.name}}
+                        <i class="pull-right glyphicon"
+                           ng-class="{'glyphicon-chevron-down': status.isCustomHeaderOpen, 'glyphicon-chevron-right': !status.isCustomHeaderOpen}"></i>
+                    </div>
                 </div>
+                <button type="button" class="btn btn-primary" ng-model="activity.completed" uib-btn-checkbox
+                        btn-checkbox-true="true" btn-checkbox-false="false"
+                        ng-click="save(activity.name)">
+                    {{getTodoToggleText(activity.completed)}}
+                </button>
+                <br/><br/>
                 <pre ng-show='activity.priority.length > 0'>Priority level is: <em>{{activity.priority}}</em></pre>
                 <pre ng-show='activity.deadline'>Deadline is: <em>{{activity.deadline | date:'fullDate' }}</em></pre>
-                <pre ng-show='activity.tags.length > 0'>Tagged as: <button type="button" class="btn btn-sm btn-info" ng-repeat="tag in activity.tags"
-                        style="margin-right: 10px;">
+                <pre ng-show='activity.tags.length > 0'>Tagged as: <button type="button" class="btn btn-sm btn-info"
+                                                                           ng-repeat="tag in activity.tags"
+                                                                           style="margin-right: 10px;">
                     {{tag}}
                 </button></pre>
-                <pre ng-show='activity.projects.length > 0'>Activity contained in projects: <button type="button" class="btn btn-sm btn-success" ng-repeat="project in activity.projects"
-                        style="margin-right: 10px;">
+                <pre ng-show='activity.projects.length > 0'>Activity contained in projects: <button type="button"
+                                                                                                    class="btn btn-sm btn-success"
+                                                                                                    ng-repeat="project in activity.projects"
+                                                                                                    style="margin-right: 10px;">
                     {{project.name}}
                 </button></pre>
             </div>
         </uib-accordion>
+        <button type="button"
+                class="btn btn-sm btn-success"
+                ng-click="togglediv('addActivity')"><i class="fa fa-plus" aria-hidden="true"></i>
+        </button>
+        <br/>
+        <div id="addActivity" class="addActivity" style="display: none">
+            <h4>Add a new activity</h4>
+            <form class="form-horizontal" role="form" ng-submit="addActivity()">
+                <div class="form-group">
+                    <div>
+                        <input type="text" class="form-control" name="name"
+                               ng-model="name" placeholder="Activity Name"/>
+                    </div>
+                    <br/>
+                    <div>
+                        <input type="text" class="form-control" name="tags"
+                               ng-model="tags" placeholder="Tags (comma separated)"/>
+                    </div>
+                    <br/>
+                    <div>
+                        <input type="text" class="form-control" name="projects"
+                               ng-model="projects" placeholder="Projects (comma separated):"/>
+                    </div>
+                    <br />
+                    <div>
+                        <p class="input-group">
+                            <input type="text" class="form-control" uib-datepicker-popup ng-model="deadline" placeholder="Activity deadline"
+                                   is-open="popup2.opened" datepicker-options="dateOptions" ng-required="true"
+                                   close-text="Close"/>
+                            <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-click="open2()"><i
+                                    class="glyphicon glyphicon-calendar"></i></button>
+                          </span>
+                        </p>
+
+                    </div>
+
+                </div>
+                <div class="form-group">
+                    <div style="padding-left:110px">
+                        <input type="submit" value="Submit" class="btn btn-primary"/> <br/><br/>
+                        <input type='reset' value='Reset' class="btn btn-primary">
+                    </div>
+                </div>
+            </form>
+
+        </div>
         <hr/>
         <br/>
     </div>

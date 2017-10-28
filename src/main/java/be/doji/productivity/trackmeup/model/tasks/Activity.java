@@ -1,16 +1,20 @@
 package be.doji.productivity.TrackMeUp.model.tasks;
 
 import be.doji.productivity.TrackMeUp.TrackMeConstants;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by Doji on 22/10/2017.
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Activity {
 
+    private UUID id;
     private String name;
     private String priority;
     private final Date creationDate = new Date();
@@ -26,6 +30,7 @@ public class Activity {
     }
 
     public Activity(String taskName) {
+        this.id = UUID.randomUUID();
         this.name = taskName;
         this.priority = PriorityConstants.PRIORITY_MEDIUM;
     }
@@ -51,7 +56,7 @@ public class Activity {
     }
 
     public Date getCompletionDate() {
-        return this.completionDate == null ? null :new Date(completionDate.getTime());
+        return this.completionDate == null?null:new Date(completionDate.getTime());
     }
 
     public void setCompletionDate(Date completionDate) {
@@ -127,7 +132,7 @@ public class Activity {
         }
 
         for (String tag : this.getTags()) {
-            sb.append("+").append(tag);
+            sb.append("@").append(tag);
             sb.append(" ");
         }
 
@@ -140,5 +145,9 @@ public class Activity {
         //TODO: add other fields
 
         return sb.toString();
+    }
+
+    public UUID getId() {
+        return id;
     }
 }

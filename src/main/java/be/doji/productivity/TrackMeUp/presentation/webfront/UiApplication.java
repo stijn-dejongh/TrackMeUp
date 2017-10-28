@@ -2,11 +2,12 @@ package be.doji.productivity.TrackMeUp.presentation.webfront;
 
 import be.doji.productivity.TrackMeUp.managers.ActivityManager;
 import be.doji.productivity.TrackMeUp.model.tasks.Activity;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.http.MediaType;
 import org.springframework.util.ResourceUtils;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -17,14 +18,24 @@ import java.util.List;
 /**
  * Created by Doji on 23/10/2017.
  */
-@SpringBootApplication @RestController public class UiApplication {
+@SpringBootApplication @RestController
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class UiApplication {
 
     private static final String TODO_FILE_LOCATION = "data/todo.txt";
+    private ActivityManager am;
 
     @RequestMapping("/getActivities") public List<Activity> getActivities() throws IOException, ParseException {
-        ActivityManager am = new ActivityManager(getPathInProject(TODO_FILE_LOCATION));
+        am = new ActivityManager(getPathInProject(TODO_FILE_LOCATION));
         am.readActivitiesFromFile();
         return am.getActivities();
+    }
+
+    @RequestMapping(value = { "/save" }, method = { RequestMethod.POST }) public @ResponseBody boolean saveActivity(
+            @RequestBody Activity activity) throws IOException {
+        System.out.println("Trying to save activity");
+        am.save(activity);
+        return true;
     }
 
     public static void main(String[] args) {
