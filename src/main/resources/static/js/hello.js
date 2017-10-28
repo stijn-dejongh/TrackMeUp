@@ -2,6 +2,15 @@ angular.module('hello', ['ui.bootstrap'])
     .controller('home', function ($scope, $http) {
         $scope.activities = [];
 
+        $scope.priorities = {
+            prioOne : "A",
+            prioTwo : "B",
+            prioThree : "C",
+            prioFour: "D",
+            prioFive: "E",
+            prioSix: "F"
+        }
+
         $http.get('/getActivities').then(function (response) {
                 console.log(response);
                 $scope.activities = response.data;
@@ -114,7 +123,8 @@ angular.module('hello', ['ui.bootstrap'])
                 completed: false,
                 tags: tagList,
                 projects: projectList,
-                deadline: $scope.deadline
+                deadline: $scope.deadline,
+                priority: $scope.selectedPriority
             };
             $scope.activities.push(activity);
             $scope.save(activity.name);

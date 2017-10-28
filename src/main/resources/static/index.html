@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 <head>
-    <title>Hello AngularJS</title>
+    <title>[TraMBU] Track My Bitch Up!</title>
     <link href="css/angular-bootstrap.css" rel="stylesheet">
     <style type="text/css">
         [ng\:cloak], [ng-cloak], .ng-cloak {
@@ -77,7 +77,7 @@
                     {{tag}}
                 </button></pre>
                 <pre ng-show='activity.projects.length > 0'>Activity contained in projects: <button type="button"
-                                                                                                    class="btn btn-sm"
+                                                                                                    class="btn btn-sm btn-success"
                                                                                                     ng-repeat="project in activity.projects"
                                                                                                     style="margin-right: 10px;">
                     {{project.name}}
@@ -103,6 +103,12 @@
                     </div>
                     <br/>
                     <div>
+                        <label>Priority:</label>
+                        <select ng-model="selectedPriority" name="selectedPriority" ng-options="y for (x, y) in priorities" ng-required="true">
+                        </select>
+                    </div>
+                    <br />
+                    <div>
                         <input type="text" class="form-control" name="tags"
                                ng-model="tags" placeholder="Tags (comma separated)"/>
                     </div>
@@ -116,7 +122,7 @@
                         <p class="input-group">
                             <input type="text" class="form-control" uib-datepicker-popup ng-model="deadline"
                                    placeholder="Activity deadline"
-                                   is-open="popup2.opened" datepicker-options="dateOptions" ng-required="true"
+                                   is-open="popup2.opened" datepicker-options="dateOptions" ng-required="false"
                                    close-text="Close"/>
                             <span class="input-group-btn">
                             <button type="button" class="btn btn-default" ng-click="open2()"><i

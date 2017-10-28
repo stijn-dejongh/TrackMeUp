@@ -102,7 +102,9 @@ public class ActivityManager {
     }
 
     public List<Activity> getActivities() {
-        return new ArrayList<>(this.activities.keySet());
+        ArrayList<Activity> activities = new ArrayList<>(this.activities.keySet());
+        Collections.sort(activities, Comparator.comparing(Activity::getPriority));
+        return activities;
     }
 
     public Activity save(Activity activity) throws IOException {
