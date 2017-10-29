@@ -115,16 +115,6 @@ public class ActivityManager {
     }
 
     public List<Activity> getActivitiesByProject(String project) {
-//        List<Activity> filteredActivities = new ArrayList<>();
-//        List<Activity> activities = this.getActivities();
-//        for (Activity activity : activities) {
-//            List<Project> projects = activity.getProjects();
-//            for (Project projectOfActivity : projects) {
-//                if (StringUtils.equalsIgnoreCase(projectOfActivity.getName(), project)) {
-//                    filteredActivities.add(activity);
-//                }
-//            }
-//        }
 
         return this.getActivities().stream().filter(activity -> !activity.getProjects().stream()
                 .filter(project1 -> StringUtils.equalsIgnoreCase(project1.getName(), project))
