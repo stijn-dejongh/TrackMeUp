@@ -4,6 +4,7 @@ angular.module('hello', ['ui.bootstrap'])
         $scope.activeFilter = "";
         $scope.errorMessage;
         $scope.hideCompleted = false;
+        $scope.selectedPriority = "C";
 
         $scope.priorities = {
             prioOne: "A",
@@ -24,6 +25,10 @@ angular.module('hello', ['ui.bootstrap'])
 
         $scope.getErrorMessage = function () {
             return errorMessage;
+        }
+
+        $scope.resetDeadline = function () {
+            $scope.deadline = undefined;
         }
 
         $scope.toggleHideCompleted = function () {
