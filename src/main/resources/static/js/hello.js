@@ -37,7 +37,6 @@ angular.module('hello', ['ui.bootstrap'])
         $scope.loadActivities = function () {
             $scope.activities.length = 0;
             $http.get('/getActivities').then(function (response) {
-                    console.log(response);
                     $scope.activities = response.data;
                 },
                 function (errResponse) {
@@ -124,8 +123,7 @@ angular.module('hello', ['ui.bootstrap'])
                     }
 
                     $http.post('/save', activity).then(function (response) {
-                            $scope.loadActivities();
-                            return;
+                            return true;
                         },
                         function (response) {
                             $scope.errorMessage = "Error while saving activity";
@@ -136,24 +134,30 @@ angular.module('hello', ['ui.bootstrap'])
         };
 
         $scope.delete = function (name) {
-            for (i in $scope.activities) {
-                if ($scope.activities[i].name == name) {
-                    let activity = $scope.activities[i];
-                    if (activity.deadline == undefined) {
-                        delete activity.deadline;
-                    }
-                    if (activity.completionDate == undefined) {
-                        delete activity.completionDate;
-                    }
-                    if (activity.projects.length < 1) {
-                        delete activity.projects;
-                    }
+            $http.get('/getActivities').then(function (response) {
+                    $scope.activities = response.data;
+                    for (i in $scope.activities) {
+                        if ($scope.activities[i].name == name) {
+                            let activity = $scope.activities[i];
+                            if (activity.deadline == undefined) {
+                                delete activity.deadline;
+                            }
+                            if (activity.completionDate == undefined) {
+                                delete activity.completionDate;
+                            }
+                            if (activity.projects.length < 1) {
+                                delete activity.projects;
+                            }
 
-                    $http.post('/delete', activity);
-                    $scope.activities.splice(i, 1);
-                    return;
-                }
-            }
+                            $http.post('/delete', activity);
+                            $scope.activities.splice(i, 1);
+                            return;
+                        }
+                    }
+                },
+                function (errResponse) {
+                    $scope.errorMessage = 'error deleting activities';
+                });
         };
 
         $scope.getPanelStyle = function (name) {
