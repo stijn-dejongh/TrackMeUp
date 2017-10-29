@@ -1,25 +1,85 @@
 angular.module('hello', ['ui.bootstrap'])
     .controller('home', function ($scope, $http) {
         $scope.activities = [];
+        $scope.activeFilter = "";
+        $scope.errorMessage;
+        $scope.hideCompleted = false;
 
         $scope.priorities = {
-            prioOne : "A",
-            prioTwo : "B",
-            prioThree : "C",
+            prioOne: "A",
+            prioTwo: "B",
+            prioThree: "C",
             prioFour: "D",
             prioFive: "E",
             prioSix: "F"
         }
 
-        $http.get('/getActivities').then(function (response) {
-                console.log(response);
-                $scope.activities = response.data;
+        $http.get('/initialize').then(function (response) {
+                $scope.loadActivities();
             },
-            function (errResponse) {
-                console.error('Error while fetching Users');
-                deferred.reject(errResponse);
-                $scope.error = 'error getting'
+            function (errorResponse) {
+                $scope.errorMessage = 'error initializing application';
             });
+
+
+        $scope.getErrorMessage = function () {
+            return errorMessage;
+        }
+
+        $scope.toggleHideCompleted = function () {
+            $scope.hideCompleted = !$scope.hideCompleted;
+        }
+
+        $scope.getHideCompleted = function () {
+            return $scope.hideCompleted;
+        }
+
+        $scope.loadActivities = function () {
+            $scope.activities = [];
+            $http.get('/getActivities').then(function (response) {
+                    console.log(response);
+                    $scope.activities = response.data;
+                },
+                function (errResponse) {
+                    $scope.errorMessage = 'error getting activities';
+                });
+        };
+
+        $scope.loadActivtiesByTag = function (tag) {
+            $scope.activeFilter = tag;
+            $scope.activities = [];
+            $scope.toggleFilterVisibility();
+            $http.post('/getActivitiesByTag', tag).then(function (response) {
+                    $scope.activities = response.data;
+                },
+                function (errResponse) {
+                    $scope.error = 'error getting activities by tag';
+                });
+        }
+
+        $scope.loadActivtiesByProject = function (project) {
+            $scope.activeFilter = project;
+            $scope.activities = [];
+            $scope.toggleFilterVisibility();
+            $http.post('/getActivitiesByProject', project).then(function (response) {
+                    $scope.activities = response.data;
+                },
+                function (errResponse) {
+                    $scope.error = 'error getting activities by project';
+                });
+        }
+
+        $scope.clearFilter = function () {
+            $scope.activeFilter = "";
+            $scope.toggleFilterVisibility();
+            $scope.activities = [];
+            $scope.loadActivities();
+        }
+
+        $scope.toggleFilterVisibility = function () {
+            var div = document.getElementById("filterDisplay");
+            div.style.display = div.style.display == "none" ? "block" : "none";
+        }
 
         $scope.getDone = function (isDone) {
             if (isDone == true) {
@@ -71,20 +131,12 @@ angular.module('hello', ['ui.bootstrap'])
                     if (activity.completionDate == undefined) {
                         delete activity.completionDate;
                     }
-                    if(activity.projects.length < 1) {
+                    if (activity.projects.length < 1) {
                         delete activity.projects;
                     }
 
                     $http.post('/delete', activity).then(function (response) {
-                        $http.get('/getActivities').then(function (response) {
-                                console.log(response);
-                                $scope.activities = response.data;
-                            },
-                            function (errResponse) {
-                                console.error('Error while fetching Users');
-                                deferred.reject(errResponse);
-                                $scope.error = 'error getting'
-                            });
+                        loadActivities();
                     });
 
                 }
@@ -130,8 +182,8 @@ angular.module('hello', ['ui.bootstrap'])
                 deadline: $scope.deadline,
                 priority: $scope.selectedPriority
             };
-            $scope.activities.push(activity);
             $scope.save(activity.name);
+            $scope.loadActivities();
         }
 
         $scope.togglediv = function (id) {

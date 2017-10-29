@@ -26,7 +26,14 @@
             width: 45%;
             float: left;
         }
-
+    </style>
+    <style>
+        pre.filterDisplay {
+            width: 75%;
+            clear: right;
+            float: left;
+            margin-bottom: 12px;
+        }
     </style>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-animate.js"></script>
@@ -43,8 +50,23 @@
         <h2><u>Your Activities</u></h2>
         <hr/>
         <br/>
+        <div class="errorPanel">
+            <pre ng-show='errorMessage.length > 0' ng-model="errorMessage"> <em>{{errorMessage}}</em></pre>
+        </div>
+        <div id="topBar" name="topBar" ng-model="activeFilter">
+            <pre id="filterDisplay" name="filterDisplay" class="filterDisplay" style="display: none;">Selected filter: <em><button
+                    type="button"
+                    class="btn" ng-click="clearFilter()">{{activeFilter}}</button></em>  <a href="#"><i
+                    class="glyphicon glyphicon-remove" ng-click="clearFilter()" style="color: #d43f3a"></i></a> </pre>
+            <button type="button" style="float: right" ;
+                    class="btn" ng-class="{'btn-success': hideCompleted, 'btn-default': !hideCompleted}"
+                    ng-click="toggleHideCompleted()" ng-model="hideCompleted">Hide completed
+            </button>
+        </div>
+        <br/>
+        <hr/>
         <uib-accordion close-others="oneAtATime">
-            <div ng-repeat="activity in activities">
+            <div ng-repeat="activity in activities" ng-show="!(activity.completed && getHideCompleted())">
                 <div uib-accordion-group class="{{getPanelStyle(activity.name)}}"
                      is-open="status.isCustomHeaderOpen">
                     <div uib-accordion-heading>
@@ -67,12 +89,14 @@
                     <pre ng-show='activity.deadline'>Deadline is: <em>{{activity.deadline | date:'fullDate' }}</em></pre>
                     <pre ng-show='activity.tags.length > 0'>Tagged as: <button type="button" class="btn btn-sm btn-info"
                                                                                ng-repeat="tag in activity.tags"
+                                                                               ng-click="loadActivtiesByTag(tag)"
                                                                                style="margin-right: 10px;">
                     {{tag}}
                 </button></pre>
                     <pre ng-show='activity.projects.length > 0'>Activity contained in projects: <button type="button"
                                                                                                         class="btn btn-sm btn-success"
                                                                                                         ng-repeat="project in activity.projects"
+                                                                                                        ng-click="loadActivtiesByProject(project.name)"
                                                                                                         style="margin-right: 10px;">
                     {{project.name}}
                 </button></pre>
@@ -80,7 +104,8 @@
                     <button type="button" class="btn btn-danger" style="float: right" ng-click="delete(activity.name)">
                         Delete
                     </button>
-                </div> <br />
+                </div>
+                <br/>
             </div>
         </uib-accordion>
         <button type="button"

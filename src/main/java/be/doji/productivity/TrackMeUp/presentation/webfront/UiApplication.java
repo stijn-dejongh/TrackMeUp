@@ -5,7 +5,6 @@ import be.doji.productivity.TrackMeUp.model.tasks.Activity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.http.MediaType;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,29 +12,58 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Doji on 23/10/2017.
  */
-@SpringBootApplication @RestController
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class UiApplication {
+@SpringBootApplication @RestController @JsonIgnoreProperties(ignoreUnknown = true) public class UiApplication {
 
     private static final String TODO_FILE_LOCATION = "data/todo.txt";
     private ActivityManager am;
 
+    @RequestMapping("/initialize") public boolean initialize() throws IOException, ParseException {
+        if (am == null) {
+            am = new ActivityManager(getPathInProject(TODO_FILE_LOCATION));
+            am.readActivitiesFromFile();
+        }
+        return true;
+    }
+
     @RequestMapping("/getActivities") public List<Activity> getActivities() throws IOException, ParseException {
-        am = new ActivityManager(getPathInProject(TODO_FILE_LOCATION));
-        am.readActivitiesFromFile();
         return am.getActivities();
+    }
+
+    @RequestMapping(value = { "/getActivitiesByTag" }, method = {
+            RequestMethod.POST }) public @ResponseBody List<Activity> getActivitiesByTag(@RequestBody String tag)
+            throws IOException {
+        System.out.println("Loading activities for tag: " + tag);
+        return am.getActivitiesByTag(tag);
+    }
+
+    @RequestMapping(value = { "/getActivitiesByProject" }, method = {
+            RequestMethod.POST }) public @ResponseBody List<Activity> getActivitiesByProject(@RequestBody String tag)
+            throws IOException {
+        System.out.println("Loading activities for tag: " + tag);
+        if (am != null) {
+            return am.getActivitiesByProject(tag);
+        } else {
+            return new ArrayList<>();
+        }
+
     }
 
     @RequestMapping(value = { "/save" }, method = { RequestMethod.POST }) public @ResponseBody boolean saveActivity(
             @RequestBody Activity activity) throws IOException {
         System.out.println("Trying to save activity");
-        am.save(activity);
-        return true;
+        if (am != null && activity != null) {
+            am.save(activity);
+            return true;
+        } else {
+            return false;
+        }
+
     }
 
     @RequestMapping(value = { "/delete" }, method = { RequestMethod.POST }) public @ResponseBody boolean deleteActivity(
