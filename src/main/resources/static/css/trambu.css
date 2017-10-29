@@ -1,0 +1,47 @@
+
+[ng\:cloak], [ng-cloak], .ng-cloak {
+    display: none !important;
+}
+
+div.indent {
+    float: left;
+    overflow: hidden;
+    height: 1px;
+    width: 12px;
+}
+
+div.vindent {
+    float: left;
+    overflow: hidden;
+    height: 8px;
+    width: 1px;
+}
+
+div.form-group {
+    width: 45%;
+    float: left;
+}
+
+pre.filterDisplay {
+    width: 75%;
+    clear: right;
+    float: left;
+    margin-bottom: 12px;
+}
+
+div.middleOfParent {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    height: 30%;
+    width: 50%;
+    margin: -15% 0 0 -25%;
+}
+
+div.bordered {
+    border-radius: 10px;
+    padding: 15px;
+    border: 1px solid grey;
+}
+
+
