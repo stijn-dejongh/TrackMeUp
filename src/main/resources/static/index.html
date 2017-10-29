@@ -80,10 +80,16 @@
         </uib-accordion>
         <button type="button"
                 class="btn btn-sm btn-success"
-                ng-click="togglediv('addActivity')"><i class="fa fa-plus" aria-hidden="true"></i>
+                ng-click="togglediv('addActivity')" uib-tooltip="Add new activity" tooltip-placement="bottom"><i
+                class="fa fa-plus" aria-hidden="true"></i>
+        </button>
+        <button type="button"
+                class="btn btn-sm btn-success"
+                ng-click="togglediv('fileselector')" tooltip-placement="bottom" uib-tooltip="Select todo file"><i
+                class="fa fa-play-circle" aria-hidden="true"></i>
         </button>
         <br/>
-        <div id="addActivity" class="addActivity" style="display: none; margin-top: 10px";>
+        <div id="addActivity" class="addActivity" style="display: none; margin-top: 10px">
             <form class="form-horizontal" role="form" ng-submit="addActivity()">
                 <div class="form-group bordered">
                     <h4>Add a new activity</h4>
@@ -129,7 +135,7 @@
                 <div class="form-group">
                     <div style="padding-left:110px">
                         <input type="submit" value="Submit" class="btn btn-primary"/> <br/><br/>
-                        <input type='reset' value='Reset' class="btn btn-primary" ng-click="resetDeadline()">
+                        <input type='reset' value='Reset' class="btn btn-primary" ng-click="resetDeadline()"/>
                     </div>
                 </div>
             </form>
@@ -137,7 +143,17 @@
         </div>
         <hr/>
         <br/>
+        <div id="fileselector" class="fileSelector" style="display: none; margin-top: 10px;">
+            <h4>Update file location</h4>
+            <div>
+                <input type="text" class="form-control" name="fileLocation"
+                       ng-model="fileLocation"/>
+                <button type="button" class="btn btn-default" ng-click="updateFile()">Update location</button>
+            </div>
+        </div>
+
     </div>
+
 </div>
 <script src="js/angular-bootstrap.js" type="text/javascript"></script>
 <script src="js/hello.js"></script>

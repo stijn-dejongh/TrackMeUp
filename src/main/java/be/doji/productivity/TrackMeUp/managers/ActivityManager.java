@@ -30,8 +30,13 @@ public class ActivityManager {
     private Map<String, Project> projects = new HashMap<>();
     private Path todoFile;
 
-    public ActivityManager(String fileLocation) {
-        this.todoFile = Paths.get(fileLocation);
+    public ActivityManager(String fileLocation) throws IOException {
+        Path filePath = Paths.get(fileLocation);
+        if (filePath.toFile().exists()) {
+            this.todoFile = filePath;
+        } else {
+            this.todoFile = Files.createTempFile("todo", "txt");
+        }
     }
 
     public void readActivitiesFromFile() throws IOException, ParseException {
@@ -191,5 +196,13 @@ public class ActivityManager {
     private void backUpTodoFile() throws IOException {
         Files.copy(this.todoFile, this.todoFile.resolveSibling(this.todoFile.getFileName() + "_BAK"),
                 StandardCopyOption.REPLACE_EXISTING);
+    }
+
+    public void updateTodoFileLocation(String location) throws IOException, ParseException {
+        Path filePath = Paths.get(location);
+        if (filePath.toFile().exists()) {
+            this.todoFile = filePath;
+        }
+        this.readActivitiesFromFile();
     }
 }

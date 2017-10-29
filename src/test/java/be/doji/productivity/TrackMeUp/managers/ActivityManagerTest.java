@@ -76,7 +76,7 @@ public class ActivityManagerTest {
         Assert.assertEquals(2017, calendarWrapper.get(Calendar.YEAR));
     }
 
-    @Test public void testMapNoPrefixLine() throws FileNotFoundException, ParseException {
+    @Test public void testMapNoPrefixLine() throws IOException, ParseException {
         ActivityManager am = new ActivityManager(getTestPath(DATA_TEST_ONE_TASK_TXT));
         Activity activity = am.mapStringToActivity(NO_PREFIX_DATA_LINE);
         Assert.assertNotNull(activity);
@@ -89,7 +89,7 @@ public class ActivityManagerTest {
 
     }
 
-    @Test public void testMapNoPrefixLineWithNumbers() throws FileNotFoundException, ParseException {
+    @Test public void testMapNoPrefixLineWithNumbers() throws IOException, ParseException {
         ActivityManager am = new ActivityManager(getTestPath(DATA_TEST_ONE_TASK_TXT));
         Activity activity = am.mapStringToActivity(NO_PREFIX_DATA_LINE_WITH_NUMBERS);
         Assert.assertNotNull(activity);

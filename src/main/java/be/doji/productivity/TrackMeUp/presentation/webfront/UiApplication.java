@@ -46,6 +46,17 @@ import java.util.List;
         return am.getActivitiesByTag(tag);
     }
 
+    @RequestMapping(value = { "/updateFileLocation" }, method = {
+            RequestMethod.POST }) public @ResponseBody boolean updateFileLocation(@RequestBody String location)
+            throws IOException, ParseException {
+        System.out.println("Setting todo file to: " + location);
+        if (am == null) {
+            am = new ActivityManager(location);
+        }
+        am.updateTodoFileLocation(location);
+        return true;
+    }
+
     @RequestMapping(value = { "/getActivitiesByProject" }, method = {
             RequestMethod.POST }) public @ResponseBody List<Activity> getActivitiesByProject(@RequestBody String tag)
             throws IOException {
@@ -55,7 +66,6 @@ import java.util.List;
         } else {
             return new ArrayList<>();
         }
-
     }
 
     @RequestMapping(value = { "/save" }, method = { RequestMethod.POST }) public @ResponseBody boolean saveActivity(

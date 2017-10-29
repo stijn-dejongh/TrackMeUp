@@ -5,6 +5,7 @@ angular.module('hello', ['ui.bootstrap'])
         $scope.errorMessage;
         $scope.hideCompleted = false;
         $scope.selectedPriority = "C";
+        $scope.fileLocation = "default/todo.txt";
 
         $scope.priorities = {
             prioOne: "A",
@@ -59,7 +60,18 @@ angular.module('hello', ['ui.bootstrap'])
                 function (errResponse) {
                     $scope.errorMessage = 'error getting activities by tag';
                 });
-        }
+        };
+
+        $scope.updateFile = function () {
+            var fileLoc = $scope.fileLocation;
+            $http.post('/updateFileLocation', fileLoc).then(function (response) {
+                    $scope.loadActivities();
+                },
+                function (errResponse) {
+                    $scope.errorMessage = 'error setting file: ' + errResponse;
+                });
+        };
+
 
         $scope.loadActivtiesByProject = function (project) {
             $scope.activeFilter = project;
