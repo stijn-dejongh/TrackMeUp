@@ -32,7 +32,11 @@ import java.util.List;
     }
 
     @RequestMapping("/getActivities") public List<Activity> getActivities() throws IOException, ParseException {
+        if (am == null) {
+            this.initialize();
+        }
         return am.getActivities();
+
     }
 
     @RequestMapping(value = { "/getActivitiesByTag" }, method = {
@@ -56,7 +60,6 @@ import java.util.List;
 
     @RequestMapping(value = { "/save" }, method = { RequestMethod.POST }) public @ResponseBody boolean saveActivity(
             @RequestBody Activity activity) throws IOException {
-        System.out.println("Trying to save activity");
         if (am != null && activity != null) {
             am.save(activity);
             return true;
@@ -68,7 +71,6 @@ import java.util.List;
 
     @RequestMapping(value = { "/delete" }, method = { RequestMethod.POST }) public @ResponseBody boolean deleteActivity(
             @RequestBody Activity activity) throws IOException, ParseException {
-        System.out.println("Trying to delete activity");
         am.delete(activity);
         return true;
     }

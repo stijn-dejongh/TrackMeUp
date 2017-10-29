@@ -35,7 +35,7 @@ angular.module('hello', ['ui.bootstrap'])
         }
 
         $scope.loadActivities = function () {
-            $scope.activities = [];
+            $scope.activities.length = 0;
             $http.get('/getActivities').then(function (response) {
                     console.log(response);
                     $scope.activities = response.data;
@@ -47,7 +47,7 @@ angular.module('hello', ['ui.bootstrap'])
 
         $scope.loadActivtiesByTag = function (tag) {
             $scope.activeFilter = tag;
-            $scope.activities = [];
+            $scope.activities.length = 0;
             $scope.toggleFilterVisibility();
             $http.post('/getActivitiesByTag', tag).then(function (response) {
                     $scope.activities = response.data;
@@ -116,7 +116,9 @@ angular.module('hello', ['ui.bootstrap'])
                     if (activity.completionDate == undefined) {
                         delete activity.completionDate;
                     }
-                    var result = $http.post('/save', activity);
+                    $http.post('/save', activity).then(function (response) {
+                        return;
+                    });
                 }
             }
         };
@@ -137,8 +139,8 @@ angular.module('hello', ['ui.bootstrap'])
 
                     $http.post('/delete', activity).then(function (response) {
                         loadActivities();
+                        return;
                     });
-
                 }
             }
         };
@@ -182,8 +184,8 @@ angular.module('hello', ['ui.bootstrap'])
                 deadline: $scope.deadline,
                 priority: $scope.selectedPriority
             };
+            $scope.activities.push(activity);
             $scope.save(activity.name);
-            $scope.loadActivities();
         }
 
         $scope.togglediv = function (id) {

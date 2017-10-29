@@ -24,7 +24,7 @@ public class ActivityManager {
     private final String NAME_REGEX = "\\b[a-zA-Z]([\\w\\s\\.\\- && [^\\+]])*(\\s\\+|$|\\s\\@)";
     private final String TAG_REGEX = "\\@([a-zA-Z0-9]*)(\\s|$)";
     private final String PROJECT_REGEX = "\\+([a-zA-Z0-9]*)(\\s|$)";
-    private final String DUE_DATE_REGEX = "due:" + DATE_REGEX + "\\s";
+    private final String DUE_DATE_REGEX = "due:" + DATE_REGEX + "(\\s|$)";
 
     private Map<Activity, Integer> activities = new ConcurrentHashMap<>();
     private Map<String, Project> projects = new HashMap<>();
@@ -35,6 +35,7 @@ public class ActivityManager {
     }
 
     public void readActivitiesFromFile() throws IOException, ParseException {
+        activities = new ConcurrentHashMap<>();
         int lineNumber = 0;
         for (String line : Files.readAllLines(this.todoFile)) {
             activities.put(mapStringToActivity(line), lineNumber);
@@ -163,7 +164,7 @@ public class ActivityManager {
         System.out.println(">> TODO.txt was updated");
     }
 
-    private void writeAllToFile() throws IOException, ParseException {
+    private void writeAllToFileAndReload() throws IOException, ParseException {
         System.out.println(">> Updating TODO.txt");
         backUpTodoFile();
         Files.write(this.todoFile, new String().getBytes());
@@ -180,10 +181,11 @@ public class ActivityManager {
         for (Activity savedActivity : activityCopy) {
             if (savedActivity.getId().equals(activity.getId())) {
                 this.activities.remove(savedActivity);
-                writeAllToFile();
+                writeAllToFileAndReload();
                 return;
             }
         }
+
     }
 
     private void backUpTodoFile() throws IOException {

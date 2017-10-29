@@ -3,42 +3,11 @@
 <head>
     <title>[TraMBU] Track My Bitch Up!</title>
     <link href="css/angular-bootstrap.css" rel="stylesheet">
-    <style type="text/css">
-        [ng\:cloak], [ng-cloak], .ng-cloak {
-            display: none !important;
-        }
-
-    </style>
-    <style>div.indent {
-        float: left;
-        overflow: hidden;
-        height: 1px;
-        width: 12px;
-    }</style>
-    <style>div.vindent {
-        float: left;
-        overflow: hidden;
-        height: 8px;
-        width: 1px;
-    }</style>
-    <style>
-        div.form-group {
-            width: 45%;
-            float: left;
-        }
-    </style>
-    <style>
-        pre.filterDisplay {
-            width: 75%;
-            clear: right;
-            float: left;
-            margin-bottom: 12px;
-        }
-    </style>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-animate.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-sanitize.js"></script>
     <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-2.5.0.js"></script>
+    <link href="./css/trambu.css" rel="stylesheet"/>
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
     <link href="./css/font-awesome.css" rel="stylesheet"/>
 </head>
@@ -54,7 +23,8 @@
             <pre ng-show='errorMessage.length > 0' ng-model="errorMessage"> <em>{{errorMessage}}</em></pre>
         </div>
         <div id="topBar" name="topBar" ng-model="activeFilter">
-            <pre id="filterDisplay" name="filterDisplay" class="filterDisplay" style="display: none;">Selected filter: <em><button
+            <pre id="filterDisplay" name="filterDisplay" class="filterDisplay"
+                 style="display: none;">Selected filter: <em><button
                     type="button"
                     class="btn" ng-click="clearFilter()">{{activeFilter}}</button></em>  <a href="#"><i
                     class="glyphicon glyphicon-remove" ng-click="clearFilter()" style="color: #d43f3a"></i></a> </pre>
@@ -86,7 +56,7 @@
                     </button>
                     <br/><br/>
                     <pre ng-show='activity.priority.length > 0'>Priority level is: <em>{{activity.priority}}</em></pre>
-                    <pre ng-show='activity.deadline'>Deadline is: <em>{{activity.deadline | date:'fullDate' }}</em></pre>
+                    <pre ng-show='activity.deadline'>Deadline is: <em>{{activity.deadline | date:'medium' }}</em></pre>
                     <pre ng-show='activity.tags.length > 0'>Tagged as: <button type="button" class="btn btn-sm btn-info"
                                                                                ng-repeat="tag in activity.tags"
                                                                                ng-click="loadActivtiesByTag(tag)"
@@ -113,10 +83,10 @@
                 ng-click="togglediv('addActivity')"><i class="fa fa-plus" aria-hidden="true"></i>
         </button>
         <br/>
-        <div id="addActivity" class="addActivity" style="display: none">
-            <h4>Add a new activity</h4>
+        <div id="addActivity" class="addActivity" style="display: none; margin-top: 10px";>
             <form class="form-horizontal" role="form" ng-submit="addActivity()">
-                <div class="form-group">
+                <div class="form-group bordered">
+                    <h4>Add a new activity</h4>
                     <div>
                         <input type="text" class="form-control" name="name"
                                ng-model="name" placeholder="Activity Name"/>
@@ -139,8 +109,9 @@
                                ng-model="projects" placeholder="Projects (comma separated):"/>
                     </div>
                     <br/>
-                    <div>
-                        <p class="input-group">
+                    <div class="bordered">
+                        <label>Deadline</label><br/>
+                        <div class="input-group">
                             <input type="text" class="form-control" uib-datepicker-popup ng-model="deadline"
                                    placeholder="Activity deadline"
                                    is-open="popup2.opened" datepicker-options="dateOptions" ng-required="false"
@@ -148,11 +119,12 @@
                             <span class="input-group-btn">
                             <button type="button" class="btn btn-default" ng-click="open2()"><i
                                     class="glyphicon glyphicon-calendar"></i></button>
-                          </span>
-                        </p>
+                            </span>
 
+                        </div>
+                        <div uib-timepicker ng-model="deadline" hour-step="1" minute-step="1" show-meridian="false"
+                             value="12:00:00" style="width: 125px;"></div>
                     </div>
-
                 </div>
                 <div class="form-group">
                     <div style="padding-left:110px">
