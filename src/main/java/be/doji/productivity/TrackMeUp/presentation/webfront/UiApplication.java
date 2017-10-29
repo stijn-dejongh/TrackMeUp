@@ -25,7 +25,7 @@ import java.util.List;
 
     @RequestMapping("/initialize") public boolean initialize() throws IOException, ParseException {
         if (am == null) {
-            am = new ActivityManager(getPathInProject(TODO_FILE_LOCATION));
+            am = new ActivityManager(TODO_FILE_LOCATION);
             am.readActivitiesFromFile();
         }
         return true;
