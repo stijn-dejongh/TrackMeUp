@@ -10,6 +10,9 @@ import org.springframework.util.ResourceUtils;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
@@ -22,12 +25,14 @@ import java.util.List;
 public class ActivityManagerTest {
 
     private static final String ACTIVITY_DATA_LINE = "(A) 2017-10-21:14:13.000 TaskTitle  +OverarchingProject @Tag @Tag2 due:2017-12-21:16:15:00.000 index:0 blocksNext:yes skill:SkillName";
+    private static final String ACTIVITY_DATA_LINE_CLONE = "(A) 2017-10-21:14:13.000 TaskTitle2  +OverarchingProject @Tag @Tag2 @Tag3 due:2017-12-21:16:15:00.000 index:0 blocksNext:yes skill:SkillName";
     private static final String NO_PREFIX_DATA_LINE = "Write my own todo.txt webapp +imnu +java +programming @development";
     private static final String NO_PREFIX_DATA_LINE_WITH_NUMBERS = "Write my own 123-todo.txt webapp +imnu +java +programming @development";
-    private static  final  String COMPLETED_ACTIVITY = "X (B) Buy thunderbird plugin license";
+    private static final String COMPLETED_ACTIVITY = "X (B) Buy thunderbird plugin license";
+    public static final String DATA_TEST_ONE_TASK_TXT = "data/testOneTask.txt";
 
     @Test public void testReadAcitvities() throws IOException, ParseException {
-        ActivityManager am = new ActivityManager(getTestPath("data/testOneTask.txt"));
+        ActivityManager am = new ActivityManager(getTestPath(DATA_TEST_ONE_TASK_TXT));
         am.readActivitiesFromFile();
         List<Activity> readActivities = am.getActivities();
         Assert.assertFalse(readActivities.isEmpty());
@@ -35,7 +40,7 @@ public class ActivityManagerTest {
     }
 
     @Test public void testMapStringToActivityCompleted() throws IOException, ParseException {
-        ActivityManager am = new ActivityManager(getTestPath("data/testOneTask.txt"));
+        ActivityManager am = new ActivityManager(getTestPath(DATA_TEST_ONE_TASK_TXT));
         Activity activity = am.mapStringToActivity(COMPLETED_ACTIVITY);
         Assert.assertNotNull(activity);
 
@@ -44,10 +49,8 @@ public class ActivityManagerTest {
         Assert.assertTrue(activity.isCompleted());
     }
 
-
-
     @Test public void testmapStringToActivity() throws IOException, ParseException {
-        ActivityManager am = new ActivityManager(getTestPath("data/testOneTask.txt"));
+        ActivityManager am = new ActivityManager(getTestPath(DATA_TEST_ONE_TASK_TXT));
         Activity activity = am.mapStringToActivity(ACTIVITY_DATA_LINE);
         Assert.assertNotNull(activity);
 
@@ -73,9 +76,8 @@ public class ActivityManagerTest {
         Assert.assertEquals(2017, calendarWrapper.get(Calendar.YEAR));
     }
 
-    @Test
-    public void testMapNoPrefixLine() throws FileNotFoundException, ParseException {
-        ActivityManager am = new ActivityManager(getTestPath("data/testOneTask.txt"));
+    @Test public void testMapNoPrefixLine() throws FileNotFoundException, ParseException {
+        ActivityManager am = new ActivityManager(getTestPath(DATA_TEST_ONE_TASK_TXT));
         Activity activity = am.mapStringToActivity(NO_PREFIX_DATA_LINE);
         Assert.assertNotNull(activity);
         Assert.assertEquals("Write my own todo.txt webapp", activity.getName());
@@ -85,20 +87,54 @@ public class ActivityManagerTest {
         Assert.assertEquals(1, activity.getTags().size());
         Assert.assertEquals("development", activity.getTags().get(0));
 
-
     }
 
-    @Test
-    public void testMapNoPrefixLineWithNumbers() throws FileNotFoundException, ParseException {
-        ActivityManager am = new ActivityManager(getTestPath("data/testOneTask.txt"));
+    @Test public void testMapNoPrefixLineWithNumbers() throws FileNotFoundException, ParseException {
+        ActivityManager am = new ActivityManager(getTestPath(DATA_TEST_ONE_TASK_TXT));
         Activity activity = am.mapStringToActivity(NO_PREFIX_DATA_LINE_WITH_NUMBERS);
         Assert.assertNotNull(activity);
         Assert.assertEquals("Write my own 123-todo.txt webapp", activity.getName());
     }
 
+    @Test public void testGetActivitiesByTag() throws IOException, ParseException {
+        Path tempFilePath = createTempFile();
+        ActivityManager am = new ActivityManager(tempFilePath.toString());
+        am.addActivityAndSaveToFile(ACTIVITY_DATA_LINE);
+        am.addActivityAndSaveToFile(ACTIVITY_DATA_LINE_CLONE);
+        Assert.assertEquals(2, am.getActivities().size());
+        List<Activity> activitiesByTag = am.getActivitiesByTag("Tag");
+        Assert.assertNotNull(activitiesByTag);
+        Assert.assertFalse(activitiesByTag.isEmpty());
+        Assert.assertEquals(2, activitiesByTag.size());
+
+        activitiesByTag = am.getActivitiesByTag("Tag3");
+        Assert.assertNotNull(activitiesByTag);
+        Assert.assertFalse(activitiesByTag.isEmpty());
+        Assert.assertEquals(1, activitiesByTag.size());
+
+        Files.delete(tempFilePath);
+    }
+
+    @Test public void testGetActivitiesByProject() throws IOException, ParseException {
+        Path tempFilePath = createTempFile();
+        ActivityManager am = new ActivityManager(tempFilePath.toString());
+        am.addActivityAndSaveToFile(ACTIVITY_DATA_LINE);
+        am.addActivityAndSaveToFile(ACTIVITY_DATA_LINE_CLONE);
+        Assert.assertEquals(2, am.getActivities().size());
+        List<Activity> activitiesByProject = am.getActivitiesByProject("OverarchingProject");
+        Assert.assertNotNull(activitiesByProject);
+        Assert.assertFalse(activitiesByProject.isEmpty());
+        Assert.assertEquals(2, activitiesByProject.size());
+        Files.delete(tempFilePath);
+    }
+
+    private Path createTempFile() throws IOException {
+        Path directoryPath = Paths.get(getTestPath(DATA_TEST_ONE_TASK_TXT)).getParent();
+        return Files.createTempFile(directoryPath, "temp", "txt");
+    }
+
     public String getTestPath(String path) throws FileNotFoundException {
-        File testFile = ResourceUtils
-                .getFile(getClass().getClassLoader().getResource(path));
+        File testFile = ResourceUtils.getFile(getClass().getClassLoader().getResource(path));
         Assert.assertTrue(testFile.exists());
         String testPath = testFile.getAbsolutePath();
         Assert.assertFalse(StringUtils.isBlank(testPath));

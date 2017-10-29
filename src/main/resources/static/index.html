@@ -15,25 +15,18 @@
         height: 1px;
         width: 12px;
     }</style>
+    <style>div.vindent {
+        float: left;
+        overflow: hidden;
+        height: 8px;
+        width: 1px;
+    }</style>
     <style>
         div.form-group {
             width: 45%;
             float: left;
         }
 
-    </style>
-    <style>
-        .full button span {
-            background-color: limegreen;
-            border-radius: 32px;
-            color: black;
-        }
-
-        .partially button span {
-            background-color: orange;
-            border-radius: 32px;
-            color: black;
-        }
     </style>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.1/angular-animate.js"></script>
@@ -51,41 +44,43 @@
         <hr/>
         <br/>
         <uib-accordion close-others="oneAtATime">
-            <div uib-accordion-group class="{{getPanelStyle(activity.name)}}" ng-repeat="activity in activities"
-                 is-open="status.isCustomHeaderOpen">
-                <div uib-accordion-heading>
-                    <div style="{{getHeaderTemplate(activity.completed)}}">
-                        <i class="{{getDone(activity.completed)}}" aria-hidden="true" style="float: left;"></i>
-                        <div class="indent"></div>
-                        {{activity.name}}
-                        <div class="indent"></div>
-                        <i class="pull-right glyphicon"
-                           ng-class="{'glyphicon-chevron-down': status.isCustomHeaderOpen, 'glyphicon-chevron-right': !status.isCustomHeaderOpen}"></i>
+            <div ng-repeat="activity in activities">
+                <div uib-accordion-group class="{{getPanelStyle(activity.name)}}"
+                     is-open="status.isCustomHeaderOpen">
+                    <div uib-accordion-heading>
+                        <div style="{{getHeaderTemplate(activity.completed)}}">
+                            <i class="{{getDone(activity.completed)}}" aria-hidden="true" style="float: left;"></i>
+                            <div class="indent"></div>
+                            {{activity.name}}
+                            <div class="indent"></div>
+                            <i class="pull-right glyphicon"
+                               ng-class="{'glyphicon-chevron-down': status.isCustomHeaderOpen, 'glyphicon-chevron-right': !status.isCustomHeaderOpen}"></i>
+                        </div>
                     </div>
-                </div>
-                <button type="button" class="btn btn-primary" ng-model="activity.completed" uib-btn-checkbox
-                        btn-checkbox-true="true" btn-checkbox-false="false"
-                        ng-click="save(activity.name)">
-                    {{getTodoToggleText(activity.completed)}}
-                </button>
-                <br/><br/>
-                <pre ng-show='activity.priority.length > 0'>Priority level is: <em>{{activity.priority}}</em></pre>
-                <pre ng-show='activity.deadline'>Deadline is: <em>{{activity.deadline | date:'fullDate' }}</em></pre>
-                <pre ng-show='activity.tags.length > 0'>Tagged as: <button type="button" class="btn btn-sm btn-info"
-                                                                           ng-repeat="tag in activity.tags"
-                                                                           style="margin-right: 10px;">
+                    <button type="button" class="btn btn-primary" ng-model="activity.completed" uib-btn-checkbox
+                            btn-checkbox-true="true" btn-checkbox-false="false"
+                            ng-click="save(activity.name)">
+                        {{getTodoToggleText(activity.completed)}}
+                    </button>
+                    <br/><br/>
+                    <pre ng-show='activity.priority.length > 0'>Priority level is: <em>{{activity.priority}}</em></pre>
+                    <pre ng-show='activity.deadline'>Deadline is: <em>{{activity.deadline | date:'fullDate' }}</em></pre>
+                    <pre ng-show='activity.tags.length > 0'>Tagged as: <button type="button" class="btn btn-sm btn-info"
+                                                                               ng-repeat="tag in activity.tags"
+                                                                               style="margin-right: 10px;">
                     {{tag}}
                 </button></pre>
-                <pre ng-show='activity.projects.length > 0'>Activity contained in projects: <button type="button"
-                                                                                                    class="btn btn-sm btn-success"
-                                                                                                    ng-repeat="project in activity.projects"
-                                                                                                    style="margin-right: 10px;">
+                    <pre ng-show='activity.projects.length > 0'>Activity contained in projects: <button type="button"
+                                                                                                        class="btn btn-sm btn-success"
+                                                                                                        ng-repeat="project in activity.projects"
+                                                                                                        style="margin-right: 10px;">
                     {{project.name}}
                 </button></pre>
-                <br/>
-                <button type="button" class="btn btn-danger" style="float: right" ng-click="delete(activity.name)">
-                    Delete
-                </button>
+                    <br/>
+                    <button type="button" class="btn btn-danger" style="float: right" ng-click="delete(activity.name)">
+                        Delete
+                    </button>
+                </div> <br />
             </div>
         </uib-accordion>
         <button type="button"
@@ -104,10 +99,11 @@
                     <br/>
                     <div>
                         <label>Priority:</label>
-                        <select ng-model="selectedPriority" name="selectedPriority" ng-options="y for (x, y) in priorities" ng-required="true">
+                        <select ng-model="selectedPriority" name="selectedPriority"
+                                ng-options="y for (x, y) in priorities" ng-required="true">
                         </select>
                     </div>
-                    <br />
+                    <br/>
                     <div>
                         <input type="text" class="form-control" name="tags"
                                ng-model="tags" placeholder="Tags (comma separated)"/>

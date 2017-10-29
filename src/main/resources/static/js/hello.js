@@ -71,6 +71,10 @@ angular.module('hello', ['ui.bootstrap'])
                     if (activity.completionDate == undefined) {
                         delete activity.completionDate;
                     }
+                    if(activity.projects.length < 1) {
+                        delete activity.projects;
+                    }
+
                     $http.post('/delete', activity).then(function (response) {
                         $http.get('/getActivities').then(function (response) {
                                 console.log(response);
@@ -89,9 +93,9 @@ angular.module('hello', ['ui.bootstrap'])
 
         $scope.getPanelStyle = function (name) {
             if ($scope.isUrgent(name)) {
-                return "panel-danger";
+                return 'panel-danger';
             } else {
-                return "panel-default";
+                return 'panel-default';
             }
         }
 

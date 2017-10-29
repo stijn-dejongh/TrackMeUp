@@ -11,6 +11,7 @@ import java.nio.file.*;
 import java.text.ParseException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 /**
  * Created by Doji on 22/10/2017.
@@ -106,6 +107,28 @@ public class ActivityManager {
         ArrayList<Activity> activities = new ArrayList<>(this.activities.keySet());
         Collections.sort(activities, Comparator.comparing(Activity::getPriority));
         return activities;
+    }
+
+    public List<Activity> getActivitiesByTag(String tag) {
+        return this.getActivities().stream().filter(activity -> activity.getTags().contains(tag))
+                .collect(Collectors.toList());
+    }
+
+    public List<Activity> getActivitiesByProject(String project) {
+//        List<Activity> filteredActivities = new ArrayList<>();
+//        List<Activity> activities = this.getActivities();
+//        for (Activity activity : activities) {
+//            List<Project> projects = activity.getProjects();
+//            for (Project projectOfActivity : projects) {
+//                if (StringUtils.equalsIgnoreCase(projectOfActivity.getName(), project)) {
+//                    filteredActivities.add(activity);
+//                }
+//            }
+//        }
+
+        return this.getActivities().stream().filter(activity -> !activity.getProjects().stream()
+                .filter(project1 -> StringUtils.equalsIgnoreCase(project1.getName(), project))
+                .collect(Collectors.toList()).isEmpty()).collect(Collectors.toList());
     }
 
     public Activity save(Activity activity) throws IOException {
