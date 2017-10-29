@@ -8,6 +8,8 @@ import java.util.Locale;
  */
 public final class TrackMeConstants {
 
+    public static final int PORT_TO_USE = 9666;
+
     private TrackMeConstants() {
     }
 

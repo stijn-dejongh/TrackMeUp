@@ -93,10 +93,6 @@ import java.util.List;
         }
     }
 
-    public static void main(String[] args) {
-        SpringApplication.run(UiApplication.class, args);
-    }
-
     public String getPathInProject(String path) throws FileNotFoundException {
         File testFile = ResourceUtils.getFile(getClass().getClassLoader().getResource(path));
         String testPath = testFile.getAbsolutePath();
