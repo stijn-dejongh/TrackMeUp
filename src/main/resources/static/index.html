@@ -95,18 +95,18 @@
                     <div>
                         <label>Priority:</label>
                         <select ng-model="selectedPriority" name="selectedPriority"
-                                ng-options="y for (x, y) in priorities" ng-required="true">
+                                ng-options="y for (x, y) in priorities">
                         </select>
                     </div>
                     <br/>
                     <div>
                         <input type="text" class="form-control" name="tags"
-                               ng-model="tags" placeholder="Tags (comma separated)"/>
+                               ng-model="tags" placeholder="Tags (comma separated)" ng-required="false"/>
                     </div>
                     <br/>
                     <div>
                         <input type="text" class="form-control" name="projects"
-                               ng-model="projects" placeholder="Projects (comma separated):"/>
+                               ng-model="projects" placeholder="Projects (comma separated):" ng-required="false"/>
                     </div>
                     <br/>
                     <div class="bordered">
@@ -114,7 +114,7 @@
                         <div class="input-group">
                             <input type="text" class="form-control" uib-datepicker-popup ng-model="deadline"
                                    placeholder="Activity deadline"
-                                   is-open="popup2.opened" datepicker-options="dateOptions" ng-required="false"
+                                   is-open="popup2.opened" datepicker-options="dateOptions"
                                    close-text="Close"/>
                             <span class="input-group-btn">
                             <button type="button" class="btn btn-default" ng-click="open2()"><i

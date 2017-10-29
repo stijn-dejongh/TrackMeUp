@@ -53,7 +53,7 @@ angular.module('hello', ['ui.bootstrap'])
                     $scope.activities = response.data;
                 },
                 function (errResponse) {
-                    $scope.error = 'error getting activities by tag';
+                    $scope.errorMessage = 'error getting activities by tag';
                 });
         }
 
@@ -65,7 +65,7 @@ angular.module('hello', ['ui.bootstrap'])
                     $scope.activities = response.data;
                 },
                 function (errResponse) {
-                    $scope.error = 'error getting activities by project';
+                    $scope.errorMessage = 'error getting activities by project';
                 });
         }
 
@@ -116,9 +116,21 @@ angular.module('hello', ['ui.bootstrap'])
                     if (activity.completionDate == undefined) {
                         delete activity.completionDate;
                     }
+                    if (activity.projects == undefined || activity.projects.length < 1) {
+                        delete activity.projects;
+                    }
+                    if (activity.tags == undefined || activity.tags.length < 1) {
+                        delete activity.tags;
+                    }
+
                     $http.post('/save', activity).then(function (response) {
-                        return;
-                    });
+                            $scope.loadActivities();
+                            return;
+                        },
+                        function (response) {
+                            $scope.errorMessage = "Error while saving activity";
+                        });
+
                 }
             }
         };
@@ -137,10 +149,9 @@ angular.module('hello', ['ui.bootstrap'])
                         delete activity.projects;
                     }
 
-                    $http.post('/delete', activity).then(function (response) {
-                        loadActivities();
-                        return;
-                    });
+                    $http.post('/delete', activity);
+                    $scope.activities.splice(i, 1);
+                    return;
                 }
             }
         };
@@ -173,17 +184,29 @@ angular.module('hello', ['ui.bootstrap'])
         }
 
         $scope.addActivity = function () {
-            var tagList = $scope.tags.split(",");
-            var projectList = $scope.projects.split(",");
+
             var activity = {
                 name: $scope.name,
-                priority: "B",
                 completed: false,
-                tags: tagList,
-                projects: projectList,
                 deadline: $scope.deadline,
-                priority: $scope.selectedPriority
+                priority: $scope.selectedPriority,
+                tags: [],
+                projects: []
             };
+            if ($scope.tags) {
+                let tagList = $scope.tags.split(",");
+                if (tagList.length > 0) {
+                    activity.tags = tagList;
+                }
+            }
+
+            if ($scope.projects) {
+                let projectList = $scope.projects.split(",");
+                if (projectList.length > 0) {
+                    activity.projects = projectList;
+                }
+            }
+
             $scope.activities.push(activity);
             $scope.save(activity.name);
         }
