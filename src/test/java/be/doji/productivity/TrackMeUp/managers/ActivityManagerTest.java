@@ -30,6 +30,7 @@ public class ActivityManagerTest {
     private static final String NO_PREFIX_DATA_LINE_WITH_NUMBERS = "Write my own 123-todo.txt webapp +imnu +java +programming @development";
     private static final String COMPLETED_ACTIVITY = "X (B) Buy thunderbird plugin license";
     public static final String DATA_TEST_ONE_TASK_TXT = "data/testOneTask.txt";
+    private static final String ACTIVITY_DATA_LINE_WITH_WARNING = "(A) 2017-10-21:14:13.000 TaskTitle  +OverarchingProject @Tag @Tag2 due:2017-12-21:16:15:00.000 index:0 blocksNext:yes skill:SkillName warningPeriod:P2DT3H4M";
 
     @Test public void testReadAcitvities() throws IOException, ParseException {
         ActivityManager am = new ActivityManager(getTestPath(DATA_TEST_ONE_TASK_TXT));
@@ -113,6 +114,16 @@ public class ActivityManagerTest {
         Assert.assertEquals(1, activitiesByTag.size());
 
         Files.delete(tempFilePath);
+    }
+
+    @Test public void testCreateActivityWithWarningTimeframe() throws ParseException, IOException {
+        ActivityManager am = new ActivityManager(getTestPath(DATA_TEST_ONE_TASK_TXT));
+        Activity activity = am.mapStringToActivity(ACTIVITY_DATA_LINE_WITH_WARNING);
+        Assert.assertNotNull(activity);
+        Assert.assertNotNull(activity.getWarningTimeFrame());
+        Assert.assertEquals(2, activity.getWarningTimeFrame().toDays());
+        Assert.assertEquals((24 * 2) + 3, activity.getWarningTimeFrame().toHours());
+        Assert.assertEquals(((24 * 2) + 3) * 60 + 4, activity.getWarningTimeFrame().toMinutes());
     }
 
     @Test public void testGetActivitiesByProject() throws IOException, ParseException {

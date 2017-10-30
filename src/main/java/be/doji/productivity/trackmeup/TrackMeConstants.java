@@ -1,6 +1,7 @@
 package be.doji.productivity.TrackMeUp;
 
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.Locale;
 
 /**
@@ -8,10 +9,13 @@ import java.util.Locale;
  */
 public final class TrackMeConstants {
 
-    public static final int PORT_TO_USE = 9666;
-
+    /**
+     * Utility classes should not have a public or default constructor
+     */
     private TrackMeConstants() {
     }
 
     public static SimpleDateFormat DATA_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd:HH:mm:ss.SSS", Locale.FRANCE);
+
+    public static final Duration DEFAULT_WARNING_PERIOD = Duration.ofDays(1);
 }

@@ -3,6 +3,8 @@ package be.doji.productivity.TrackMeUp.model.tasks;
 import be.doji.productivity.TrackMeUp.TrackMeConstants;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.nio.file.attribute.PosixFilePermissions;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -24,6 +26,7 @@ public class Activity {
     private List<String> tags = new ArrayList<>();
     private List<Project> projects = new ArrayList<>();
     private Date deadline;
+    private Duration warningTimeFrame = TrackMeConstants.DEFAULT_WARNING_PERIOD;
 
     public Activity() {
         this("New Activity");
@@ -149,5 +152,13 @@ public class Activity {
 
     public UUID getId() {
         return id;
+    }
+
+    public Duration getWarningTimeFrame() {
+        return warningTimeFrame;
+    }
+
+    public void setWarningTimeFrame(Duration warningTimeFrame) {
+        this.warningTimeFrame = warningTimeFrame;
     }
 }

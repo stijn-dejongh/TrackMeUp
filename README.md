@@ -38,4 +38,4 @@ follow these steps:
 * Open a terminal window and navigate to the 'target' directory
 * Execute 'java -jar XXXX' , where XXXX is the name of the TraMBU jar
 * Navigate your browser to 'http://localhost:9666'
-* Set up the application to use your own 'todo.txt' fileó
+* Set up the application to use your own 'todo.txt' file

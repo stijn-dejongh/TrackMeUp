@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 import java.nio.file.*;
 import java.text.ParseException;
+import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -25,6 +26,8 @@ public class ActivityManager {
     private final String TAG_REGEX = "\\@([a-zA-Z0-9]*)(\\s|$)";
     private final String PROJECT_REGEX = "\\+([a-zA-Z0-9]*)(\\s|$)";
     private final String DUE_DATE_REGEX = "due:" + DATE_REGEX + "(\\s|$)";
+    private static final String DURATION_REGEX = "P((0-9|.)+(T)*(D|H|M|S))*";
+    private final String WARNING_PERIOD_REGEX = "warningPeriod:" + DURATION_REGEX + "(\\s|$)";
 
     private Map<Activity, Integer> activities = new ConcurrentHashMap<>();
     private Map<String, Project> projects = new HashMap<>();
@@ -81,6 +84,12 @@ public class ActivityManager {
         for (String dueDateMatch : dueDateMatches) {
             String dueDateString = dueDateMatch.replace("due:", "").trim();
             activity.setDeadline(TrackMeConstants.DATA_DATE_FORMAT.parse(dueDateString));
+        }
+
+        List<String> warningPeriodMatches = TrackerUtils.findAllMatches(WARNING_PERIOD_REGEX, line);
+        for (String warningMatch : warningPeriodMatches) {
+            String warningMatchString = warningMatch.replace("warningPeriod:", "").trim();
+            activity.setWarningTimeFrame(Duration.parse(warningMatchString));
         }
 
         return activity;
