@@ -3,7 +3,6 @@ package be.doji.productivity.TrackMeUp.model.tasks;
 import be.doji.productivity.TrackMeUp.TrackMeConstants;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-import java.nio.file.attribute.PosixFilePermissions;
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Date;
@@ -13,8 +12,7 @@ import java.util.UUID;
 /**
  * Created by Doji on 22/10/2017.
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class Activity {
+@JsonIgnoreProperties(ignoreUnknown = true) public class Activity {
 
     private UUID id;
     private String name;
@@ -145,9 +143,13 @@ public class Activity {
             sb.append(" ");
         }
 
-        //TODO: add other fields
+        if (this.warningTimeFrame != null) {
+            sb.append("warningPeriod:");
+            sb.append(warningTimeFrame.toString());
+            sb.append(" ");
+        }
 
-        return sb.toString();
+        return sb.toString().trim();
     }
 
     public UUID getId() {
