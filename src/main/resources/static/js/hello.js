@@ -6,6 +6,9 @@ angular.module('hello', ['ui.bootstrap'])
             $scope.hideCompleted = false;
             $scope.selectedPriority = "C";
             $scope.fileLocation = "default/todo.txt";
+            $scope.warningHours = 24;
+            $scope.warningMinutes = 0;
+            $scope.warningSeconds = 0;
 
             $scope.priorities = {
                 prioOne: "A",
@@ -209,6 +212,10 @@ angular.module('hello', ['ui.bootstrap'])
                 return new Date(acivitydeadline[0], acivitydeadline[1], acivitydeadline[2], acivitydeadline[3], acivitydeadline[4]);
             };
 
+            $scope.getWarningTimeFrameInSeconds = function getWarningTimeFrameInSeconds() {
+                return $scope.warningSeconds + ($scope.warningMinutes * 60) + ($scope.warningHours * 60 * 60);
+            }
+
             $scope.addActivity = function () {
 
                 var activity = {
@@ -218,7 +225,7 @@ angular.module('hello', ['ui.bootstrap'])
                     priority: $scope.selectedPriority,
                     tags: [],
                     projects: [],
-                    warningTimeFrame: 86400
+                    warningTimeFrame: $scope.getWarningTimeFrameInSeconds()
                 };
                 if ($scope.tags) {
                     let tagList = $scope.tags.split(",");
@@ -334,7 +341,6 @@ angular.module('hello', ['ui.bootstrap'])
                         }
                     }
                 }
-
                 return '';
             }
         }
