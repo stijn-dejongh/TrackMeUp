@@ -26,10 +26,6 @@ public class ActivityLogpoint {
     public String toString() {
         StringBuilder logLine = new StringBuilder();
         logLine.append(activity.getName());
-        logLine.append(" ");
-        logLine.append(TrackMeConstants.DATA_DATE_FORMAT.format(startTime));
-        logLine.append(" ");
-        logLine.append(TrackMeConstants.DATA_DATE_FORMAT.format(endTime));
         return logLine.toString();
     }
 

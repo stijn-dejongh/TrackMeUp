@@ -3,7 +3,6 @@ package be.doji.productivity.TrackMeUp.presentation.webfront;
 import be.doji.productivity.TrackMeUp.managers.ActivityManager;
 import be.doji.productivity.TrackMeUp.model.tasks.Activity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +11,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -36,7 +38,6 @@ import java.util.List;
             this.initialize();
         }
         return am.getActivities();
-
     }
 
     @RequestMapping(value = { "/getActivitiesByTag" }, method = {
@@ -44,6 +45,7 @@ import java.util.List;
             throws IOException {
         System.out.println("Loading activities for tag: " + tag);
         return am.getActivitiesByTag(tag);
+
     }
 
     @RequestMapping(value = { "/updateFileLocation" }, method = {

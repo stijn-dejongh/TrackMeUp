@@ -73,9 +73,9 @@
                     <pre ng-show='activity.projects.length > 0'>Activity contained in projects: <button type="button"
                                                                                                         class="btn btn-sm btn-success"
                                                                                                         ng-repeat="project in activity.projects"
-                                                                                                        ng-click="loadActivtiesByProject(project.name)"
+                                                                                                        ng-click="loadActivtiesByProject(project)"
                                                                                                         style="margin-right: 10px;">
-                    {{project.name}}
+                    {{project}}
                 </button></pre>
                     <br/>
                     <button type="button" class="btn btn-danger" style="float: right" ng-click="delete(activity.name)">

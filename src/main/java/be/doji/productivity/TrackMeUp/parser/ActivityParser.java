@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.text.ParseException;
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -65,7 +66,7 @@ public final class ActivityParser {
         List<String> dueDateMatches = TrackerUtils.findAllMatches(DUE_DATE_REGEX, line);
         for (String dueDateMatch : dueDateMatches) {
             String dueDateString = dueDateMatch.replace(TrackMeConstants.INDICATOR_DEADLINE, "").trim();
-            activity.setDeadline(TrackMeConstants.DATA_DATE_FORMAT.parse(dueDateString));
+            activity.setDeadline(LocalDateTime.parse(dueDateString, TrackMeConstants.DATA_DATE_FORMAT));
         }
 
         List<String> warningPeriodMatches = TrackerUtils.findAllMatches(WARNING_PERIOD_REGEX, line);

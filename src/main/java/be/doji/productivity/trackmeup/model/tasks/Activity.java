@@ -4,8 +4,8 @@ import be.doji.productivity.TrackMeUp.TrackMeConstants;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,13 +17,13 @@ import java.util.UUID;
     private UUID id;
     private String name;
     private String priority;
-    private final Date creationDate = new Date();
-    private Date completionDate;
+    private final LocalDateTime creationDate = LocalDateTime.now();
+    private LocalDateTime completionDate;
     private List<Activity> subTasks = new ArrayList<>();
     private boolean completed = false;
     private List<String> tags = new ArrayList<>();
     private List<String> projects = new ArrayList<>();
-    private Date deadline;
+    private LocalDateTime deadline;
     private Duration warningTimeFrame = TrackMeConstants.DEFAULT_WARNING_PERIOD;
 
     public Activity() {
@@ -52,23 +52,23 @@ import java.util.UUID;
         this.priority = priority;
     }
 
-    public Date getCreationDate() {
-        return new Date(creationDate.getTime());
+    public LocalDateTime getCreationDate() {
+        return creationDate;
     }
 
-    public Date getCompletionDate() {
-        return this.completionDate == null?null:new Date(completionDate.getTime());
+    public LocalDateTime getCompletionDate() {
+        return this.completionDate;
     }
 
-    public void setCompletionDate(Date completionDate) {
-        this.completionDate = new Date(completionDate.getTime());
+    public void setCompletionDate(LocalDateTime completionDate) {
+        this.completionDate = completionDate;
     }
 
-    public Date getDeadline() {
+    public LocalDateTime getDeadline() {
         return deadline;
     }
 
-    public void setDeadline(Date deadline) {
+    public void setDeadline(LocalDateTime deadline) {
         this.deadline = deadline;
     }
 
