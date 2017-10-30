@@ -3,27 +3,28 @@ package be.doji.productivity.TrackMeUp.model.tasks;
 import be.doji.productivity.TrackMeUp.TrackMeConstants;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 /**
  * Created by Doji on 22/10/2017.
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class Activity {
+@JsonIgnoreProperties(ignoreUnknown = true) public class Activity {
 
     private UUID id;
     private String name;
     private String priority;
-    private final Date creationDate = new Date();
-    private Date completionDate;
+    private final LocalDateTime creationDate = LocalDateTime.now();
+    private LocalDateTime completionDate;
     private List<Activity> subTasks = new ArrayList<>();
-    private boolean completed;
+    private boolean completed = false;
     private List<String> tags = new ArrayList<>();
-    private List<Project> projects = new ArrayList<>();
-    private Date deadline;
+    private List<String> projects = new ArrayList<>();
+    private LocalDateTime deadline;
+    private Duration warningTimeFrame = TrackMeConstants.DEFAULT_WARNING_PERIOD;
 
     public Activity() {
         this("New Activity");
@@ -51,23 +52,23 @@ public class Activity {
         this.priority = priority;
     }
 
-    public Date getCreationDate() {
-        return new Date(creationDate.getTime());
+    public LocalDateTime getCreationDate() {
+        return creationDate;
     }
 
-    public Date getCompletionDate() {
-        return this.completionDate == null?null:new Date(completionDate.getTime());
+    public LocalDateTime getCompletionDate() {
+        return this.completionDate;
     }
 
-    public void setCompletionDate(Date completionDate) {
-        this.completionDate = new Date(completionDate.getTime());
+    public void setCompletionDate(LocalDateTime completionDate) {
+        this.completionDate = completionDate;
     }
 
-    public Date getDeadline() {
+    public LocalDateTime getDeadline() {
         return deadline;
     }
 
-    public void setDeadline(Date deadline) {
+    public void setDeadline(LocalDateTime deadline) {
         this.deadline = deadline;
     }
 
@@ -107,18 +108,18 @@ public class Activity {
         this.tags.add(tag);
     }
 
-    public List<Project> getProjects() {
+    public List<String> getProjects() {
         return new ArrayList<>(projects);
     }
 
-    public void addProject(Project project) {
+    public void addProject(String project) {
         this.projects.add(project);
     }
 
     public String toString() {
         StringBuilder sb = new StringBuilder();
         if (this.isCompleted()) {
-            sb.append("X");
+            sb.append(TrackMeConstants.INDICATOR_DONE);
             sb.append(" ");
         }
 
@@ -126,28 +127,40 @@ public class Activity {
         sb.append(" ");
         sb.append(this.getName());
         sb.append(" ");
-        for (Project project : this.getProjects()) {
-            sb.append("+").append(project.getName());
+        for (String project : this.getProjects()) {
+            sb.append(TrackMeConstants.INDICATOR_PROJECT).append(project);
             sb.append(" ");
         }
 
         for (String tag : this.getTags()) {
-            sb.append("@").append(tag);
+            sb.append(TrackMeConstants.INDICATOR_TAG).append(tag);
             sb.append(" ");
         }
 
         if (deadline != null) {
-            sb.append("due:");
+            sb.append(TrackMeConstants.INDICATOR_DEADLINE);
             sb.append(TrackMeConstants.DATA_DATE_FORMAT.format(deadline));
             sb.append(" ");
         }
 
-        //TODO: add other fields
+        if (this.warningTimeFrame != null) {
+            sb.append(TrackMeConstants.INDICATOR_WARNING_PERIOD);
+            sb.append(warningTimeFrame.toString());
+            sb.append(" ");
+        }
 
-        return sb.toString();
+        return sb.toString().trim();
     }
 
     public UUID getId() {
         return id;
+    }
+
+    public Duration getWarningTimeFrame() {
+        return warningTimeFrame;
+    }
+
+    public void setWarningTimeFrame(Duration warningTimeFrame) {
+        this.warningTimeFrame = warningTimeFrame;
     }
 }

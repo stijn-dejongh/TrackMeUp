@@ -15,8 +15,8 @@
 
 <body ng-app="hello">
 <div class="container">
-    <div class = "page-header">
-        <img src="images/trambu.png" height="75px" width="75px" />
+    <div class="page-header">
+        <img src="images/trambu.png" height="75px" width="75px"/>
         <h1>
             TraMBU
             <small>Get your life back on the rails</small>
@@ -73,9 +73,9 @@
                     <pre ng-show='activity.projects.length > 0'>Activity contained in projects: <button type="button"
                                                                                                         class="btn btn-sm btn-success"
                                                                                                         ng-repeat="project in activity.projects"
-                                                                                                        ng-click="loadActivtiesByProject(project.name)"
+                                                                                                        ng-click="loadActivtiesByProject(project)"
                                                                                                         style="margin-right: 10px;">
-                    {{project.name}}
+                    {{project}}
                 </button></pre>
                     <br/>
                     <button type="button" class="btn btn-danger" style="float: right" ng-click="delete(activity.name)">
@@ -96,7 +96,7 @@
                 class="fa fa-play-circle" aria-hidden="true"></i>
         </button>
         <br/>
-        <div id="addActivity" class="addActivity" style="display: none; margin-top: 10px">
+        <div id="addActivity" class="addActivity" style="display: none; margin-top: 10px; width: 100%">
             <form class="form-horizontal" role="form" ng-submit="addActivity()">
                 <div class="form-group bordered">
                     <h4>Add a new activity</h4>
@@ -136,9 +136,26 @@
 
                         </div>
                         <div uib-timepicker ng-model="deadline" hour-step="1" minute-step="1" show-meridian="false"
-                             value="12:00:00" style="width: 125px;"></div>
+                             value="12:00:00" style="width: 125px;">
+                        </div>
+                    </div>
+                    <br/>
+                    <div class="bordered">
+                        <label>Warning offset</label><br/>
+                        <div class="input-group">
+                            <input type="number" ng-pattern="/[0-9]+/" class="form-control" name="warningHours"
+                                   ng-model="warningHours" ng-required="false"
+                                   style="width: 105px"/>
+                            <input type="number" ng-pattern="/[0-9]+/" class="form-control" name="warningMinutes"
+                                   ng-model="warningMinutes" ng-required="false"
+                                   style="width: 105px"/>
+                            <input type="number" ng-pattern="/[0-9]+/" class="form-control" name="warningSeconds"
+                                   ng-model="warningSeconds" ng-required="false"
+                                   style="width: 105px"/>
+                        </div>
                     </div>
                 </div>
+                <br/>
                 <div class="form-group">
                     <div style="padding-left:110px">
                         <input type="submit" value="Submit" class="btn btn-primary"/> <br/><br/>
@@ -151,8 +168,8 @@
         <hr/>
         <br/>
         <div id="fileselector" class="fileSelector" style="display: none; margin-top: 10px;">
-            <h4>Update file location</h4>
             <div>
+                <h4>Update file location</h4>
                 <input type="text" class="form-control" name="fileLocation"
                        ng-model="fileLocation"/>
                 <button type="button" class="btn btn-default" ng-click="updateFile()">Update location</button>

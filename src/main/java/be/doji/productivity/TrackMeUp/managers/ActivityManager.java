@@ -1,9 +1,7 @@
 package be.doji.productivity.TrackMeUp.managers;
 
-import be.doji.productivity.TrackMeUp.TrackMeConstants;
 import be.doji.productivity.TrackMeUp.model.tasks.Activity;
-import be.doji.productivity.TrackMeUp.model.tasks.Project;
-import be.doji.productivity.TrackMeUp.utils.TrackerUtils;
+import be.doji.productivity.TrackMeUp.parser.ActivityParser;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
@@ -18,16 +16,7 @@ import java.util.stream.Collectors;
  */
 public class ActivityManager {
 
-    private final String DATE_REGEX = "[0-9\\-\\:\\.]*";
-    private final String COMPLETED_REGEX = "^[Xx]";
-    private final String PRIORITY_REGEX = "\\([a-zA-Z]\\)";
-    private final String NAME_REGEX = "\\b[a-zA-Z]([\\w\\s\\.\\- && [^\\+]])*(\\s\\+|$|\\s\\@)";
-    private final String TAG_REGEX = "\\@([a-zA-Z0-9]*)(\\s|$)";
-    private final String PROJECT_REGEX = "\\+([a-zA-Z0-9]*)(\\s|$)";
-    private final String DUE_DATE_REGEX = "due:" + DATE_REGEX + "(\\s|$)";
-
     private Map<Activity, Integer> activities = new ConcurrentHashMap<>();
-    private Map<String, Project> projects = new HashMap<>();
     private Path todoFile;
 
     public ActivityManager(String fileLocation) throws IOException {
@@ -43,62 +32,13 @@ public class ActivityManager {
         activities = new ConcurrentHashMap<>();
         int lineNumber = 0;
         for (String line : Files.readAllLines(this.todoFile)) {
-            activities.put(mapStringToActivity(line), lineNumber);
+            activities.put(ActivityParser.mapStringToActivity(line), lineNumber);
             lineNumber += 1;
         }
     }
 
-    protected Activity mapStringToActivity(String line) throws ParseException {
-        Activity activity = new Activity();
-        List<String> matchedCompleted = TrackerUtils.findAllMatches(COMPLETED_REGEX, line);
-        if (!matchedCompleted.isEmpty()) {
-            activity.setCompleted(true);
-            line = line.replaceFirst(COMPLETED_REGEX + "\\s", "");
-        }
-
-        List<String> priorityMatches = TrackerUtils.findAllMatches(PRIORITY_REGEX, line);
-        if (!priorityMatches.isEmpty()) {
-            activity.setPriority(priorityMatches.get(0).replace("(", "").replace(")", "").trim());
-        }
-
-        List<String> nameMatches = TrackerUtils.findAllMatches(NAME_REGEX, line);
-        if (!nameMatches.isEmpty()) {
-            activity.setName(nameMatches.get(0).replace("+", "").replace("@", "").trim());
-        }
-
-        List<String> tagMatches = TrackerUtils.findAllMatches(TAG_REGEX, line);
-        for (String tag : tagMatches) {
-            activity.addTag(tag.replace("@", "").trim());
-        }
-
-        List<String> projectMatches = TrackerUtils.findAllMatches(PROJECT_REGEX, line);
-        for (String projectMatch : projectMatches) {
-            String projectName = projectMatch.replace("+", "").trim();
-            activity.addProject(getProjectForName(projectName));
-        }
-
-        List<String> dueDateMatches = TrackerUtils.findAllMatches(DUE_DATE_REGEX, line);
-        for (String dueDateMatch : dueDateMatches) {
-            String dueDateString = dueDateMatch.replace("due:", "").trim();
-            activity.setDeadline(TrackMeConstants.DATA_DATE_FORMAT.parse(dueDateString));
-        }
-
-        return activity;
-    }
-
-    private Project getProjectForName(String projectName) {
-        Project project;
-        if (this.projects.containsKey(projectName)) {
-            project = this.projects.get(projectName);
-        } else {
-            project = new Project(projectName);
-            this.projects.put(projectName, project);
-        }
-        return project;
-    }
-
     public void addActivityAndSaveToFile(String activity) throws IOException, ParseException {
-        addActivityAndSaveToFile(mapStringToActivity(activity));
+        addActivityAndSaveToFile(ActivityParser.mapStringToActivity(activity));
     }
 
     public void addActivityAndSaveToFile(Activity activity) throws IOException {
@@ -123,8 +63,8 @@ public class ActivityManager {
     public List<Activity> getActivitiesByProject(String project) {
 
         return this.getActivities().stream().filter(activity -> !activity.getProjects().stream()
-                .filter(project1 -> StringUtils.equalsIgnoreCase(project1.getName(), project))
-                .collect(Collectors.toList()).isEmpty()).collect(Collectors.toList());
+                .filter(project1 -> StringUtils.equalsIgnoreCase(project1, project)).collect(Collectors.toList())
+                .isEmpty()).collect(Collectors.toList());
     }
 
     public Activity save(Activity activity) throws IOException {
