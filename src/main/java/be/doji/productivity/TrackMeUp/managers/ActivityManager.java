@@ -1,15 +1,13 @@
 package be.doji.productivity.TrackMeUp.managers;
 
-import be.doji.productivity.TrackMeUp.TrackMeConstants;
 import be.doji.productivity.TrackMeUp.model.tasks.Activity;
 import be.doji.productivity.TrackMeUp.model.tasks.Project;
-import be.doji.productivity.TrackMeUp.utils.TrackerUtils;
+import be.doji.productivity.TrackMeUp.parser.ActivityParser;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.nio.file.*;
 import java.text.ParseException;
-import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -19,17 +17,8 @@ import java.util.stream.Collectors;
  */
 public class ActivityManager {
 
-    private final String DATE_REGEX = "[0-9\\-\\:\\.]*";
-    private final String COMPLETED_REGEX = "^[Xx]";
-    private final String PRIORITY_REGEX = "\\([a-zA-Z]\\)";
-    private final String NAME_REGEX = "\\b[a-zA-Z]([\\w\\s\\.\\- && [^\\+]])*(\\s\\+|$|\\s\\@)";
-    private final String TAG_REGEX = "\\@([a-zA-Z0-9]*)(\\s|$)";
-    private final String PROJECT_REGEX = "\\+([a-zA-Z0-9]*)(\\s|$)";
-    private final String DUE_DATE_REGEX = "due:" + DATE_REGEX + "(\\s|$)";
-    private static final String DURATION_REGEX = "P((0-9|.)+(T)*(D|H|M|S))*";
-    private final String WARNING_PERIOD_REGEX = "warningPeriod:" + DURATION_REGEX + "(\\s|$)";
-
     private Map<Activity, Integer> activities = new ConcurrentHashMap<>();
+    //TODO: this is probably in the wrong location
     private Map<String, Project> projects = new HashMap<>();
     private Path todoFile;
 
@@ -52,50 +41,10 @@ public class ActivityManager {
     }
 
     protected Activity mapStringToActivity(String line) throws ParseException {
-        Activity activity = new Activity();
-        List<String> matchedCompleted = TrackerUtils.findAllMatches(COMPLETED_REGEX, line);
-        if (!matchedCompleted.isEmpty()) {
-            activity.setCompleted(true);
-            line = line.replaceFirst(COMPLETED_REGEX + "\\s", "");
-        }
-
-        List<String> priorityMatches = TrackerUtils.findAllMatches(PRIORITY_REGEX, line);
-        if (!priorityMatches.isEmpty()) {
-            activity.setPriority(priorityMatches.get(0).replace("(", "").replace(")", "").trim());
-        }
-
-        List<String> nameMatches = TrackerUtils.findAllMatches(NAME_REGEX, line);
-        if (!nameMatches.isEmpty()) {
-            activity.setName(nameMatches.get(0).replace("+", "").replace("@", "").trim());
-        }
-
-        List<String> tagMatches = TrackerUtils.findAllMatches(TAG_REGEX, line);
-        for (String tag : tagMatches) {
-            activity.addTag(tag.replace("@", "").trim());
-        }
-
-        List<String> projectMatches = TrackerUtils.findAllMatches(PROJECT_REGEX, line);
-        for (String projectMatch : projectMatches) {
-            String projectName = projectMatch.replace("+", "").trim();
-            activity.addProject(getProjectForName(projectName));
-        }
-
-        List<String> dueDateMatches = TrackerUtils.findAllMatches(DUE_DATE_REGEX, line);
-        for (String dueDateMatch : dueDateMatches) {
-            String dueDateString = dueDateMatch.replace("due:", "").trim();
-            activity.setDeadline(TrackMeConstants.DATA_DATE_FORMAT.parse(dueDateString));
-        }
-
-        List<String> warningPeriodMatches = TrackerUtils.findAllMatches(WARNING_PERIOD_REGEX, line);
-        for (String warningMatch : warningPeriodMatches) {
-            String warningMatchString = warningMatch.replace("warningPeriod:", "").trim();
-            activity.setWarningTimeFrame(Duration.parse(warningMatchString));
-        }
-
-        return activity;
+        return ActivityParser.mapStringToActivity(line);
     }
 
-    private Project getProjectForName(String projectName) {
+    public Project getManagedProjectForName(String projectName) {
         Project project;
         if (this.projects.containsKey(projectName)) {
             project = this.projects.get(projectName);
@@ -132,7 +81,7 @@ public class ActivityManager {
     public List<Activity> getActivitiesByProject(String project) {
 
         return this.getActivities().stream().filter(activity -> !activity.getProjects().stream()
-                .filter(project1 -> StringUtils.equalsIgnoreCase(project1.getName(), project))
+                .filter(project1 -> StringUtils.equalsIgnoreCase(project1, project))
                 .collect(Collectors.toList()).isEmpty()).collect(Collectors.toList());
     }
 

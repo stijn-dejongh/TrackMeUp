@@ -64,9 +64,9 @@ public class ActivityManagerTest {
         Assert.assertTrue(tags.contains("Tag"));
         Assert.assertTrue(tags.contains("Tag2"));
 
-        List<Project> projects = activity.getProjects();
+        List<String> projects = activity.getProjects();
         Assert.assertEquals(1, projects.size());
-        Assert.assertEquals("OverarchingProject", projects.get(0).getName());
+        Assert.assertEquals("OverarchingProject", projects.get(0));
 
         Date deadline = activity.getDeadline();
         Assert.assertNotNull(deadline);

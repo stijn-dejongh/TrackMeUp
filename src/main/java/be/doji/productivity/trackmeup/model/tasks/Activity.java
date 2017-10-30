@@ -20,9 +20,9 @@ import java.util.UUID;
     private final Date creationDate = new Date();
     private Date completionDate;
     private List<Activity> subTasks = new ArrayList<>();
-    private boolean completed;
+    private boolean completed = false;
     private List<String> tags = new ArrayList<>();
-    private List<Project> projects = new ArrayList<>();
+    private List<String> projects = new ArrayList<>();
     private Date deadline;
     private Duration warningTimeFrame = TrackMeConstants.DEFAULT_WARNING_PERIOD;
 
@@ -108,11 +108,11 @@ import java.util.UUID;
         this.tags.add(tag);
     }
 
-    public List<Project> getProjects() {
+    public List<String> getProjects() {
         return new ArrayList<>(projects);
     }
 
-    public void addProject(Project project) {
+    public void addProject(String project) {
         this.projects.add(project);
     }
 
@@ -127,8 +127,8 @@ import java.util.UUID;
         sb.append(" ");
         sb.append(this.getName());
         sb.append(" ");
-        for (Project project : this.getProjects()) {
-            sb.append(TrackMeConstants.INDICATOR_PROJECT).append(project.getName());
+        for (String project : this.getProjects()) {
+            sb.append(TrackMeConstants.INDICATOR_PROJECT).append(project);
             sb.append(" ");
         }
 
