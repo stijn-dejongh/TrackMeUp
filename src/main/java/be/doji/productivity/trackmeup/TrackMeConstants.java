@@ -16,6 +16,12 @@ public final class TrackMeConstants {
     }
 
     public static SimpleDateFormat DATA_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd:HH:mm:ss.SSS", Locale.FRANCE);
-
     public static final Duration DEFAULT_WARNING_PERIOD = Duration.ofDays(1);
+
+    public static final String INDICATOR_DONE = "X";
+    public static final String INDICATOR_PROJECT = "+";
+    public static final String INDICATOR_TAG = "@";
+    public static final String INDICATOR_DEADLINE = "due:";
+    public static final String INDICATOR_WARNING_PERIOD = "warningPeriod:";
+
 }

@@ -119,7 +119,7 @@ import java.util.UUID;
     public String toString() {
         StringBuilder sb = new StringBuilder();
         if (this.isCompleted()) {
-            sb.append("X");
+            sb.append(TrackMeConstants.INDICATOR_DONE);
             sb.append(" ");
         }
 
@@ -128,23 +128,23 @@ import java.util.UUID;
         sb.append(this.getName());
         sb.append(" ");
         for (Project project : this.getProjects()) {
-            sb.append("+").append(project.getName());
+            sb.append(TrackMeConstants.INDICATOR_PROJECT).append(project.getName());
             sb.append(" ");
         }
 
         for (String tag : this.getTags()) {
-            sb.append("@").append(tag);
+            sb.append(TrackMeConstants.INDICATOR_TAG).append(tag);
             sb.append(" ");
         }
 
         if (deadline != null) {
-            sb.append("due:");
+            sb.append(TrackMeConstants.INDICATOR_DEADLINE);
             sb.append(TrackMeConstants.DATA_DATE_FORMAT.format(deadline));
             sb.append(" ");
         }
 
         if (this.warningTimeFrame != null) {
-            sb.append("warningPeriod:");
+            sb.append(TrackMeConstants.INDICATOR_WARNING_PERIOD);
             sb.append(warningTimeFrame.toString());
             sb.append(" ");
         }
