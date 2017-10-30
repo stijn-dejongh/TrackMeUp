@@ -1,7 +1,6 @@
 package be.doji.productivity.TrackMeUp.managers;
 
 import be.doji.productivity.TrackMeUp.model.tasks.Activity;
-import be.doji.productivity.TrackMeUp.model.tasks.Project;
 import be.doji.productivity.TrackMeUp.parser.ActivityParser;
 import org.apache.commons.lang3.StringUtils;
 
@@ -18,8 +17,6 @@ import java.util.stream.Collectors;
 public class ActivityManager {
 
     private Map<Activity, Integer> activities = new ConcurrentHashMap<>();
-    //TODO: this is probably in the wrong location
-    private Map<String, Project> projects = new HashMap<>();
     private Path todoFile;
 
     public ActivityManager(String fileLocation) throws IOException {
@@ -35,28 +32,13 @@ public class ActivityManager {
         activities = new ConcurrentHashMap<>();
         int lineNumber = 0;
         for (String line : Files.readAllLines(this.todoFile)) {
-            activities.put(mapStringToActivity(line), lineNumber);
+            activities.put(ActivityParser.mapStringToActivity(line), lineNumber);
             lineNumber += 1;
         }
     }
 
-    protected Activity mapStringToActivity(String line) throws ParseException {
-        return ActivityParser.mapStringToActivity(line);
-    }
-
-    public Project getManagedProjectForName(String projectName) {
-        Project project;
-        if (this.projects.containsKey(projectName)) {
-            project = this.projects.get(projectName);
-        } else {
-            project = new Project(projectName);
-            this.projects.put(projectName, project);
-        }
-        return project;
-    }
-
     public void addActivityAndSaveToFile(String activity) throws IOException, ParseException {
-        addActivityAndSaveToFile(mapStringToActivity(activity));
+        addActivityAndSaveToFile(ActivityParser.mapStringToActivity(activity));
     }
 
     public void addActivityAndSaveToFile(Activity activity) throws IOException {
@@ -81,8 +63,8 @@ public class ActivityManager {
     public List<Activity> getActivitiesByProject(String project) {
 
         return this.getActivities().stream().filter(activity -> !activity.getProjects().stream()
-                .filter(project1 -> StringUtils.equalsIgnoreCase(project1, project))
-                .collect(Collectors.toList()).isEmpty()).collect(Collectors.toList());
+                .filter(project1 -> StringUtils.equalsIgnoreCase(project1, project)).collect(Collectors.toList())
+                .isEmpty()).collect(Collectors.toList());
     }
 
     public Activity save(Activity activity) throws IOException {
