@@ -66,15 +66,18 @@ public class ActivityManager {
 
     public Activity save(Activity activity) throws IOException, ParseException {
 
-        if (!containsActivityWithName(activity.getName())) {
-            this.addActivity(activity);
+        Optional<Activity> savedActivity = getSavedActivityByName(activity.getName());
+        if (savedActivity.isPresent()) {
+            this.activities.remove(savedActivity.get());
+
         }
+        this.addActivity(activity);
         writeAllToFileAndReload();
 
         Activity matchingActivity = null;
-        for (Activity savedActivity : this.activities.keySet()) {
-            if (savedActivity.getName().equals(activity.getName())) {
-                matchingActivity = savedActivity;
+        for (Activity reloadedAct : this.activities.keySet()) {
+            if (reloadedAct.getName().equals(activity.getName())) {
+                matchingActivity = reloadedAct;
             }
         }
 
@@ -82,29 +85,17 @@ public class ActivityManager {
     }
 
     private boolean containsActivityWithName(String name) {
-        for (Activity savedActivity : this.activities.keySet()) {
-            if (StringUtils.equals(savedActivity.getName(), name)) {
-                return true;
-            }
-        }
-        return false;
+        Optional<Activity> foundActivity = getSavedActivityByName(name);
+        return foundActivity.isPresent();
     }
 
-    private void writeActivityToFile(Activity activity, Integer lineNumber) throws IOException {
-        System.out.println(">> Updating TODO.txt");
-        backUpTodoFile();
-        List<String> fileLines = Files.readAllLines(this.todoFile);
-        Files.write(this.todoFile, new String().getBytes());
-        for (int i = 0; i < fileLines.size(); i++) {
-            String lineToWrite;
-            if (i != lineNumber) {
-                lineToWrite = fileLines.get(i);
-            } else {
-                lineToWrite = activity.toString();
+    private Optional<Activity> getSavedActivityByName(String name) {
+        for (Activity savedActivity : this.activities.keySet()) {
+            if (StringUtils.equals(savedActivity.getName(), name)) {
+                return Optional.of(savedActivity);
             }
-            Files.write(this.todoFile, (lineToWrite + System.lineSeparator()).getBytes(), StandardOpenOption.APPEND);
         }
-        System.out.println(">> TODO.txt was updated");
+        return Optional.empty();
     }
 
     private void writeAllToFileAndReload() throws IOException, ParseException {

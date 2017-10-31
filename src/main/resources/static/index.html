@@ -83,7 +83,7 @@
                     <pre ng-show='activity.projects.length > 0' ng-switch-when="editable">Activity contained in projects: <button type="button"
                                                                                                                                     class="btn btn-sm btn-danger"
                                                                                                                                     ng-repeat="project in activity.projects"
-                                                                                                                                    ng-click="removeProject(activity.name, activity.projects, $index)"
+                                                                                                                                    ng-click="removeProject(activity.name, projects, $index)"
                                                                                                                                     style="margin-right: 10px;">{{project}}</button></pre>
                     <br/>
                     <button ng-switch-when="uneditable" type="button" class="btn btn-default" style="float: right"
