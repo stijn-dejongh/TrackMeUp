@@ -11,7 +11,7 @@ angular.module('hello', ['ui.bootstrap'])
             $scope.warningSeconds = 0;
             $scope.editMode = "uneditable";
             $scope.editableActivites = {};
-
+            $scope.lastPrintedDate = undefined;
 
             $scope.priorities = {
                 prioOne: "A",
@@ -45,6 +45,19 @@ angular.module('hello', ['ui.bootstrap'])
 
             $scope.getErrorMessage = function () {
                 return errorMessage;
+            }
+
+            $scope.shouldDateBePrinted = function (dateToCheck) {
+                if ($scope.lastPrintedDate == undefined) {
+                    return true;
+                }
+                var printed = new Date($scope.lastPrintedDate);
+                var date = new Date(dateToCheck);
+                if (printed == date) {
+                    return false;
+                } else {
+                    return true;
+                }
             }
 
             $scope.resetDeadline = function () {

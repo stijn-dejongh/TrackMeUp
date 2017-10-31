@@ -48,7 +48,18 @@ public class ActivityManager {
 
     public List<Activity> getActivities() {
         ArrayList<Activity> activities = new ArrayList<>(this.activities.keySet());
-        Collections.sort(activities, Comparator.comparing(Activity::getPriority));
+        Collections.sort(activities, new Comparator<Activity>() {
+            @Override public int compare(Activity o1, Activity o2) {
+                if (o1.getDeadline() != null && o2.getDeadline() != null) {
+                    return o1.getDeadline().compareTo(o2.getDeadline());
+                } else {
+                    int priorityCompare = o1.getPriority().compareTo(o2.getPriority());
+                    return o1.getDeadline() == null?
+                            o2.getDeadline() == null?priorityCompare:-1:
+                            o2.getDeadline() == null?1:priorityCompare;
+                }
+            }
+        });
         return activities;
     }
 

@@ -42,6 +42,10 @@
         </div>
         <br/>
         <hr/>
+        <div ng-repeat="activityByDate in activitiesByDate">
+            {{activityByDate.date | date:'medium'}}
+        </div>
+        <br />
         <uib-accordion close-others="oneAtATime">
             <div ng-repeat="activity in activities" ng-show="!(activity.completed && getHideCompleted())">
                 <div uib-accordion-group class="{{getPanelStyle(activity.name)}}"
@@ -64,8 +68,10 @@
                     </button>
                     <br/><br/>
 
-                    <pre ng-switch-when="editable"> Priority level is: <span><select ng-model="activity.priority" ng-options="y for (x, y) in priorities"></select></span></pre>
-                    <pre ng-show='activity.priority.length > 0' ng-switch-when="uneditable"> Priority level is: <span><em>{{activity.priority}}</em></span></pre>
+                    <pre ng-switch-when="editable"> Priority level is: <span><select ng-model="activity.priority"
+                                                                                     ng-options="y for (x, y) in priorities"></select></span></pre>
+                    <pre ng-show='activity.priority.length > 0'
+                         ng-switch-when="uneditable"> Priority level is: <span><em>{{activity.priority}}</em></span></pre>
                     <br/>
 
 
@@ -82,27 +88,31 @@
                             </span>
 
                         </div>
-                        <div uib-timepicker ng-model="activity.deadline" hour-step="1" minute-step="1" show-meridian="false"
+                        <div uib-timepicker ng-model="activity.deadline" hour-step="1" minute-step="1"
+                             show-meridian="false"
                              value="12:00:00" style="width: 125px;">
                         </div>
                     </div>
                     <pre ng-show='activity.deadline'>Deadline is: <em>{{activity.deadline | date:'medium' }}</em></pre>
 
-                    <pre ng-show='activity.tags.length > 0' ng-switch-when="uneditable">Tagged as: <button type="button" class="btn btn-sm btn-info"
-                                                                               ng-repeat="tag in activity.tags"
-                                                                               ng-click="loadActivtiesByTag(tag)"
-                                                                               style="margin-right: 10px;">{{tag}}</button></pre>
+                    <pre ng-show='activity.tags.length > 0' ng-switch-when="uneditable">Tagged as: <button type="button"
+                                                                                                           class="btn btn-sm btn-info"
+                                                                                                           ng-repeat="tag in activity.tags"
+                                                                                                           ng-click="loadActivtiesByTag(tag)"
+                                                                                                           style="margin-right: 10px;">{{tag}}</button></pre>
 
-                    <pre ng-show='activity.projects.length > 0' ng-switch-when="uneditable">Activity contained in projects: <button type="button"
-                                                                                                        class="btn btn-sm btn-success"
-                                                                                                        ng-repeat="project in activity.projects"
-                                                                                                        ng-click="loadActivtiesByProject(project)"
-                                                                                                        style="margin-right: 10px;">{{project}}</button></pre>
-                    <pre ng-show='activity.projects.length > 0' ng-switch-when="editable">Activity contained in projects: <button type="button"
-                                                                                                                                    class="btn btn-sm btn-danger"
-                                                                                                                                    ng-repeat="project in activity.projects"
-                                                                                                                                    ng-click="removeProject(activity.name, projects, $index)"
-                                                                                                                                    style="margin-right: 10px;">{{project}}</button></pre>
+                    <pre ng-show='activity.projects.length > 0' ng-switch-when="uneditable">Activity contained in projects: <button
+                            type="button"
+                            class="btn btn-sm btn-success"
+                            ng-repeat="project in activity.projects"
+                            ng-click="loadActivtiesByProject(project)"
+                            style="margin-right: 10px;">{{project}}</button></pre>
+                    <pre ng-show='activity.projects.length > 0' ng-switch-when="editable">Activity contained in projects: <button
+                            type="button"
+                            class="btn btn-sm btn-danger"
+                            ng-repeat="project in activity.projects"
+                            ng-click="removeProject(activity.name, projects, $index)"
+                            style="margin-right: 10px;">{{project}}</button></pre>
                     <br/>
                     <button ng-switch-when="uneditable" type="button" class="btn btn-default" style="float: right"
                             ng-click="makeEditable(activity.name)">
@@ -119,6 +129,7 @@
                 <br/>
             </div>
         </uib-accordion>
+
         <button type="button"
                 class="btn btn-sm btn-success"
                 ng-click="togglediv('addActivity')" uib-tooltip="Add new activity" tooltip-placement="bottom"><i
