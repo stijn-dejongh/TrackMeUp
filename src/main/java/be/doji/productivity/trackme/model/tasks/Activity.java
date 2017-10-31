@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,12 +19,12 @@ import java.util.UUID;
     private String name;
     private String priority;
     private final LocalDateTime creationDate = LocalDateTime.now();
-    private LocalDateTime completionDate;
+    private Date completionDate;
     private List<Activity> subTasks = new ArrayList<>();
     private boolean completed = false;
     private List<String> tags = new ArrayList<>();
     private List<String> projects = new ArrayList<>();
-    private LocalDateTime deadline;
+    private Date deadline;
     private Duration warningTimeFrame = TrackMeConstants.DEFAULT_WARNING_PERIOD;
 
     public Activity() {
@@ -56,19 +57,19 @@ import java.util.UUID;
         return creationDate;
     }
 
-    public LocalDateTime getCompletionDate() {
+    public Date getCompletionDate() {
         return this.completionDate;
     }
 
-    public void setCompletionDate(LocalDateTime completionDate) {
+    public void setCompletionDate(Date completionDate) {
         this.completionDate = completionDate;
     }
 
-    public LocalDateTime getDeadline() {
+    public Date getDeadline() {
         return deadline;
     }
 
-    public void setDeadline(LocalDateTime deadline) {
+    public void setDeadline(Date deadline) {
         this.deadline = deadline;
     }
 

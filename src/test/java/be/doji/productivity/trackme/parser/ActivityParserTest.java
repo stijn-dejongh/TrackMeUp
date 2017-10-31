@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 /**
@@ -42,11 +45,13 @@ public class ActivityParserTest {
         Assert.assertEquals(1, projects.size());
         Assert.assertEquals("OverarchingProject", projects.get(0));
 
-        LocalDateTime deadline = activity.getDeadline();
+        Date deadline = activity.getDeadline();
         Assert.assertNotNull(deadline);
-        Assert.assertEquals(21, deadline.getDayOfMonth());
-        Assert.assertEquals(12, deadline.getMonth().getValue());
-        Assert.assertEquals(2017, deadline.getYear());
+        Calendar parsedDeadline = new GregorianCalendar();
+        parsedDeadline.setTime(deadline);
+        Assert.assertEquals(21, parsedDeadline.get(Calendar.DAY_OF_MONTH));
+        Assert.assertEquals(11, parsedDeadline.get(Calendar.MONTH));
+        Assert.assertEquals(2017, parsedDeadline.get(Calendar.YEAR));
     }
 
     @Test public void testMapNoPrefixLine() throws IOException, ParseException {
@@ -76,12 +81,12 @@ public class ActivityParserTest {
         Assert.assertEquals(((24 * 2) + 3) * 60 + 4, activity.getWarningTimeFrame().toMinutes());
     }
 
-
     @Test public void testParseWithPeriod() throws ParseException {
         String testString = "(B) TestDeadline warningPeriod:PT24H";
         Activity activity = ActivityParser.mapStringToActivity(testString);
         Assert.assertEquals("TestDeadline", activity.getName());
     }
+
     @Test public void testDateTime() {
         LocalDateTime now = LocalDateTime.now();
         Duration duration = Duration.ofSeconds(86400);

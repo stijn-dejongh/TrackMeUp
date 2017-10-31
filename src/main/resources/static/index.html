@@ -68,6 +68,24 @@
                     <pre ng-show='activity.priority.length > 0' ng-switch-when="uneditable"> Priority level is: <span><em>{{activity.priority}}</em></span></pre>
                     <br/>
 
+
+                    <div ng-switch-when="editable">
+                        Deadline:
+                        <div class="input-group" style="width: 355px">
+                            <input type="text" class="form-control" uib-datepicker-popup ng-model="activity.deadline"
+                                   placeholder="Activity deadline"
+                                   is-open="popup3.opened" datepicker-options="dateOptions"
+                                   close-text="Close"/>
+                            <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-click="open3()"><i
+                                    class="glyphicon glyphicon-calendar"></i></button>
+                            </span>
+
+                        </div>
+                        <div uib-timepicker ng-model="activity.deadline" hour-step="1" minute-step="1" show-meridian="false"
+                             value="12:00:00" style="width: 125px;">
+                        </div>
+                    </div>
                     <pre ng-show='activity.deadline'>Deadline is: <em>{{activity.deadline | date:'medium' }}</em></pre>
 
                     <pre ng-show='activity.tags.length > 0' ng-switch-when="uneditable">Tagged as: <button type="button" class="btn btn-sm btn-info"

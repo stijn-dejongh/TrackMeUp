@@ -1,5 +1,6 @@
 package be.doji.productivity.trackme;
 
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
@@ -15,8 +16,7 @@ public final class TrackMeConstants {
     private TrackMeConstants() {
     }
 
-    public static DateTimeFormatter DATA_DATE_FORMAT = DateTimeFormatter
-            .ofPattern("yyyy-MM-dd:HH:mm:ss.SSS", Locale.FRANCE);
+    public static SimpleDateFormat DATA_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd:HH:mm:ss.SSS", Locale.FRANCE);
     public static final Duration DEFAULT_WARNING_PERIOD = Duration.ofDays(1);
 
     public static final String INDICATOR_DONE = "X";

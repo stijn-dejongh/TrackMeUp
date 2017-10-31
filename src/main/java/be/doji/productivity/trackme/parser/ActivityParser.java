@@ -69,7 +69,7 @@ public final class ActivityParser {
         List<String> dueDateMatches = TrackerUtils.findAllMatches(DUE_DATE_REGEX, line);
         for (String dueDateMatch : dueDateMatches) {
             String dueDateString = dueDateMatch.replace(TrackMeConstants.INDICATOR_DEADLINE, "").trim();
-            activity.setDeadline(LocalDateTime.parse(dueDateString, TrackMeConstants.DATA_DATE_FORMAT));
+            activity.setDeadline(TrackMeConstants.DATA_DATE_FORMAT.parse(dueDateString));
         }
 
         List<String> warningPeriodMatches = TrackerUtils.findAllMatches(WARNING_PERIOD_REGEX, line);

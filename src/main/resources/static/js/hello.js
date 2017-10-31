@@ -69,8 +69,14 @@ angular.module('hello', ['ui.bootstrap'])
                     });
 
                 $scope.editableActivites = new Object();
-                for (var activity in $scope.activities) {
+                for (i in $scope.activities) {
+                    var activity = $scope.activities[i];
                     $scope.editableActivites[activity.name] = "uneditable";
+                    if (Array.isArray(activity.deadline)) {
+                        var deadLineArray = activity.deadline;
+                        $scope.activities[i].deadline = new Date(deadLineArray[0], deadLineArray[1], deadLineArray[2], deadLineArray[3], deadLineArray[4]);
+                    }
+
                 }
             };
 
@@ -225,10 +231,9 @@ angular.module('hello', ['ui.bootstrap'])
                     if ($scope.activities[i].name == name) {
                         let activity = $scope.activities[i];
                         if (activity.deadline != undefined) {
-                            var seconds = activity.deadline.getSeconds() - activity.warningTimeFrame;
-                            var warnDate = new Date();
-                            warnDate.setSeconds(seconds);
-                            if (today >= warnDate && !activity.completed) {
+                            var parsedDeadline = new Date(activity.deadline);
+                            var diff = Math.abs(parsedDeadline - new Date()) / 1000;
+                            if (diff <= activity.warningTimeFrame && !activity.completed) {
                                 return true;
                             } else {
                                 return false;
@@ -327,6 +332,10 @@ angular.module('hello', ['ui.bootstrap'])
                 $scope.popup2.opened = true;
             };
 
+            $scope.open3 = function () {
+                $scope.popup3.opened = true;
+            };
+
             $scope.setDate = function (year, month, day) {
                 $scope.dt = new Date(year, month, day);
             };
@@ -340,6 +349,10 @@ angular.module('hello', ['ui.bootstrap'])
             };
 
             $scope.popup2 = {
+                opened: false
+            };
+
+            $scope.popup3 = {
                 opened: false
             };
 
