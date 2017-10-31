@@ -42,11 +42,10 @@
         </div>
         <br/>
         <hr/>
-        <div ng-repeat="activityByDate in activitiesByDate">
-            {{activityByDate.date | date:'medium'}}
-        </div>
-        <br />
-        <uib-accordion close-others="oneAtATime">
+        <div ng-repeat="(date,activities) in activitiesWithHeader">
+            <h3>{{date | date:medium}}</h3>
+            <br />
+            <uib-accordion close-others="oneAtATime">
             <div ng-repeat="activity in activities" ng-show="!(activity.completed && getHideCompleted())">
                 <div uib-accordion-group class="{{getPanelStyle(activity.name)}}"
                      is-open="status.isCustomHeaderOpen" ng-switch="getEditMode(activity.name)">
@@ -129,7 +128,7 @@
                 <br/>
             </div>
         </uib-accordion>
-
+        </div>
         <button type="button"
                 class="btn btn-sm btn-success"
                 ng-click="togglediv('addActivity')" uib-tooltip="Add new activity" tooltip-placement="bottom"><i

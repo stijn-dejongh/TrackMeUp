@@ -1,6 +1,6 @@
 angular.module('hello', ['ui.bootstrap'])
     .controller('home', function ($scope, $http) {
-            $scope.activities = [];
+            $scope.activitiesWithHeader = [];
             $scope.activeFilter = "";
             $scope.errorMessage;
             $scope.hideCompleted = false;
@@ -73,35 +73,34 @@ angular.module('hello', ['ui.bootstrap'])
             }
 
             $scope.loadActivities = function () {
-                $scope.activities.length = 0;
-                $http.get('/getActivities').then(function (response) {
-                        $scope.activities = response.data;
+                $scope.activitiesWithHeader.length = 0;
+                $http.get('/getActivitiesWithDateHeader').then(function (response) {
+                        $scope.activitiesWithHeader = response.data;
                     },
                     function (errResponse) {
-                        $scope.errorMessage = 'error getting activities';
+                        $scope.errorMessage = 'error getting activitiesWithHeader';
                     });
 
                 $scope.editableActivites = new Object();
-                for (i in $scope.activities) {
-                    var activity = $scope.activities[i];
-                    $scope.editableActivites[activity.name] = "uneditable";
-                    if (Array.isArray(activity.deadline)) {
-                        var deadLineArray = activity.deadline;
-                        $scope.activities[i].deadline = new Date(deadLineArray[0], deadLineArray[1], deadLineArray[2], deadLineArray[3], deadLineArray[4]);
-                    }
 
+                for (var i in $scope.activitiesWithHeader) {
+                    var activityList = $scope.activitiesWithHeader[i];
+                    for (var j in activityList) {
+                        var activity = activityList[j];
+                        $scope.editableActivites[activity.name] = "uneditable";
+                    }
                 }
             };
 
             $scope.loadActivtiesByTag = function (tag) {
                 $scope.activeFilter = tag;
-                $scope.activities.length = 0;
+                $scope.activitiesWithHeader.length = 0;
                 $scope.toggleFilterVisibility();
                 $http.post('/getActivitiesByTag', tag).then(function (response) {
-                        $scope.activities = response.data;
+                        $scope.activitiesWithHeader = response.data;
                     },
                     function (errResponse) {
-                        $scope.errorMessage = 'error getting activities by tag';
+                        $scope.errorMessage = 'error getting activitiesWithHeader by tag';
                     });
             };
 
@@ -118,20 +117,20 @@ angular.module('hello', ['ui.bootstrap'])
 
             $scope.loadActivtiesByProject = function (project) {
                 $scope.activeFilter = project;
-                $scope.activities = [];
+                $scope.activitiesWithHeader = [];
                 $scope.toggleFilterVisibility();
                 $http.post('/getActivitiesByProject', project).then(function (response) {
-                        $scope.activities = response.data;
+                        $scope.activitiesWithHeader = response.data;
                     },
                     function (errResponse) {
-                        $scope.errorMessage = 'error getting activities by project';
+                        $scope.errorMessage = 'error getting activitiesWithHeader by project';
                     });
             }
 
             $scope.clearFilter = function () {
                 $scope.activeFilter = "";
                 $scope.toggleFilterVisibility();
-                $scope.activities = [];
+                $scope.activitiesWithHeader = [];
                 $scope.loadActivities();
             }
 
@@ -165,68 +164,78 @@ angular.module('hello', ['ui.bootstrap'])
             }
 
             $scope.removeProject = function (activityName, displayArray, index) {
-                for (var i in $scope.activities) {
-                    if ($scope.activities[i].name == activityName) {
-                        $scope.activities[i].projects.splice(index, 1);
-                        displayArray.splice(index, 1);
+                for (var i in $scope.activitiesWithHeader) {
+                    var activityList = $scope.activitiesWithHeader[i];
+                    for (var j in activityList) {
+                        var activity = activityList[j]
+                        if (activity.name == activityName) {
+                            $scope.activitiesWithHeader[i][j].projects.splice(index, 1);
+                            displayArray.splice(index, 1);
+                        }
                     }
                 }
             }
 
             $scope.save = function (name) {
-                for (var i in $scope.activities) {
-                    if ($scope.activities[i].name == name) {
-                        let activity = $scope.activities[i];
-                        if (activity.deadline == undefined) {
-                            delete activity.deadline;
-                        }
-                        if (activity.completionDate == undefined) {
-                            delete activity.completionDate;
-                        }
-                        if (activity.projects == undefined || activity.projects.length < 1) {
-                            delete activity.projects;
-                        }
-                        if (activity.tags == undefined || activity.tags.length < 1) {
-                            delete activity.tags;
-                        }
+                for (j in $scope.activitiesWithHeader) {
+                    var activityList = $scope.activitiesWithHeader[j];
+                    for (var i in activityList) {
+                        if (activityList[i].name == name) {
+                            let activity = activityList[i];
+                            if (activity.deadline == undefined) {
+                                delete activity.deadline;
+                            }
+                            if (activity.completionDate == undefined) {
+                                delete activity.completionDate;
+                            }
+                            if (activity.projects == undefined || activity.projects.length < 1) {
+                                delete activity.projects;
+                            }
+                            if (activity.tags == undefined || activity.tags.length < 1) {
+                                delete activity.tags;
+                            }
 
-                        $http.post('/save', activity).then(function (response) {
-                                $scope.editableActivites[name] = "uneditable";
-                                return true;
-                            },
-                            function (response) {
-                                $scope.errorMessage = "Error while saving activity";
-                            });
+                            $http.post('/save', activity).then(function (response) {
+                                    $scope.editableActivites[name] = "uneditable";
+                                    return true;
+                                },
+                                function (response) {
+                                    $scope.errorMessage = "Error while saving activity";
+                                });
 
+                        }
                     }
+                    $scope.editableActivites[name] = "uneditable";
                 }
-                $scope.editableActivites[name] = "uneditable";
             };
 
             $scope.delete = function (name) {
-                $http.get('/getActivities').then(function (response) {
-                        $scope.activities = response.data;
-                        for (i in $scope.activities) {
-                            if ($scope.activities[i].name == name) {
-                                let activity = $scope.activities[i];
-                                if (activity.deadline == undefined) {
-                                    delete activity.deadline;
-                                }
-                                if (activity.completionDate == undefined) {
-                                    delete activity.completionDate;
-                                }
-                                if (activity.projects.length < 1) {
-                                    delete activity.projects;
-                                }
+                $http.get('/getActivitiesWithDateHeader').then(function (response) {
+                        $scope.activitiesWithHeader = response.data;
+                        for (j in $scope.activitiesWithHeader) {
+                            var activityList = $scope.activitiesWithHeader[j];
+                            for (i in activityList) {
+                                if (activityList[i].name == name) {
+                                    let activity = $scope.activitiesWithHeader[i];
+                                    if (activity.deadline == undefined) {
+                                        delete activity.deadline;
+                                    }
+                                    if (activity.completionDate == undefined) {
+                                        delete activity.completionDate;
+                                    }
+                                    if (activity.projects.length < 1) {
+                                        delete activity.projects;
+                                    }
 
-                                $http.post('/delete', activity);
-                                $scope.activities.splice(i, 1);
-                                return;
+                                    $http.post('/delete', activity);
+                                    $scope.activitiesWithHeader[j][i].splice(i, 1);
+                                    return;
+                                }
                             }
                         }
                     },
                     function (errResponse) {
-                        $scope.errorMessage = 'error deleting activities';
+                        $scope.errorMessage = 'error deleting activitiesWithHeader';
                     });
             };
 
@@ -240,9 +249,9 @@ angular.module('hello', ['ui.bootstrap'])
 
             $scope.isUrgent = function (name) {
                 var today = new Date();
-                for (i in $scope.activities) {
-                    if ($scope.activities[i].name == name) {
-                        let activity = $scope.activities[i];
+                for (i in $scope.activitiesWithHeader) {
+                    if ($scope.activitiesWithHeader[i].name == name) {
+                        let activity = $scope.activitiesWithHeader[i];
                         if (activity.deadline != undefined) {
                             var parsedDeadline = new Date(activity.deadline);
                             var diff = Math.abs(parsedDeadline - new Date()) / 1000;
@@ -290,7 +299,21 @@ angular.module('hello', ['ui.bootstrap'])
                     }
                 }
 
-                $scope.activities.push(activity);
+                var added = false;
+                for (var j in $scope.activitiesWithHeader) {
+                    if (j == activity.deadline && !added) {
+                        var activityList = $scope.activitiesWithHeader[j];
+                        activityList.push(activity);
+                        added = true;
+                        break;
+                    }
+                }
+                if (!added) {
+                    var tempActivityList = [];
+                    tempActivityList.push(activity);
+                    $scope.activitiesWithHeader[activity.deadline] = tempActivityList;
+                }
+
                 $scope.save(activity.name);
             }
 

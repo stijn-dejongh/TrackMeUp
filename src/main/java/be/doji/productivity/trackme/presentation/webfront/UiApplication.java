@@ -11,8 +11,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Doji on 23/10/2017.
@@ -38,9 +40,9 @@ import java.util.List;
     }
 
     @RequestMapping(value = { "/getActivitiesByTag" }, method = {
-            RequestMethod.POST }) public @ResponseBody List<Activity> getActivitiesByTag(@RequestBody String tag)
-            throws IOException {
-        System.out.println("Loading activities for tag: " + tag);
+            RequestMethod.POST }) public @ResponseBody Map<Date, List<Activity>> getActivitiesByTag(
+            @RequestBody String tag) throws IOException {
+        System.out.println("Loading activitiesWithHeader for tag: " + tag);
         return am.getActivitiesByTag(tag);
 
     }
@@ -57,13 +59,22 @@ import java.util.List;
     }
 
     @RequestMapping(value = { "/getActivitiesByProject" }, method = {
-            RequestMethod.POST }) public @ResponseBody List<Activity> getActivitiesByProject(@RequestBody String tag)
-            throws IOException {
-        System.out.println("Loading activities for tag: " + tag);
+            RequestMethod.POST }) public @ResponseBody Map<Date, List<Activity>> getActivitiesByProject(
+            @RequestBody String tag) throws IOException {
+        System.out.println("Loading activitiesWithHeader for tag: " + tag);
         if (am != null) {
             return am.getActivitiesByProject(tag);
         } else {
-            return new ArrayList<>();
+            return new HashMap<>();
+        }
+    }
+
+    @RequestMapping(value = { "/getActivitiesWithDateHeader" }, method = {
+            RequestMethod.GET }) public @ResponseBody Map<Date, List<Activity>> getActivitiesWithDateHeader() throws IOException {
+        if (am != null) {
+            return am.getActivitiesWithDateHeader();
+        } else {
+            return new HashMap<>();
         }
     }
 

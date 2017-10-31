@@ -1,5 +1,6 @@
 package be.doji.productivity.trackme.managers;
 
+import be.doji.productivity.trackme.TrackMeConstants;
 import be.doji.productivity.trackme.model.tasks.Activity;
 import be.doji.productivity.trackme.parser.ActivityParser;
 import org.apache.commons.lang3.StringUtils;
@@ -63,16 +64,19 @@ public class ActivityManager {
         return activities;
     }
 
-    public List<Activity> getActivitiesByTag(String tag) {
-        return this.getActivities().stream().filter(activity -> activity.getTags().contains(tag))
-                .collect(Collectors.toList());
+    public Map<Date, List<Activity>> getActivitiesByTag(String tag) {
+        List<Activity> activitiesByTag = this.getActivities().stream()
+                .filter(activity -> activity.getTags().contains(tag)).collect(Collectors.toList());
+        return groupByDate(activitiesByTag);
     }
 
-    public List<Activity> getActivitiesByProject(String project) {
+    public Map<Date, List<Activity>> getActivitiesByProject(String project) {
 
-        return this.getActivities().stream().filter(activity -> !activity.getProjects().stream()
-                .filter(project1 -> StringUtils.equalsIgnoreCase(project1, project)).collect(Collectors.toList())
-                .isEmpty()).collect(Collectors.toList());
+        List<Activity> activitiesByProject = this.getActivities().stream()
+                .filter(activity -> !activity.getProjects().stream()
+                        .filter(project1 -> StringUtils.equalsIgnoreCase(project1, project))
+                        .collect(Collectors.toList()).isEmpty()).collect(Collectors.toList());
+        return groupByDate(activitiesByProject);
     }
 
     public Activity save(Activity activity) throws IOException, ParseException {
@@ -144,5 +148,30 @@ public class ActivityManager {
             this.todoFile = filePath;
         }
         this.readActivitiesFromFile();
+    }
+
+    public Map<Date, List<Activity>> getActivitiesWithDateHeader() {
+        List<Activity> activities = this.getActivities();
+        Map<Date, List<Activity>> activitiesWithDateHeader = groupByDate(activities);
+
+        return activitiesWithDateHeader;
+    }
+
+    private Map<Date, List<Activity>> groupByDate(List<Activity> activities) {
+        Map<Date, List<Activity>> activitiesWithDateHeader = new TreeMap<>();
+        for (Activity activity : activities) {
+            Date deadline = activity.getDeadline();
+            if(deadline == null) {
+                deadline = TrackMeConstants.DEFAULT_DATE_HEADER;
+            }
+            if (activitiesWithDateHeader.containsKey(deadline)) {
+                activitiesWithDateHeader.get(deadline).add(activity);
+            } else {
+                ArrayList<Activity> value = new ArrayList<>();
+                value.add(activity);
+                activitiesWithDateHeader.put(deadline, value);
+            }
+        }
+        return activitiesWithDateHeader;
     }
 }
