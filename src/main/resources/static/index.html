@@ -99,6 +99,13 @@
                                                                                                            ng-repeat="tag in activity.tags"
                                                                                                            ng-click="loadActivtiesByTag(tag)"
                                                                                                            style="margin-right: 10px;">{{tag}}</button></pre>
+                    <pre ng-show='activity.tags.length > 0' ng-switch-when="editable">Tagged as: <button
+                            type="button"
+                            class="btn btn-sm btn-danger"
+                            ng-repeat="project in activity.tags"
+                            ng-click="removeTag(activity.name, tags, $index)"
+                            style="margin-right: 10px;">{{project}}</button></pre>
+
 
                     <pre ng-show='activity.projects.length > 0' ng-switch-when="uneditable">Activity contained in projects: <button
                             type="button"
@@ -113,6 +120,7 @@
                             ng-click="removeProject(activity.name, projects, $index)"
                             style="margin-right: 10px;">{{project}}</button></pre>
                     <br/>
+
                     <button ng-switch-when="uneditable" type="button" class="btn btn-default" style="float: right"
                             ng-click="makeEditable(activity.name)">
                         Edit

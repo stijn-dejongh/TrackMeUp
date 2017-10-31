@@ -176,6 +176,19 @@ angular.module('hello', ['ui.bootstrap'])
                 }
             }
 
+        $scope.removeTag = function (activityName, displayArray, index) {
+            for (var i in $scope.activitiesWithHeader) {
+                var activityList = $scope.activitiesWithHeader[i];
+                for (var j in activityList) {
+                    var activity = activityList[j]
+                    if (activity.name == activityName) {
+                        $scope.activitiesWithHeader[i][j].tags.splice(index, 1);
+                        displayArray.splice(index, 1);
+                    }
+                }
+            }
+        }
+
             $scope.save = function (name) {
                 for (j in $scope.activitiesWithHeader) {
                     var activityList = $scope.activitiesWithHeader[j];
@@ -212,11 +225,10 @@ angular.module('hello', ['ui.bootstrap'])
             $scope.delete = function (name) {
                 $http.get('/getActivitiesWithDateHeader').then(function (response) {
                         $scope.activitiesWithHeader = response.data;
-                        for (j in $scope.activitiesWithHeader) {
-                            var activityList = $scope.activitiesWithHeader[j];
-                            for (i in activityList) {
-                                if (activityList[i].name == name) {
-                                    let activity = $scope.activitiesWithHeader[i];
+                        for (var i in $scope.activitiesWithHeader) {
+                            for (var j in $scope.activitiesWithHeader[i]) {
+                                if ($scope.activitiesWithHeader[i][j].name == name) {
+                                    let activity = $scope.activitiesWithHeader[i][j];
                                     if (activity.deadline == undefined) {
                                         delete activity.deadline;
                                     }
@@ -228,7 +240,7 @@ angular.module('hello', ['ui.bootstrap'])
                                     }
 
                                     $http.post('/delete', activity);
-                                    $scope.activitiesWithHeader[j][i].splice(i, 1);
+                                    $scope.activitiesWithHeader[i].splice(j, 1);
                                     return;
                                 }
                             }
@@ -299,9 +311,15 @@ angular.module('hello', ['ui.bootstrap'])
                     }
                 }
 
+
                 var added = false;
+                let deadlineToCheck = activity.deadline;
+                if(activity.deadline = undefined) {
+                    deadlineToCheck = new Date();
+                }
+
                 for (var j in $scope.activitiesWithHeader) {
-                    if (j == activity.deadline && !added) {
+                    if (j == deadlineToCheck && !added) {
                         var activityList = $scope.activitiesWithHeader[j];
                         activityList.push(activity);
                         added = true;
@@ -311,7 +329,7 @@ angular.module('hello', ['ui.bootstrap'])
                 if (!added) {
                     var tempActivityList = [];
                     tempActivityList.push(activity);
-                    $scope.activitiesWithHeader[activity.deadline] = tempActivityList;
+                    $scope.activitiesWithHeader[deadlineToCheck] = tempActivityList;
                 }
 
                 $scope.save(activity.name);
