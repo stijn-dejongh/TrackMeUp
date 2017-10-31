@@ -37,16 +37,13 @@ public class ActivityManager {
         }
     }
 
-    public void addActivityAndSaveToFile(String activity) throws IOException, ParseException {
-        addActivityAndSaveToFile(ActivityParser.mapStringToActivity(activity));
+    public void addActivity(String activity) throws IOException, ParseException {
+        addActivity(ActivityParser.mapStringToActivity(activity));
     }
 
-    public void addActivityAndSaveToFile(Activity activity) throws IOException {
+    public void addActivity(Activity activity) throws IOException {
         int lineNumber = Files.readAllLines(this.todoFile).size();
         this.activities.put(activity, lineNumber);
-        Files.write(this.todoFile, (activity.toString() + System.lineSeparator()).getBytes(),
-                StandardOpenOption.APPEND);
-
     }
 
     public List<Activity> getActivities() {
@@ -67,17 +64,18 @@ public class ActivityManager {
                 .isEmpty()).collect(Collectors.toList());
     }
 
-    public Activity save(Activity activity) throws IOException {
+    public Activity save(Activity activity) throws IOException, ParseException {
+
+        if (!containsActivityWithName(activity.getName())) {
+            this.addActivity(activity);
+        }
+        writeAllToFileAndReload();
+
         Activity matchingActivity = null;
         for (Activity savedActivity : this.activities.keySet()) {
-            if (savedActivity.getId().equals(activity.getId())) {
+            if (savedActivity.getName().equals(activity.getName())) {
                 matchingActivity = savedActivity;
-                writeActivityToFile(activity, this.activities.get(savedActivity));
             }
-        }
-        if (matchingActivity == null && !containsActivityWithName(activity.getName())) {
-            this.addActivityAndSaveToFile(activity);
-            matchingActivity = activity;
         }
 
         return matchingActivity;

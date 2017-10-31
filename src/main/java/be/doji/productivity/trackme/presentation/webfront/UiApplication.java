@@ -68,7 +68,8 @@ import java.util.List;
     }
 
     @RequestMapping(value = { "/save" }, method = { RequestMethod.POST }) public @ResponseBody boolean saveActivity(
-            @RequestBody Activity activity) throws IOException {
+            @RequestBody Activity activity) throws IOException, ParseException {
+        System.out.println("Saving activity");
         if (am != null && activity != null) {
             am.save(activity);
             return true;

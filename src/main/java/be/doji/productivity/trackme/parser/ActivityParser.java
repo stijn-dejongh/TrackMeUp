@@ -19,7 +19,9 @@ public final class ActivityParser {
     private static final String COMPLETED_REGEX =
             "^[" + TrackMeConstants.INDICATOR_DONE + StringUtils.lowerCase(TrackMeConstants.INDICATOR_DONE) + "]";
     private static final String PRIORITY_REGEX = "\\([a-zA-Z]\\)";
-    private static final String NAME_REGEX = "\\b[a-zA-Z]([\\w\\s\\.\\- && [^\\+]])*(\\s\\+|$|\\s\\@)";
+    private static final String NAME_REGEX =
+            "\\b[a-zA-Z]([\\w\\s\\.\\- && [^\\+]])*(\\s\\+|$|\\s\\@|\\s" + TrackMeConstants.INDICATOR_WARNING_PERIOD
+                    + "|\\s" + TrackMeConstants.INDICATOR_DEADLINE + ")";
     private static final String TAG_REGEX = "\\" + TrackMeConstants.INDICATOR_TAG + "([a-zA-Z0-9]*)(\\s|$)";
     private static final String PROJECT_REGEX = "\\" + TrackMeConstants.INDICATOR_PROJECT + "([a-zA-Z0-9]*)(\\s|$)";
     private static final String DUE_DATE_REGEX = TrackMeConstants.INDICATOR_DEADLINE + DATE_REGEX + "(\\s|$)";
@@ -49,7 +51,8 @@ public final class ActivityParser {
         List<String> nameMatches = TrackerUtils.findAllMatches(NAME_REGEX, line);
         if (!nameMatches.isEmpty()) {
             activity.setName(nameMatches.get(0).replace(TrackMeConstants.INDICATOR_PROJECT, "")
-                    .replace(TrackMeConstants.INDICATOR_TAG, "").trim());
+                    .replace(TrackMeConstants.INDICATOR_TAG, "").replace(TrackMeConstants.INDICATOR_DEADLINE, "")
+                    .replace(TrackMeConstants.INDICATOR_WARNING_PERIOD, "").trim());
         }
 
         List<String> tagMatches = TrackerUtils.findAllMatches(TAG_REGEX, line);

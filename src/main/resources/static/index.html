@@ -67,20 +67,24 @@
                     <pre ng-switch-when="editable"> Priority level is: <span><select ng-model="activity.priority" ng-options="y for (x, y) in priorities"></select></span></pre>
                     <pre ng-show='activity.priority.length > 0' ng-switch-when="uneditable"> Priority level is: <span><em>{{activity.priority}}</em></span></pre>
                     <br/>
+
                     <pre ng-show='activity.deadline'>Deadline is: <em>{{activity.deadline | date:'medium' }}</em></pre>
-                    <pre ng-show='activity.tags.length > 0'>Tagged as: <button type="button" class="btn btn-sm btn-info"
+
+                    <pre ng-show='activity.tags.length > 0' ng-switch-when="uneditable">Tagged as: <button type="button" class="btn btn-sm btn-info"
                                                                                ng-repeat="tag in activity.tags"
                                                                                ng-click="loadActivtiesByTag(tag)"
-                                                                               style="margin-right: 10px;">
-                    {{tag}}
-                </button></pre>
-                    <pre ng-show='activity.projects.length > 0'>Activity contained in projects: <button type="button"
+                                                                               style="margin-right: 10px;">{{tag}}</button></pre>
+
+                    <pre ng-show='activity.projects.length > 0' ng-switch-when="uneditable">Activity contained in projects: <button type="button"
                                                                                                         class="btn btn-sm btn-success"
                                                                                                         ng-repeat="project in activity.projects"
                                                                                                         ng-click="loadActivtiesByProject(project)"
-                                                                                                        style="margin-right: 10px;">
-                    {{project}}
-                </button></pre>
+                                                                                                        style="margin-right: 10px;">{{project}}</button></pre>
+                    <pre ng-show='activity.projects.length > 0' ng-switch-when="editable">Activity contained in projects: <button type="button"
+                                                                                                                                    class="btn btn-sm btn-danger"
+                                                                                                                                    ng-repeat="project in activity.projects"
+                                                                                                                                    ng-click="removeProject(activity.name, activity.projects, $index)"
+                                                                                                                                    style="margin-right: 10px;">{{project}}</button></pre>
                     <br/>
                     <button ng-switch-when="uneditable" type="button" class="btn btn-default" style="float: right"
                             ng-click="makeEditable(activity.name)">

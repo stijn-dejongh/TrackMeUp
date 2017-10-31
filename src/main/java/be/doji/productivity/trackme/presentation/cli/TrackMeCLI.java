@@ -31,7 +31,7 @@ public class TrackMeCLI implements CommandLineRunner {
             String command = input.split(" ")[0];
             switch (command) {
                 case "add":
-                    am.addActivityAndSaveToFile(input.replaceFirst("add ", ""));
+                    am.addActivity(input.replaceFirst("add ", ""));
                     break;
                 case "list":
                     List<Activity> activities = am.getActivities();

@@ -76,6 +76,12 @@ public class ActivityParserTest {
         Assert.assertEquals(((24 * 2) + 3) * 60 + 4, activity.getWarningTimeFrame().toMinutes());
     }
 
+
+    @Test public void testParseWithPeriod() throws ParseException {
+        String testString = "(B) TestDeadline warningPeriod:PT24H";
+        Activity activity = ActivityParser.mapStringToActivity(testString);
+        Assert.assertEquals("TestDeadline", activity.getName());
+    }
     @Test public void testDateTime() {
         LocalDateTime now = LocalDateTime.now();
         Duration duration = Duration.ofSeconds(86400);

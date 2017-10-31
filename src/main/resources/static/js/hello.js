@@ -145,10 +145,17 @@ angular.module('hello', ['ui.bootstrap'])
                 }
             }
 
+            $scope.removeProject = function (activityName, displayArray, index) {
+                for (var i in $scope.activities) {
+                    if ($scope.activities[i].name == activityName) {
+                        $scope.activities[i].projects.splice(index, 1);
+                        displayArray.splice(index, 1);
+                    }
+                }
+            }
 
             $scope.save = function (name) {
-                $scope.editableActivites[name] = "uneditable";
-                for (i in $scope.activities) {
+                for (var i in $scope.activities) {
                     if ($scope.activities[i].name == name) {
                         let activity = $scope.activities[i];
                         if (activity.deadline == undefined) {
@@ -165,6 +172,7 @@ angular.module('hello', ['ui.bootstrap'])
                         }
 
                         $http.post('/save', activity).then(function (response) {
+                                $scope.editableActivites[name] = "uneditable";
                                 return true;
                             },
                             function (response) {
@@ -173,6 +181,7 @@ angular.module('hello', ['ui.bootstrap'])
 
                     }
                 }
+                $scope.editableActivites[name] = "uneditable";
             };
 
             $scope.delete = function (name) {

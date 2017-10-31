@@ -31,8 +31,8 @@ public class ActivityManagerTest {
     @Test public void testGetActivitiesByTag() throws IOException, ParseException {
         Path tempFilePath = createTempFile();
         ActivityManager am = new ActivityManager(tempFilePath.toString());
-        am.addActivityAndSaveToFile(ActivityTestData.ACTIVITY_DATA_LINE);
-        am.addActivityAndSaveToFile(ActivityTestData.ACTIVITY_DATA_LINE_CLONE);
+        am.addActivity(ActivityTestData.ACTIVITY_DATA_LINE);
+        am.addActivity(ActivityTestData.ACTIVITY_DATA_LINE_CLONE);
         Assert.assertEquals(2, am.getActivities().size());
         List<Activity> activitiesByTag = am.getActivitiesByTag("Tag");
         Assert.assertNotNull(activitiesByTag);
@@ -50,8 +50,8 @@ public class ActivityManagerTest {
     @Test public void testGetActivitiesByProject() throws IOException, ParseException {
         Path tempFilePath = createTempFile();
         ActivityManager am = new ActivityManager(tempFilePath.toString());
-        am.addActivityAndSaveToFile(ActivityTestData.ACTIVITY_DATA_LINE);
-        am.addActivityAndSaveToFile(ActivityTestData.ACTIVITY_DATA_LINE_CLONE);
+        am.addActivity(ActivityTestData.ACTIVITY_DATA_LINE);
+        am.addActivity(ActivityTestData.ACTIVITY_DATA_LINE_CLONE);
         Assert.assertEquals(2, am.getActivities().size());
         List<Activity> activitiesByProject = am.getActivitiesByProject("OverarchingProject");
         Assert.assertNotNull(activitiesByProject);
