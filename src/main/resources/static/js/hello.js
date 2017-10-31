@@ -47,19 +47,6 @@ angular.module('hello', ['ui.bootstrap'])
                 return errorMessage;
             }
 
-            $scope.shouldDateBePrinted = function (dateToCheck) {
-                if ($scope.lastPrintedDate == undefined) {
-                    return true;
-                }
-                var printed = new Date($scope.lastPrintedDate);
-                var date = new Date(dateToCheck);
-                if (printed == date) {
-                    return false;
-                } else {
-                    return true;
-                }
-            }
-
             $scope.resetDeadline = function () {
                 $scope.deadline = undefined;
             }
@@ -176,18 +163,18 @@ angular.module('hello', ['ui.bootstrap'])
                 }
             }
 
-        $scope.removeTag = function (activityName, displayArray, index) {
-            for (var i in $scope.activitiesWithHeader) {
-                var activityList = $scope.activitiesWithHeader[i];
-                for (var j in activityList) {
-                    var activity = activityList[j]
-                    if (activity.name == activityName) {
-                        $scope.activitiesWithHeader[i][j].tags.splice(index, 1);
-                        displayArray.splice(index, 1);
+            $scope.removeTag = function (activityName, displayArray, index) {
+                for (var i in $scope.activitiesWithHeader) {
+                    var activityList = $scope.activitiesWithHeader[i];
+                    for (var j in activityList) {
+                        var activity = activityList[j]
+                        if (activity.name == activityName) {
+                            $scope.activitiesWithHeader[i][j].tags.splice(index, 1);
+                            displayArray.splice(index, 1);
+                        }
                     }
                 }
             }
-        }
 
             $scope.save = function (name) {
                 for (j in $scope.activitiesWithHeader) {
@@ -262,21 +249,33 @@ angular.module('hello', ['ui.bootstrap'])
             $scope.isUrgent = function (name) {
                 var today = new Date();
                 for (i in $scope.activitiesWithHeader) {
-                    if ($scope.activitiesWithHeader[i].name == name) {
-                        let activity = $scope.activitiesWithHeader[i];
-                        if (activity.deadline != undefined) {
-                            var parsedDeadline = new Date(activity.deadline);
-                            var diff = Math.abs(parsedDeadline - new Date()) / 1000;
-                            if (diff <= activity.warningTimeFrame && !activity.completed) {
-                                return true;
-                            } else {
-                                return false;
+                    for (j in $scope.activitiesWithHeader[i]) {
+                        if ($scope.activitiesWithHeader[i][j].name == name) {
+                            let activity = $scope.activitiesWithHeader[i][j];
+                            if (activity.deadline != undefined) {
+                                var parsedDeadline = new Date(activity.deadline);
+                                var diff = Math.abs(parsedDeadline - new Date()) / 1000;
+                                if (diff <= activity.warningTimeFrame && !activity.completed) {
+                                    return true;
+                                } else {
+                                    return false;
+                                }
                             }
                         }
                     }
                 }
                 return false;
             };
+
+            $scope.shouldDateBeDisplayed = function (date) {
+                let headerDate = Date.parse(date);
+                var diff = Math.abs(headerDate - new Date()) / 1000;
+                if (diff >= (31557600)) {
+                    return "nodisplay";
+                } else {
+                    return "display";
+                }
+            }
 
             $scope.convertActivityDeadlineToDate = function (acivitydeadline) {
                 return new Date(acivitydeadline[0], acivitydeadline[1], acivitydeadline[2], acivitydeadline[3], acivitydeadline[4]);
@@ -314,7 +313,7 @@ angular.module('hello', ['ui.bootstrap'])
 
                 var added = false;
                 let deadlineToCheck = activity.deadline;
-                if(activity.deadline = undefined) {
+                if (activity.deadline == undefined) {
                     deadlineToCheck = new Date();
                 }
 

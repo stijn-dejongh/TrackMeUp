@@ -43,7 +43,10 @@
         <br/>
         <hr/>
         <div ng-repeat="(date,activities) in activitiesWithHeader">
-            <h3>{{date | date:medium}}</h3>
+            <div class="dateHeader" ng-switch="shouldDateBeDisplayed(date)">
+                <h3 ng-switch-when="display">{{date | date:medium}}</h3>
+                <h3 ng-switch-when="nodisplay">No deadline in sight</h3>
+            </div>
             <br />
             <uib-accordion close-others="oneAtATime">
             <div ng-repeat="activity in activities" ng-show="!(activity.completed && getHideCompleted())">
