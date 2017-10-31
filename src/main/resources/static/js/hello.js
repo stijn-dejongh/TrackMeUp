@@ -9,6 +9,9 @@ angular.module('hello', ['ui.bootstrap'])
             $scope.warningHours = 24;
             $scope.warningMinutes = 0;
             $scope.warningSeconds = 0;
+            $scope.editMode = "uneditable";
+            $scope.editableActivites = {};
+
 
             $scope.priorities = {
                 prioOne: "A",
@@ -26,6 +29,19 @@ angular.module('hello', ['ui.bootstrap'])
                     $scope.errorMessage = 'error initializing application';
                 });
 
+            $scope.makeEditable = function (activityName) {
+                $scope.editableActivites[activityName] = "editable";
+            }
+
+            $scope.getEditMode = function (activityName) {
+                let editable = $scope.editableActivites[activityName];
+                if (editable) {
+                    return editable;
+                } else {
+                    $scope.editableActivites[activityName] = "uneditable";
+                    return $scope.editableActivites[activityName];
+                }
+            }
 
             $scope.getErrorMessage = function () {
                 return errorMessage;
@@ -51,6 +67,11 @@ angular.module('hello', ['ui.bootstrap'])
                     function (errResponse) {
                         $scope.errorMessage = 'error getting activities';
                     });
+
+                $scope.editableActivites = new Object();
+                for (var activity in $scope.activities) {
+                    $scope.editableActivites[activity.name] = "uneditable";
+                }
             };
 
             $scope.loadActivtiesByTag = function (tag) {
@@ -126,6 +147,7 @@ angular.module('hello', ['ui.bootstrap'])
 
 
             $scope.save = function (name) {
+                $scope.editableActivites[name] = "uneditable";
                 for (i in $scope.activities) {
                     if ($scope.activities[i].name == name) {
                         let activity = $scope.activities[i];
