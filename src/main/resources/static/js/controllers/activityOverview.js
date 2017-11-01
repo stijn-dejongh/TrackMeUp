@@ -4,15 +4,23 @@ angular.module('activityOverview')
             $scope.activeFilter = "";
             $scope.errorMessage;
             $scope.hideCompleted = false;
-            $scope.selectedPriority = "C";
-            $scope.selectedParent = undefined;
-            $scope.fileLocation = "default/todo.txt";
-            $scope.warningHours = 24;
-            $scope.warningMinutes = 0;
-            $scope.warningSeconds = 0;
+
             $scope.editMode = "uneditable";
             $scope.editableActivites = {};
             $scope.lastPrintedDate = undefined;
+
+            $scope.fileLocation = "default/todo.txt";
+
+            $scope.name = "";
+            $scope.selectedPriority = "C";
+            $scope.warningHours = 24;
+            $scope.warningMinutes = 0;
+            $scope.warningSeconds = 0;
+            $scope.selectedParent = undefined;
+            $scope.tags = "";
+            $scope.projects = "";
+            $scope.deadline = undefined;
+
 
             $scope.priorities = {
                 prioOne: "A",
@@ -378,6 +386,21 @@ angular.module('activityOverview')
                 }
 
                 $scope.save(activity.name);
+                $scope.resetInputFields();
+            }
+
+            $scope.resetInputFields = function () {
+                $scope.name = "";
+                $scope.selectedPriority = "C";
+                $scope.warningHours = 24;
+                $scope.warningMinutes = 0;
+                $scope.warningSeconds = 0;
+                $scope.selectedParent = undefined;
+                $scope.tags = "";
+                $scope.projects = "";
+                $scope.deadline = undefined;
+
+                $scope.togglediv('addActivity');
             }
 
             $scope.togglediv = function (id) {
