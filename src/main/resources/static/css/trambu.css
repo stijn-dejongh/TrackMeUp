@@ -3,6 +3,10 @@
     display: none !important;
 }
 
+body {
+    font-family: 'Lora', sans-serif;
+}
+
 div.indent {
     float: left;
     overflow: hidden;
@@ -44,12 +48,39 @@ div.bordered {
     border: 1px solid grey;
 }
 
-div.page-header h1 {
-    display: inline;
+.page-header {
+    background-size: cover;
+    display: block;
+    margin-bottom: 30px;
+    padding: 25px 0;
+    text-align: center;
+    width: 100%;
 }
 
-div.page-header img {
-    display: inline;
+h1.site-title {
+    font-family: inherit;
+    font-weight: 500;
+    line-height: 1.1;
+    color: #ff8c8c;
+}
+
+p.site-description {
+    color: #818181;
+    font-family: 'Droid Serif', sans-serif;
+    font-size: 14px;
+    letter-spacing: 3px;
+    margin-bottom: 0px;
+}
+
+.main-banner {
+
+    background-size: cover;
+    display: block;
+    margin-bottom: 30px;
+    padding: 15px 0;
+    text-align: center;
+    width: 100%;
+
 }
 
 

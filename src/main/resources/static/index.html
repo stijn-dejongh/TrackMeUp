@@ -14,14 +14,14 @@
 </head>
 
 <body ng-app="activityOverview">
-<div class="container">
+<div class="main-banner">
     <div class="page-header">
-        <img src="images/trambu.png" height="75px" width="75px"/>
-        <h1>
-            TraMBU
-            <small>Get your life back on the rails</small>
-        </h1>
+        <h1 class="site-title">TraMBU</h1>
+        <p class="site-description">Get your life back on the rails</p>
     </div>
+</div>
+
+<div class="container">
     <div ng-controller="home" ng-cloak class="ng-cloak">
         <h2><u>Your Activities</u></h2>
         <hr/>
@@ -68,7 +68,7 @@
         <hr/>
         <br/>
         <div id="fileselector" class="fileSelector" style="display: none; margin-top: 10px;">
-            <trambu-file-selector />
+            <trambu-file-selector/>
         </div>
 
     </div>
