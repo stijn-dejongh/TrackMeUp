@@ -18,7 +18,7 @@ public final class TrackMeConstants {
     private TrackMeConstants() {
     }
 
-    public static SimpleDateFormat DATA_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd:HH:mm:ss.SSS", Locale.FRANCE);
+    public static final SimpleDateFormat DATA_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd:HH:mm:ss.SSS", Locale.FRANCE);
     public static final Duration DEFAULT_WARNING_PERIOD = Duration.ofDays(1);
     public static final Date DEFAULT_DATE_HEADER = new Date(3550, 12 ,31);
 
