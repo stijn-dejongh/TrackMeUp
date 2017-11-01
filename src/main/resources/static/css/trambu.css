@@ -50,7 +50,7 @@ div.middleOfParent {
     padding: 25px 0;
     text-align: center;
     width: 100%;
-    border-bottom: 0px;
+    border-bottom: 0;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -69,7 +69,7 @@ p.site-description {
     font-family: 'Droid Serif', sans-serif;
     font-size: 14px;
     letter-spacing: 3px;
-    margin-bottom: 0px;
+    margin-bottom: 0;
 }
 
 .main-banner {

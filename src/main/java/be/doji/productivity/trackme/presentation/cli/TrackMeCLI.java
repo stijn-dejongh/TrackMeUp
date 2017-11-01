@@ -16,16 +16,14 @@ import java.util.Scanner;
 public class TrackMeCLI implements CommandLineRunner {
 
     private static final String TODO_FILE_LOCATION = "data/todo.txt";
-    private ActivityManager am;
 
     @Override public void run(String... strings) throws Exception {
         System.out.println("Welcome to trackme - CLI");
-        am = new ActivityManager(getPathInProject(TODO_FILE_LOCATION));
+        ActivityManager am = new ActivityManager(getPathInProject(TODO_FILE_LOCATION));
         am.readActivitiesFromFile();
 
         Scanner reader = new Scanner(System.in);
-        boolean terminate = false;
-        while (!terminate) {
+        while (true) {
             System.out.print("$: ");
             String input = reader.nextLine();
             String command = input.split(" ")[0];
@@ -41,7 +39,6 @@ public class TrackMeCLI implements CommandLineRunner {
                     System.out.println("--------");
                     break;
                 case "exit":
-                    terminate = true;
                     System.exit(0);
                     break;
                 default:

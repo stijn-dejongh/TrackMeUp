@@ -84,14 +84,6 @@ import java.util.*;
         this.subActivities.add(subTask);
     }
 
-    public void addSubTask(int index, Activity subTask) {
-        if (index >= 0 && index < getSubActivities().size()) {
-            this.subActivities.add(index, subTask);
-        } else {
-            addSubTask(subTask);
-        }
-    }
-
     public void setCompleted(boolean completed) {
         this.completed = completed;
     }

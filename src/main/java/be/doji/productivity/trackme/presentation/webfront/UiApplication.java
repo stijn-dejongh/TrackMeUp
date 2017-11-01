@@ -24,12 +24,11 @@ import java.util.Map;
     private static final String TODO_FILE_LOCATION = "data/todo.txt";
     private ActivityManager am;
 
-    @RequestMapping("/initialize") public boolean initialize() throws IOException, ParseException {
+    @RequestMapping("/initialize") public void initialize() throws IOException, ParseException {
         if (am == null) {
             am = new ActivityManager(TODO_FILE_LOCATION);
             am.readActivitiesFromFile();
         }
-        return true;
     }
 
     @RequestMapping("/getActivities") public List<Activity> getActivities() throws IOException, ParseException {
@@ -104,11 +103,4 @@ import java.util.Map;
             return false;
         }
     }
-
-    public String getPathInProject(String path) throws FileNotFoundException {
-        File testFile = ResourceUtils.getFile(getClass().getClassLoader().getResource(path));
-        String testPath = testFile.getAbsolutePath();
-        return testPath;
-    }
-
 }
