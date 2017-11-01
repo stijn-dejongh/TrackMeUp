@@ -15,7 +15,7 @@
 
 <body ng-app="activityOverview">
 <div class="main-banner">
-    <div class="page-header">
+    <div class="trambu-page-header">
         <h1 class="site-title">TraMBU</h1>
         <p class="site-description">Get your life back on the rails</p>
     </div>
@@ -24,8 +24,6 @@
 <div class="container">
     <div ng-controller="home" ng-cloak class="ng-cloak bordered-component">
         <h2><u>Your Activities</u></h2>
-        <hr/>
-        <br/>
         <div class="errorPanel">
             <pre ng-show='errorMessage.length > 0' ng-model="errorMessage"> <em>{{errorMessage}}</em></pre>
         </div>
@@ -61,7 +59,7 @@
                 class="fa fa-play-circle" aria-hidden="true"></i>
         </button>
         <br/>
-        <div id="addActivity" class="addActivity" style="display: none; margin-top: 10px; width: 100%">
+        <div id="addActivity" style="display: none; margin-top: 10px;">
             <x-trambu-add-activity/>
         </div>
         <hr/>
