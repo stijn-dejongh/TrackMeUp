@@ -39,3 +39,10 @@ follow these steps:
 * Execute 'java -jar XXXX' , where XXXX is the name of the TraMBU jar
 * Navigate your browser to 'http://localhost:9666'
 * Set up the application to use your own 'todo.txt' file
+
+## Code quality
+
+In order to keep the code maintainable and of reasonably high quality,
+I use SonarCloud to point out any issues that exist.
+The report can be found at:
+https://sonarcloud.io/dashboard?id=be.doji.productivity%3ATrackMeUp
