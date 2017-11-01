@@ -41,7 +41,7 @@ public class ActivityManager {
         addActivity(ActivityParser.mapStringToActivity(activity));
     }
 
-    public void addActivity(Activity activity) throws IOException {
+    private void addActivity(Activity activity) throws IOException {
         String parentActivity = activity.getParentActivity();
         if (StringUtils.isNotBlank(parentActivity)) {
             Optional<Activity> parent = getSavedActivityByName(parentActivity);
@@ -57,7 +57,7 @@ public class ActivityManager {
 
     public List<Activity> getActivities() {
         ArrayList<Activity> activities = new ArrayList<>(this.activities);
-        Collections.sort(activities, (o1, o2) -> {
+        activities.sort((o1, o2) -> {
             if (o1.getDeadline() != null && o2.getDeadline() != null) {
                 return o1.getDeadline().compareTo(o2.getDeadline());
             } else {
@@ -88,9 +88,7 @@ public class ActivityManager {
     public Activity save(Activity activity) throws IOException, ParseException {
 
         Optional<Activity> savedActivity = getSavedActivityByName(activity.getName());
-        if (savedActivity.isPresent()) {
-            this.activities.remove(savedActivity.get());
-        }
+        savedActivity.ifPresent(activity1 -> this.activities.remove(activity1));
         this.addActivity(activity);
         writeAllToFileAndReload();
 
@@ -102,11 +100,6 @@ public class ActivityManager {
         }
 
         return matchingActivity;
-    }
-
-    private boolean containsActivityWithName(String name) {
-        Optional<Activity> foundActivity = getSavedActivityByName(name);
-        return foundActivity.isPresent();
     }
 
     private Optional<Activity> getSavedActivityByName(String name) {
@@ -121,7 +114,7 @@ public class ActivityManager {
     private void writeAllToFileAndReload() throws IOException, ParseException {
         System.out.println(">> Updating TODO.txt");
         backUpTodoFile();
-        Files.write(this.todoFile, new String().getBytes());
+        Files.write(this.todoFile, "".getBytes());
         for (Activity activity : this.getActivities()) {
             writeActivityToFile(activity);
         }
@@ -184,9 +177,7 @@ public class ActivityManager {
 
     public Map<Date, List<Activity>> getActivitiesWithDateHeader() {
         List<Activity> activities = this.getActivities();
-        Map<Date, List<Activity>> activitiesWithDateHeader = groupByDate(activities);
-
-        return activitiesWithDateHeader;
+        return groupByDate(activities);
     }
 
     private Map<Date, List<Activity>> groupByDate(List<Activity> activities) {

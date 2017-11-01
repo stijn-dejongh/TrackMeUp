@@ -183,11 +183,6 @@ import java.util.*;
     }
 
     public void removeSubActivity(Activity activityToDelete) {
-        for (Iterator<Activity> it = this.subActivities.iterator(); it.hasNext(); ) {
-            Activity subActivity = it.next();
-            if(subActivity.getId().equals(activityToDelete.getId())) {
-                   it.remove();
-            }
-        }
+        this.subActivities.removeIf(subActivity -> subActivity.getId().equals(activityToDelete.getId()));
     }
 }
