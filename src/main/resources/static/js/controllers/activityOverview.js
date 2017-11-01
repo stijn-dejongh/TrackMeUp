@@ -1,4 +1,4 @@
-angular.module('hello', ['ui.bootstrap'])
+angular.module('activityOverview')
     .controller('home', function ($scope, $http) {
             $scope.activitiesWithHeader = [];
             $scope.activeFilter = "";
