@@ -5,6 +5,7 @@
 
 body {
     font-family: 'Lora', sans-serif;
+    background-color: #fffefa;
 }
 
 div.indent {
@@ -57,11 +58,15 @@ div.bordered {
     width: 100%;
 }
 
+h1, h2, h3, h4, h5, h6 {
+    color: #a89be0;
+}
+
 h1.site-title {
     font-family: inherit;
     font-weight: 500;
     line-height: 1.1;
-    color: #ff8c8c;
+    color: #a89be0;
 }
 
 p.site-description {
@@ -73,14 +78,39 @@ p.site-description {
 }
 
 .main-banner {
-
     background-size: cover;
     display: block;
     margin-bottom: 30px;
     padding: 15px 0;
     text-align: center;
     width: 100%;
+}
 
+.bordered-component {
+    margin-bottom: 55px;
+    padding: 30px;
+    border: 1px solid #e9e9e9;
+    position: relative;
+    display: block;
+}
+
+.bordered-component h2 {
+    color: #a89be0;
+    font-size: 16px;
+    letter-spacing: 3px;
+}
+
+.dateHeader {
+    padding: 8px;
+    border: 1px solid #e9e9e9;
+    margin-bottom: 8px;
+    position: relative;
+    display: block;
+}
+
+.dateHeader h5 {
+    font-size: 14px;
+    letter-spacing: 2px;
 }
 
 

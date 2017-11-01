@@ -22,26 +22,25 @@
 </div>
 
 <div class="container">
-    <div ng-controller="home" ng-cloak class="ng-cloak">
+    <div ng-controller="home" ng-cloak class="ng-cloak bordered-component">
         <h2><u>Your Activities</u></h2>
         <hr/>
         <br/>
         <div class="errorPanel">
             <pre ng-show='errorMessage.length > 0' ng-model="errorMessage"> <em>{{errorMessage}}</em></pre>
         </div>
-        <div id="topBar" name="topBar" ng-model="activeFilter">
+        <div id="topBar" name="topBar" ng-model="activeFilter" class="bordered-component">
             <pre id="filterDisplay" name="filterDisplay" class="filterDisplay"
                  style="display: none;">Selected filter: <em><button
                     type="button"
                     class="btn" ng-click="clearFilter()">{{activeFilter}}</button></em>  <a href="#"><i
                     class="glyphicon glyphicon-remove" ng-click="clearFilter()" style="color: #d43f3a"></i></a> </pre>
-            <button type="button" style="float: right" ;
+            <button type="button"
                     class="btn" ng-class="{'btn-success': hideCompleted, 'btn-default': !hideCompleted}"
                     ng-click="toggleHideCompleted()" ng-model="hideCompleted">Hide completed
             </button>
         </div>
-        <br/>
-        <hr/>
+
         <div ng-repeat="(date,activities) in activitiesWithHeader">
             <div x-trambu-date-header class="dateHeader" ng-switch="shouldDateBeDisplayed(date)"></div>
             <br/>
