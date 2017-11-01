@@ -199,25 +199,17 @@ angular.module('activityOverview')
                 }
             }
 
-            $scope.removeProject = function (activityName, displayArray, index) {
-                for (let i in $scope.activitiesWithHeader) {
-                    let activityList = $scope.activitiesWithHeader[i];
-                    for (let j in activityList) {
-                        let activity = activityList[j];
-                        if (activity.name === activityName) {
-                            $scope.activitiesWithHeader[i][j].projects.splice(index, 1);
-                            displayArray.splice(index, 1);
-                        }
-                    }
-                }
+            $scope.removeProject = function (activityName, projectToRemove) {
+                let activity = $scope.findActivity(activityName);
+                let index = activity.projects.indexOf(projectToRemove);
+                activity.projects.splice(index, 1);
             };
 
-            $scope.removeTag = function (activityName, displayArray, index) {
-                let activity = findActivity(activityName);
-                if (activity.name === activityName) {
-                    activity.tags.splice(index, 1);
-                    displayArray.splice(index, 1);
-                }
+            $scope.removeTag = function (activityName, tagToRemove) {
+                let activity = $scope.findActivity(activityName);
+                $scope.errorMessage = "ActivityName: " + activityName + " Tag: [" + tagToRemove + "]";
+                let index = activity.tags.indexOf(tagToRemove);
+                activity.tags.splice(index, 1);
             };
 
             $scope.save = function (name) {
