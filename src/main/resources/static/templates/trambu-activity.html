@@ -77,12 +77,14 @@
 
         <br/>
         <div ng-switch="displaySubActivities(activity.subActivities.length)">
-            Subactivities:
-            <br />
-            <div x-trambu-activity ng-repeat="activity in activity.subActivities"
-                 ng-show="!(activity.completed && getHideCompleted())" ng-switch-when="showSubActivities">
+            <div ng-switch-when="showSubActivities" class="bordered-component">
+                Subactivities:
+                <br/>
+                <div x-trambu-activity ng-repeat="activity in activity.subActivities"
+                     ng-show="!(activity.completed && getHideCompleted())">
+                </div>
             </div>
-            <pre ng-switch-when="noShowSubActivities">None</pre>
+            <pre ng-switch-when="noShowSubActivities"></pre>
         </div>
 
         <button ng-switch-when="uneditable" type="button" class="btn btn-default" style="float: right"

@@ -123,23 +123,50 @@ public class ActivityManager {
         backUpTodoFile();
         Files.write(this.todoFile, new String().getBytes());
         for (Activity activity : this.getActivities()) {
-            Files.write(this.todoFile, (activity.toString() + System.lineSeparator()).getBytes(),
-                    StandardOpenOption.APPEND);
+            writeActivityToFile(activity);
         }
         System.out.println(">> TODO.txt was updated");
         this.readActivitiesFromFile();
+    }
+
+    private void writeActivityToFile(Activity activity) throws IOException {
+        Files.write(this.todoFile, (activity.toString() + System.lineSeparator()).getBytes(),
+                StandardOpenOption.APPEND);
+        for (Activity subActivity : activity.getSubActivities()) {
+            writeActivityToFile(subActivity);
+        }
     }
 
     public void delete(Activity activity) throws IOException, ParseException {
         for (Iterator<Activity> it = this.activities.iterator(); it.hasNext(); ) {
             Activity savedActivity = it.next();
             if (savedActivity.getId().equals(activity.getId())) {
-                this.activities.remove(savedActivity);
+                it.remove();
                 writeAllToFileAndReload();
                 return;
+            } else {
+                if (deleteInSubactivities(savedActivity, activity.getId())) {
+                    return;
+                }
             }
         }
 
+    }
+
+    private boolean deleteInSubactivities(Activity parentActivity, UUID id) throws IOException, ParseException {
+        for (Iterator<Activity> it = parentActivity.getSubActivities().iterator(); it.hasNext(); ) {
+            Activity savedActivity = it.next();
+            if (savedActivity.getId().equals(id)) {
+                parentActivity.removeSubActivity(savedActivity);
+                writeAllToFileAndReload();
+                return true;
+            } else {
+                if (deleteInSubactivities(savedActivity, id)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void backUpTodoFile() throws IOException {

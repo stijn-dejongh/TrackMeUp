@@ -6,10 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by Doji on 22/10/2017.
@@ -21,7 +18,7 @@ import java.util.UUID;
     private String priority;
     private final LocalDateTime creationDate = LocalDateTime.now();
     private Date completionDate;
-    private List<Activity> subTasks = new ArrayList<>();
+    private List<Activity> subActivities = new ArrayList<>();
     private boolean completed = false;
     private List<String> tags = new ArrayList<>();
     private List<String> projects = new ArrayList<>();
@@ -76,16 +73,20 @@ import java.util.UUID;
     }
 
     public List<Activity> getSubActivities() {
-        return new ArrayList<>(subTasks);
+        return new ArrayList<>(subActivities);
+    }
+
+    public void setSubActivities(List<Activity> subActivities) {
+        this.subActivities = subActivities;
     }
 
     public void addSubTask(Activity subTask) {
-        this.subTasks.add(subTask);
+        this.subActivities.add(subTask);
     }
 
     public void addSubTask(int index, Activity subTask) {
         if (index >= 0 && index < getSubActivities().size()) {
-            this.subTasks.add(index, subTask);
+            this.subActivities.add(index, subTask);
         } else {
             addSubTask(subTask);
         }
@@ -179,5 +180,14 @@ import java.util.UUID;
 
     public String getParentActivity() {
         return parentActivity;
+    }
+
+    public void removeSubActivity(Activity activityToDelete) {
+        for (Iterator<Activity> it = this.subActivities.iterator(); it.hasNext(); ) {
+            Activity subActivity = it.next();
+            if(subActivity.getId().equals(activityToDelete.getId())) {
+                   it.remove();
+            }
+        }
     }
 }

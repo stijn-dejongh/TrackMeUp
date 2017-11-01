@@ -188,61 +188,88 @@ angular.module('activityOverview')
             }
 
             $scope.save = function (name) {
+                $scope.editableActivites[name] = false;
+                let activityInMemory = $scope.findActivity(name);
+                if (activityInMemory == undefined) {
+                    $scope.errorMessage = "Activity not found!";
+                    return;
+                }
+                let parentActivity = activityInMemory.parentActivity;
+                if (parentActivity != null && parentActivity.length > 0) {
+                    $scope.save(parentActivity);
+                } else {
+                    $scope.saveActivityObjectFromMemory(activityInMemory);
+                    return;
+                }
+            };
+
+            $scope.saveActivityObjectFromMemory = function saveActivityObjectFromMemory(activityToSave) {
+                if (activityToSave.deadline == undefined) {
+                    delete activityToSave.deadline;
+                }
+                if (activityToSave.completionDate == undefined) {
+                    delete activityToSave.completionDate;
+                }
+                if (activityToSave.projects == undefined || activityToSave.projects.length < 1) {
+                    delete activityToSave.projects;
+                }
+                if (activityToSave.tags == undefined || activityToSave.tags.length < 1) {
+                    delete activityToSave.tags;
+                }
+
+                $http.post('/save', activityToSave).then(function (response) {
+                        $scope.editableActivites[name] = "uneditable";
+                        return true;
+                    },
+                    function (response) {
+                        $scope.errorMessage = "Error while saving activity";
+                    });
+            }
+
+            $scope.findActivity = function (name) {
                 for (j in $scope.activitiesWithHeader) {
                     var activityList = $scope.activitiesWithHeader[j];
                     for (var i in activityList) {
-                        if (activityList[i].name == name) {
-                            let activity = activityList[i];
-                            if (activity.deadline == undefined) {
-                                delete activity.deadline;
+                        let activityInMemory = activityList[i];
+                        if (activityInMemory.name == name) {
+                            return activityInMemory;
+                        } else {
+                            let foundSub = $scope.findSubActivity(activityInMemory, name);
+                            if (foundSub != undefined) {
+                                return foundSub;
                             }
-                            if (activity.completionDate == undefined) {
-                                delete activity.completionDate;
-                            }
-                            if (activity.projects == undefined || activity.projects.length < 1) {
-                                delete activity.projects;
-                            }
-                            if (activity.tags == undefined || activity.tags.length < 1) {
-                                delete activity.tags;
-                            }
-
-                            $http.post('/save', activity).then(function (response) {
-                                    $scope.editableActivites[name] = "uneditable";
-                                    return true;
-                                },
-                                function (response) {
-                                    $scope.errorMessage = "Error while saving activity";
-                                });
-
                         }
                     }
-                    $scope.editableActivites[name] = "uneditable";
                 }
+                return undefined;
             };
+
+            $scope.findSubActivity = function (activityWithSubs, name) {
+                for (var sub in activityWithSubs.subActivities) {
+                    let subActivity = activityWithSubs.subActivities[sub];
+                    if (subActivity.name == name) {
+                        return subActivity;
+                    } else {
+                        let foundSub = $scope.findSubActivity(subActivity);
+                        if (foundSub != undefined) {
+                            return foundSub;
+                        }
+                    }
+                }
+                return undefined;
+            }
 
             $scope.delete = function (name) {
                 $http.get('/getActivitiesWithDateHeader').then(function (response) {
                         $scope.activitiesWithHeader = response.data;
-                        for (var i in $scope.activitiesWithHeader) {
-                            for (var j in $scope.activitiesWithHeader[i]) {
-                                if ($scope.activitiesWithHeader[i][j].name == name) {
-                                    let activity = $scope.activitiesWithHeader[i][j];
-                                    if (activity.deadline == undefined) {
-                                        delete activity.deadline;
-                                    }
-                                    if (activity.completionDate == undefined) {
-                                        delete activity.completionDate;
-                                    }
-                                    if (activity.projects.length < 1) {
-                                        delete activity.projects;
-                                    }
-
-                                    $http.post('/delete', activity);
-                                    $scope.activitiesWithHeader[i].splice(j, 1);
-                                    return;
-                                }
-                            }
-                        }
+                        let foundActivity = $scope.findActivity(name);
+                        $http.post('/delete', foundActivity).then(function (response) {
+                                $scope.loadActivities();
+                            },
+                            function (errResponse) {
+                                $scope.errorMessage = 'error deleting activitiesWithHeader';
+                            });
+                        return;
                     },
                     function (errResponse) {
                         $scope.errorMessage = 'error deleting activitiesWithHeader';
@@ -373,7 +400,7 @@ angular.module('activityOverview')
                 startingDay: 1
             };
 
-            // Disable weekend selection
+// Disable weekend selection
             function disabled(data) {
                 var date = data.date,
                     mode = data.mode;
@@ -460,4 +487,5 @@ angular.module('activityOverview')
                 return '';
             }
         }
-    );
+    )
+;

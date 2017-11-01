@@ -92,6 +92,7 @@ import java.util.Map;
 
     @RequestMapping(value = { "/delete" }, method = { RequestMethod.POST }) public @ResponseBody boolean deleteActivity(
             @RequestBody Activity activity) throws IOException, ParseException {
+        System.out.println("Deleting Activity!");
         if (am == null) {
             initialize();
         }
