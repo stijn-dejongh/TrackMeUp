@@ -5,6 +5,7 @@ angular.module('activityOverview')
             $scope.errorMessage;
             $scope.hideCompleted = false;
             $scope.selectedPriority = "C";
+            $scope.selectedParent = undefined;
             $scope.fileLocation = "default/todo.txt";
             $scope.warningHours = 24;
             $scope.warningMinutes = 0;
@@ -286,22 +287,17 @@ angular.module('activityOverview')
 
             $scope.isUrgent = function (name) {
                 var today = new Date();
-                for (i in $scope.activitiesWithHeader) {
-                    for (j in $scope.activitiesWithHeader[i]) {
-                        if ($scope.activitiesWithHeader[i][j].name == name) {
-                            let activity = $scope.activitiesWithHeader[i][j];
-                            if (activity.deadline != undefined) {
-                                var parsedDeadline = new Date(activity.deadline);
-                                var diff = Math.abs(parsedDeadline - new Date()) / 1000;
-                                if (diff <= activity.warningTimeFrame && !activity.completed) {
-                                    return true;
-                                } else {
-                                    return false;
-                                }
-                            }
-                        }
+                let activity = $scope.findActivity(name);
+                if (activity.deadline != undefined) {
+                    var parsedDeadline = new Date(activity.deadline);
+                    var diff = Math.abs(parsedDeadline - new Date()) / 1000;
+                    if (diff <= activity.warningTimeFrame && !activity.completed) {
+                        return true;
+                    } else {
+                        return false;
                     }
                 }
+
                 return false;
             };
 
@@ -332,7 +328,8 @@ angular.module('activityOverview')
                     priority: $scope.selectedPriority,
                     tags: [],
                     projects: [],
-                    warningTimeFrame: $scope.getWarningTimeFrameInSeconds()
+                    warningTimeFrame: $scope.getWarningTimeFrameInSeconds(),
+                    parentActivity: $scope.selectedParent
                 };
                 if ($scope.tags) {
                     let tagList = $scope.tags.split(",");
@@ -350,6 +347,17 @@ angular.module('activityOverview')
 
 
                 var added = false;
+                if (activity.parentActivity != undefined && activity.parentActivity.length > 0) {
+                    let parent = $scope.findActivity(activity.parentActivity);
+                    if (parent != undefined) {
+                        parent.subActivities.push(activity);
+                        added = true;
+                    } else {
+                        activity.parentActivity = null;
+                    }
+                }
+
+
                 let deadlineToCheck = activity.deadline;
                 if (activity.deadline == undefined) {
                     deadlineToCheck = new Date();
