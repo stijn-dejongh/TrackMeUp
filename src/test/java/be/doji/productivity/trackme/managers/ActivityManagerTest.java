@@ -79,6 +79,26 @@ public class ActivityManagerTest {
         Assert.assertEquals(2, activitiesWithDateHeader.size());
         Assert.assertNotNull(activitiesWithDateHeader.get(TrackMeConstants.DEFAULT_DATE_HEADER));
         Assert.assertEquals(1, activitiesWithDateHeader.get(TrackMeConstants.DEFAULT_DATE_HEADER).size());
+        Files.delete(tempFilePath);
+    }
+
+    @Test public void testManageSubProjects() throws IOException, ParseException {
+        Path tempFilePath = createTempFile();
+        ActivityManager am = new ActivityManager(tempFilePath.toString());
+        am.addActivity(ActivityTestData.SUPER_ACTIVITY);
+        am.addActivity(ActivityTestData.SUB_ACTIVITY_ONE);
+        am.addActivity(ActivityTestData.SUB_ACTIVITY_TWO);
+        List<Activity> savedActivities = am.getActivities();
+        Assert.assertNotNull(savedActivities);
+        Assert.assertEquals(1, savedActivities.size());
+        Activity superActivity = savedActivities.get(0);
+        Assert.assertEquals("Implement new project", superActivity.getName());
+        List<Activity> subActivities = superActivity.getSubActivities();
+        Assert.assertNotNull(subActivities);
+        Assert.assertEquals(2, subActivities.size());
+        Assert.assertEquals("Set up IDE", subActivities.get(0).getName());
+        Assert.assertEquals("Read analisis", subActivities.get(1).getName());
+        Files.delete(tempFilePath);
     }
 
     private Path createTempFile() throws IOException {

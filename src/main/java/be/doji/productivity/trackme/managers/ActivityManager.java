@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.text.ParseException;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -17,7 +16,7 @@ import java.util.stream.Collectors;
  */
 public class ActivityManager {
 
-    private Map<Activity, Integer> activities = new ConcurrentHashMap<>();
+    private List<Activity> activities = new ArrayList<>();
     private Path todoFile;
 
     public ActivityManager(String fileLocation) throws IOException {
@@ -30,11 +29,11 @@ public class ActivityManager {
     }
 
     public void readActivitiesFromFile() throws IOException, ParseException {
-        activities = new ConcurrentHashMap<>();
-        int lineNumber = 0;
+        activities = new ArrayList<>();
         for (String line : Files.readAllLines(this.todoFile)) {
-            activities.put(ActivityParser.mapStringToActivity(line), lineNumber);
-            lineNumber += 1;
+            if (StringUtils.isNotBlank(line)) {
+                addActivity(line);
+            }
         }
     }
 
@@ -43,22 +42,29 @@ public class ActivityManager {
     }
 
     public void addActivity(Activity activity) throws IOException {
-        int lineNumber = Files.readAllLines(this.todoFile).size();
-        this.activities.put(activity, lineNumber);
+        String parentActivity = activity.getParentActivity();
+        if (StringUtils.isNotBlank(parentActivity)) {
+            Optional<Activity> parent = getSavedActivityByName(parentActivity);
+            if (parent.isPresent()) {
+                parent.get().addSubTask(activity);
+            } else {
+                this.activities.add(activity);
+            }
+        } else {
+            this.activities.add(activity);
+        }
     }
 
     public List<Activity> getActivities() {
-        ArrayList<Activity> activities = new ArrayList<>(this.activities.keySet());
-        Collections.sort(activities, new Comparator<Activity>() {
-            @Override public int compare(Activity o1, Activity o2) {
-                if (o1.getDeadline() != null && o2.getDeadline() != null) {
-                    return o1.getDeadline().compareTo(o2.getDeadline());
-                } else {
-                    int priorityCompare = o1.getPriority().compareTo(o2.getPriority());
-                    return o1.getDeadline() == null?
-                            o2.getDeadline() == null?priorityCompare:-1:
-                            o2.getDeadline() == null?1:priorityCompare;
-                }
+        ArrayList<Activity> activities = new ArrayList<>(this.activities);
+        Collections.sort(activities, (o1, o2) -> {
+            if (o1.getDeadline() != null && o2.getDeadline() != null) {
+                return o1.getDeadline().compareTo(o2.getDeadline());
+            } else {
+                int priorityCompare = o1.getPriority().compareTo(o2.getPriority());
+                return o1.getDeadline() == null?
+                        o2.getDeadline() == null?priorityCompare:-1:
+                        o2.getDeadline() == null?1:priorityCompare;
             }
         });
         return activities;
@@ -84,13 +90,12 @@ public class ActivityManager {
         Optional<Activity> savedActivity = getSavedActivityByName(activity.getName());
         if (savedActivity.isPresent()) {
             this.activities.remove(savedActivity.get());
-
         }
         this.addActivity(activity);
         writeAllToFileAndReload();
 
         Activity matchingActivity = null;
-        for (Activity reloadedAct : this.activities.keySet()) {
+        for (Activity reloadedAct : this.activities) {
             if (reloadedAct.getName().equals(activity.getName())) {
                 matchingActivity = reloadedAct;
             }
@@ -105,7 +110,7 @@ public class ActivityManager {
     }
 
     private Optional<Activity> getSavedActivityByName(String name) {
-        for (Activity savedActivity : this.activities.keySet()) {
+        for (Activity savedActivity : this.activities) {
             if (StringUtils.equals(savedActivity.getName(), name)) {
                 return Optional.of(savedActivity);
             }
@@ -126,8 +131,8 @@ public class ActivityManager {
     }
 
     public void delete(Activity activity) throws IOException, ParseException {
-        Set<Activity> activityCopy = this.activities.keySet();
-        for (Activity savedActivity : activityCopy) {
+        for (Iterator<Activity> it = this.activities.iterator(); it.hasNext(); ) {
+            Activity savedActivity = it.next();
             if (savedActivity.getId().equals(activity.getId())) {
                 this.activities.remove(savedActivity);
                 writeAllToFileAndReload();
@@ -161,7 +166,7 @@ public class ActivityManager {
         Map<Date, List<Activity>> activitiesWithDateHeader = new TreeMap<>();
         for (Activity activity : activities) {
             Date deadline = activity.getDeadline();
-            if(deadline == null) {
+            if (deadline == null) {
                 deadline = TrackMeConstants.DEFAULT_DATE_HEADER;
             }
             if (activitiesWithDateHeader.containsKey(deadline)) {

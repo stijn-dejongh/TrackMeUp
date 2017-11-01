@@ -7,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.text.ParseException;
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -21,13 +20,17 @@ public final class ActivityParser {
     private static final String PRIORITY_REGEX = "\\([a-zA-Z]\\)";
     private static final String NAME_REGEX =
             "\\b[a-zA-Z]([\\w\\s\\.\\- && [^\\+]])*(\\s\\+|$|\\s\\@|\\s" + TrackMeConstants.INDICATOR_WARNING_PERIOD
-                    + "|\\s" + TrackMeConstants.INDICATOR_DEADLINE + ")";
+                    + "|\\s" + TrackMeConstants.INDICATOR_DEADLINE + "|\\s" + TrackMeConstants.INDICATOR_PARENT_ACTIVITY
+                    + ")";
     private static final String TAG_REGEX = "\\" + TrackMeConstants.INDICATOR_TAG + "([a-zA-Z0-9]*)(\\s|$)";
     private static final String PROJECT_REGEX = "\\" + TrackMeConstants.INDICATOR_PROJECT + "([a-zA-Z0-9]*)(\\s|$)";
     private static final String DUE_DATE_REGEX = TrackMeConstants.INDICATOR_DEADLINE + DATE_REGEX + "(\\s|$)";
     private static final String DURATION_REGEX = "P((0-9|.)+(T)*(D|H|M|S))*";
     private static final String WARNING_PERIOD_REGEX =
             TrackMeConstants.INDICATOR_WARNING_PERIOD + DURATION_REGEX + "(\\s|$)";
+    private static final String SUPER_ACTIVITY_REGEX =
+            TrackMeConstants.INDICATOR_PARENT_ACTIVITY + "([\\w\\s\\.\\- && [^\\+]])*(\\s\\+|$|\\s\\@|\\s"
+                    + TrackMeConstants.INDICATOR_WARNING_PERIOD + "|\\s" + TrackMeConstants.INDICATOR_DEADLINE + ")";
 
     /**
      * Utility classes should not have a public or default constructor
@@ -52,7 +55,8 @@ public final class ActivityParser {
         if (!nameMatches.isEmpty()) {
             activity.setName(nameMatches.get(0).replace(TrackMeConstants.INDICATOR_PROJECT, "")
                     .replace(TrackMeConstants.INDICATOR_TAG, "").replace(TrackMeConstants.INDICATOR_DEADLINE, "")
-                    .replace(TrackMeConstants.INDICATOR_WARNING_PERIOD, "").trim());
+                    .replace(TrackMeConstants.INDICATOR_WARNING_PERIOD, "")
+                    .replace(TrackMeConstants.INDICATOR_PARENT_ACTIVITY, "").trim());
         }
 
         List<String> tagMatches = TrackerUtils.findAllMatches(TAG_REGEX, line);
@@ -76,6 +80,12 @@ public final class ActivityParser {
         for (String warningMatch : warningPeriodMatches) {
             String warningMatchString = warningMatch.replace(TrackMeConstants.INDICATOR_WARNING_PERIOD, "").trim();
             activity.setWarningTimeFrame(Duration.parse(warningMatchString));
+        }
+
+        List<String> superActivityMatches = TrackerUtils.findAllMatches(SUPER_ACTIVITY_REGEX, line);
+        for (String activityMatch : superActivityMatches) {
+            String superActivityString = activityMatch.replace(TrackMeConstants.INDICATOR_PARENT_ACTIVITY, "").trim();
+            activity.setParentActivity(superActivityString);
         }
 
         return activity;

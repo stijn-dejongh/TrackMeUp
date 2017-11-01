@@ -87,6 +87,14 @@ public class ActivityParserTest {
         Assert.assertEquals("TestDeadline", activity.getName());
     }
 
+    @Test public void testParseWithParent() throws ParseException {
+        Activity activity = ActivityParser.mapStringToActivity(ActivityTestData.SUB_ACTIVITY_ONE);
+        Assert.assertNotNull(activity);
+        Assert.assertNotNull(activity.getParentActivity());
+        Assert.assertEquals("Implement new project", activity.getParentActivity());
+        Assert.assertEquals("Set up IDE", activity.getName());
+    }
+
     @Test public void testDateTime() {
         LocalDateTime now = LocalDateTime.now();
         Duration duration = Duration.ofSeconds(86400);

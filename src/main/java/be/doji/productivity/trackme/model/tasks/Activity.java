@@ -2,6 +2,7 @@ package be.doji.productivity.trackme.model.tasks;
 
 import be.doji.productivity.trackme.TrackMeConstants;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -26,6 +27,7 @@ import java.util.UUID;
     private List<String> projects = new ArrayList<>();
     private Date deadline;
     private Duration warningTimeFrame = TrackMeConstants.DEFAULT_WARNING_PERIOD;
+    private String parentActivity;
 
     public Activity() {
         this("New Activity");
@@ -73,7 +75,7 @@ import java.util.UUID;
         this.deadline = deadline;
     }
 
-    public List<Activity> getSubTasks() {
+    public List<Activity> getSubActivities() {
         return new ArrayList<>(subTasks);
     }
 
@@ -82,7 +84,7 @@ import java.util.UUID;
     }
 
     public void addSubTask(int index, Activity subTask) {
-        if (index >= 0 && index < getSubTasks().size()) {
+        if (index >= 0 && index < getSubActivities().size()) {
             this.subTasks.add(index, subTask);
         } else {
             addSubTask(subTask);
@@ -150,6 +152,12 @@ import java.util.UUID;
             sb.append(" ");
         }
 
+        if (StringUtils.isNotBlank(this.parentActivity)) {
+            sb.append(TrackMeConstants.INDICATOR_PARENT_ACTIVITY);
+            sb.append(parentActivity);
+            sb.append(" ");
+        }
+
         return sb.toString().trim();
     }
 
@@ -163,5 +171,13 @@ import java.util.UUID;
 
     public void setWarningTimeFrame(Duration warningTimeFrame) {
         this.warningTimeFrame = warningTimeFrame;
+    }
+
+    public void setParentActivity(String parentActivity) {
+        this.parentActivity = parentActivity;
+    }
+
+    public String getParentActivity() {
+        return parentActivity;
     }
 }
