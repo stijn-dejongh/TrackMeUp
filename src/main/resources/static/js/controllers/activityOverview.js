@@ -74,9 +74,20 @@ angular.module('activityOverview')
                     var activityList = $scope.activitiesWithHeader[i];
                     for (var j in activityList) {
                         var activity = activityList[j];
-                        $scope.editableActivites[activity.name] = "uneditable";
+                        $scope.initializeProperties(activity);
                     }
                 }
+            };
+
+            $scope.initializeProperties = function (activity) {
+                $scope.editableActivites[activity.name] = "uneditable";
+                $scope.openHeaders[activity.name] = false;
+
+                for (var i in activity.subActivities) {
+                    var subActivity = activity.subActivities[i];
+                    $scope.initializeProperties(subActivity);
+                }
+
             };
 
             $scope.loadActivtiesByTag = function (tag) {
@@ -423,6 +434,14 @@ angular.module('activityOverview')
                     status: 'partially'
                 }
             ];
+
+            $scope.displaySubActivities = function (subArrayLength) {
+                if (subArrayLength > 0) {
+                    return "showSubActivities";
+                } else {
+                    return "noShowSubActivities";
+                }
+            }
 
             function getDayClass(data) {
                 var date = data.date,
