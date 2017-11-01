@@ -1,7 +1,9 @@
 angular.module('activityOverview')
     .directive('trambuActivity', function () {
         return {
-            scope: true,
-            templateUrl: "templates/trambu-activity.html"
+            templateUrl: "templates/trambu-activity.html",
+            link: function(scope, elem, attrs) {
+                scope.activity = activity;
+            }
         };
     });

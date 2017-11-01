@@ -63,17 +63,12 @@
         </button>
         <br/>
         <div id="addActivity" class="addActivity" style="display: none; margin-top: 10px; width: 100%">
-            <x-trambu-add-activity></x-trambu-add-activity>
+            <x-trambu-add-activity/>
         </div>
         <hr/>
         <br/>
         <div id="fileselector" class="fileSelector" style="display: none; margin-top: 10px;">
-            <div>
-                <h4>Update file location</h4>
-                <input type="text" class="form-control" name="fileLocation"
-                       ng-model="fileLocation"/>
-                <button type="button" class="btn btn-default" ng-click="updateFile()">Update location</button>
-            </div>
+            <trambu-file-selector />
         </div>
 
     </div>

@@ -3,3 +3,6 @@ document.writeln("<script type='text/javascript' src='js/controllers/activityOve
 document.writeln("<script type='text/javascript' src='js/directives/trambuActivity.js'></script>");
 document.writeln("<script type='text/javascript' src='js/directives/trambuAddActivity.js'></script>");
 document.writeln("<script type='text/javascript' src='js/directives/trambuDateHeader.js'></script>");
+document.writeln("<script type='text/javascript' src='js/directives/trambuFileSelector.js'></script>");
+document.writeln("<script type='text/javascript' src='js/directives/trambuActivityTopBar.js'></script>");
+
