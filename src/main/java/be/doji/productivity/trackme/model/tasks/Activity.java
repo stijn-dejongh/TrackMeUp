@@ -135,7 +135,7 @@ import java.util.*;
 
         if (deadline != null) {
             sb.append(TrackMeConstants.INDICATOR_DEADLINE);
-            sb.append(TrackMeConstants.DATA_DATE_FORMAT.format(deadline));
+            sb.append(TrackMeConstants.getDateFormat().format(deadline));
             sb.append(" ");
         }
 
