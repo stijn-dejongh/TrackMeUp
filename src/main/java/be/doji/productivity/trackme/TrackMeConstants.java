@@ -32,6 +32,8 @@ public final class TrackMeConstants {
     public static final String INDICATOR_LOGPOINT_START = "STARTTIME:";
     public static final String INDICATOR_LOGPOINT_END = "ENDTIME:";
 
+    public static final String REGEX_DATE = "[0-9\\-\\:\\.]*";
+
     public static SimpleDateFormat getDateFormat() {
         return new SimpleDateFormat(DATA_DATE_FORMAT, Locale.FRANCE);
     }

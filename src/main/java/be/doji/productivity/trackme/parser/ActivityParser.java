@@ -14,7 +14,6 @@ import java.util.List;
  */
 public final class ActivityParser {
 
-    private static final String DATE_REGEX = "[0-9\\-\\:\\.]*";
     private static final String COMPLETED_REGEX =
             "^[" + TrackMeConstants.INDICATOR_DONE + StringUtils.lowerCase(TrackMeConstants.INDICATOR_DONE) + "]";
     private static final String PRIORITY_REGEX = "\\([a-zA-Z]\\)";
@@ -24,7 +23,7 @@ public final class ActivityParser {
                     + ")";
     private static final String TAG_REGEX = "\\" + TrackMeConstants.INDICATOR_TAG + "([a-zA-Z0-9]*)(\\s|$)";
     private static final String PROJECT_REGEX = "\\" + TrackMeConstants.INDICATOR_PROJECT + "([a-zA-Z0-9]*)(\\s|$)";
-    private static final String DUE_DATE_REGEX = TrackMeConstants.INDICATOR_DEADLINE + DATE_REGEX + "(\\s|$)";
+    private static final String DUE_DATE_REGEX = TrackMeConstants.INDICATOR_DEADLINE + TrackMeConstants.REGEX_DATE + "(\\s|$)";
     private static final String DURATION_REGEX = "P((0-9|.)+(T)*(D|H|M|S))*";
     private static final String WARNING_PERIOD_REGEX =
             TrackMeConstants.INDICATOR_WARNING_PERIOD + DURATION_REGEX + "(\\s|$)";

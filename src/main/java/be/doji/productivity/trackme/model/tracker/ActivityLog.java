@@ -18,11 +18,32 @@ public class ActivityLog {
         this.activityId = activity.getId();
     }
 
+    public ActivityLog(UUID activityId) {
+        this.activityId = activityId;
+    }
+
+    public UUID getActivityId() {
+        return activityId;
+    }
+
+    public void setActivityId(UUID activityId) {
+        this.activityId = activityId;
+    }
+
+    public List<TimeLog> getLogPoints() {
+        return logPoints;
+    }
+
+    public void setLogPoints(List<TimeLog> logPoints) {
+        this.logPoints = logPoints;
+    }
+
     public String toString() {
         StringBuilder logLine = new StringBuilder();
-        logLine.append(activityId.toString());
-        logLine.append(" ");
         logLine.append(TrackMeConstants.INDICATOR_LOG_START);
+        logLine.append(" ");
+        logLine.append(activityId.toString());
+
         logLine.append(System.lineSeparator());
         for (TimeLog logPoint : logPoints) {
             logLine.append(logLine.toString());
@@ -32,4 +53,7 @@ public class ActivityLog {
         return logLine.toString();
     }
 
+    public void addLogPoint(TimeLog timeLog) {
+        this.logPoints.add(timeLog);
+    }
 }
