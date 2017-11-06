@@ -73,7 +73,7 @@ public class ActivityManagerTest {
         Assert.assertNotNull(activitiesWithDateHeader);
         Assert.assertFalse(activitiesWithDateHeader.isEmpty());
         Assert.assertEquals(2, activitiesWithDateHeader.size());
-        Date deadLineDate = TrackMeConstants.DATA_DATE_FORMAT.parse("2017-12-21:16:15:00.000");
+        Date deadLineDate = TrackMeConstants.getDateFormat().parse("2017-12-21:16:15:00.000");
         List<Activity> activitiesWithDeadline = activitiesWithDateHeader.get(deadLineDate);
         Assert.assertNotNull(activitiesWithDeadline);
         Assert.assertEquals(2, activitiesWithDateHeader.size());

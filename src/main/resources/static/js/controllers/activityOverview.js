@@ -220,7 +220,7 @@ angular.module('activityOverview')
                     return;
                 }
                 let parentActivity = activityInMemory.parentActivity;
-                if (parentActivity !== null && parentActivity.length > 0) {
+                if (parentActivity !== null && parentActivity !== undefined && parentActivity.length > 0) {
                     $scope.save(parentActivity);
                 } else {
                     $scope.saveActivityObjectFromMemory(activityInMemory);
@@ -336,7 +336,7 @@ angular.module('activityOverview')
             };
 
             $scope.addActivity = function () {
-
+                $scope.errorMessage = "Saving activity";
                 let activity = {
                     name: $scope.name,
                     completed: false,
@@ -345,20 +345,24 @@ angular.module('activityOverview')
                     tags: [],
                     projects: [],
                     warningTimeFrame: $scope.getWarningTimeFrameInSeconds(),
-                    parentActivity: $scope.selectedParent
+                    parentActivity: undefined
                 };
-                if ($scope.tags) {
+                if ($scope.tags && $scope.tags.length > 1) {
                     let tagList = $scope.tags.split(",");
                     if (tagList.length > 0) {
                         activity.tags = tagList;
                     }
                 }
 
-                if ($scope.projects) {
+                if ($scope.projects && $scope.projects.length > 1) {
                     let projectList = $scope.projects.split(",");
                     if (projectList.length > 0) {
                         activity.projects = projectList;
                     }
+                }
+
+                if ($scope.selectedParent && $scope.selectedParent !== undefined) {
+                    activity.parentActivity = $scope.selectedParent;
                 }
 
 
@@ -387,11 +391,13 @@ angular.module('activityOverview')
                         break;
                     }
                 }
+
                 if (!added) {
                     let tempActivityList = [];
                     tempActivityList.push(activity);
                     $scope.activitiesWithHeader[deadlineToCheck] = tempActivityList;
                 }
+
 
                 $scope.save(activity.name);
                 $scope.resetInputFields();
