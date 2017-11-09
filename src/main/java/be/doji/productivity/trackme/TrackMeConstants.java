@@ -26,6 +26,7 @@ public final class TrackMeConstants {
     public static final String INDICATOR_DEADLINE = "due:";
     public static final String INDICATOR_WARNING_PERIOD = "warningPeriod:";
     public static final String INDICATOR_PARENT_ACTIVITY = "super:";
+    public static final String INDICATOR_UUID = "uuid:";
 
     public static final String INDICATOR_LOG_START = "LOG_START";
     public static final String INDICATOR_LOG_END = "LOG_END";

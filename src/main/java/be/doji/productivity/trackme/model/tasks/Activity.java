@@ -6,7 +6,10 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by Doji on 22/10/2017.
@@ -151,6 +154,10 @@ import java.util.*;
             sb.append(" ");
         }
 
+        sb.append(TrackMeConstants.INDICATOR_UUID);
+        sb.append(this.id.toString());
+        sb.append(" ");
+
         return sb.toString().trim();
     }
 
@@ -176,5 +183,9 @@ import java.util.*;
 
     public void removeSubActivity(Activity activityToDelete) {
         this.subActivities.removeIf(subActivity -> subActivity.getId().equals(activityToDelete.getId()));
+    }
+
+    public void setId(String uuidString) {
+        this.id = UUID.fromString(uuidString);
     }
 }

@@ -1,7 +1,9 @@
 package be.doji.productivity.trackme.parser;
 
+import be.doji.productivity.trackme.TrackMeConstants;
 import be.doji.productivity.trackme.model.tasks.Activity;
 import be.doji.productivity.trackme.testutil.ActivityTestData;
+import be.doji.productivity.trackme.utils.TrackerUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -95,10 +97,11 @@ public class ActivityParserTest {
         Assert.assertEquals("Set up IDE", activity.getName());
     }
 
-    @Test public void testDateTime() {
-        LocalDateTime now = LocalDateTime.now();
-        Duration duration = Duration.ofSeconds(86400);
-        Assert.assertEquals(1, duration.toDays());
-        Assert.assertNotNull(now.minus(duration));
+    @Test public void testParseWithUUID() throws ParseException {
+        Activity activity = ActivityParser.mapStringToActivity(ActivityTestData.ACTIVITY_WITH_UUID);
+        Assert.assertNotNull(activity);
+        Assert.assertEquals("283b6271-b513-4e89-b757-10e98c9078ea", activity.getId().toString());
+        Assert.assertEquals("TaskTitle", activity.getName());
     }
+
 }

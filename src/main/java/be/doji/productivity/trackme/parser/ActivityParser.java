@@ -30,6 +30,7 @@ public final class ActivityParser {
     private static final String SUPER_ACTIVITY_REGEX =
             TrackMeConstants.INDICATOR_PARENT_ACTIVITY + "([\\w\\s\\.\\- && [^\\+]])*(\\s\\+|$|\\s\\@|\\s"
                     + TrackMeConstants.INDICATOR_WARNING_PERIOD + "|\\s" + TrackMeConstants.INDICATOR_DEADLINE + ")";
+    private static final String REGEX_UUID = TrackMeConstants.INDICATOR_UUID + "([a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12})" + "(\\s|$)";
 
     /**
      * Utility classes should not have a public or default constructor
@@ -85,6 +86,12 @@ public final class ActivityParser {
         for (String activityMatch : superActivityMatches) {
             String superActivityString = activityMatch.replace(TrackMeConstants.INDICATOR_PARENT_ACTIVITY, "").trim();
             activity.setParentActivity(superActivityString);
+        }
+
+        List<String> uuidMatches = TrackerUtils.findAllMatches(REGEX_UUID, line);
+        for (String uuidMatch : uuidMatches) {
+            String uuidString = uuidMatch.replace(TrackMeConstants.INDICATOR_UUID, "").trim();
+            activity.setId(uuidString);
         }
 
         return activity;
