@@ -4,6 +4,7 @@ import be.doji.productivity.trackme.TrackMeConstants;
 import be.doji.productivity.trackme.model.tasks.Activity;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -55,5 +56,31 @@ public class ActivityLog {
 
     public void addLogPoint(TimeLog timeLog) {
         this.logPoints.add(timeLog);
+    }
+
+    public void startLog() {
+        Optional<TimeLog> activeLog = getActiveLog();
+        if (activeLog.isPresent()) {
+            activeLog.get().stop();
+        }
+        TimeLog timeLog = new TimeLog();
+        timeLog.start();
+        this.addLogPoint(timeLog);
+    }
+
+    public Optional<TimeLog> getActiveLog() {
+        for (TimeLog log : this.logPoints) {
+            if (log.isActive()) {
+                return Optional.of(log);
+            }
+        }
+        return Optional.empty();
+    }
+
+    public void stopActiveLog() {
+        Optional<TimeLog> activeLog = getActiveLog();
+        if (activeLog.isPresent()) {
+            activeLog.get().stop();
+        }
     }
 }

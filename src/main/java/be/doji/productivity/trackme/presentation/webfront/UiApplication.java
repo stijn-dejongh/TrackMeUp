@@ -1,14 +1,13 @@
 package be.doji.productivity.trackme.presentation.webfront;
 
 import be.doji.productivity.trackme.managers.ActivityManager;
+import be.doji.productivity.trackme.managers.TimeTrackingManager;
 import be.doji.productivity.trackme.model.tasks.Activity;
+import be.doji.productivity.trackme.model.tracker.ActivityLog;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Date;
@@ -22,12 +21,18 @@ import java.util.Map;
 @SpringBootApplication @RestController @JsonIgnoreProperties(ignoreUnknown = true) public class UiApplication {
 
     private static final String TODO_FILE_LOCATION = "data/todo.txt";
+    private static final String TIMELOG_FILE_LOCATION = "data/timelog.txt";
     private ActivityManager am;
+    private TimeTrackingManager tm;
 
     @RequestMapping("/initialize") public void initialize() throws IOException, ParseException {
         if (am == null) {
             am = new ActivityManager(TODO_FILE_LOCATION);
             am.readActivitiesFromFile();
+        }
+        if (tm == null) {
+            tm = new TimeTrackingManager(TIMELOG_FILE_LOCATION);
+            tm.readLogs();
         }
     }
 
@@ -69,7 +74,8 @@ import java.util.Map;
     }
 
     @RequestMapping(value = { "/getActivitiesWithDateHeader" }, method = {
-            RequestMethod.GET }) public @ResponseBody Map<Date, List<Activity>> getActivitiesWithDateHeader() throws IOException {
+            RequestMethod.GET }) public @ResponseBody Map<Date, List<Activity>> getActivitiesWithDateHeader()
+            throws IOException {
         if (am != null) {
             return am.getActivitiesWithDateHeader();
         } else {
@@ -103,4 +109,30 @@ import java.util.Map;
             return false;
         }
     }
+
+    @RequestMapping(value = { "/startTimeLog" }, method = { RequestMethod.POST }) public void startTimeLog(
+            @RequestBody String activityID) throws IOException, ParseException {
+        System.out.println("Start timelog");
+        ActivityLog timeLogForActivity = getTimeLogForActivity(activityID);
+        timeLogForActivity.startLog();
+    }
+
+    @RequestMapping(value = { "/stopTimeLog" }, method = { RequestMethod.POST }) public void stopTimeLog(
+            @RequestBody String activityID) throws IOException, ParseException {
+        System.out.println("Start timelog");
+        ActivityLog timeLogForActivity = getTimeLogForActivity(activityID);
+        timeLogForActivity.stopActiveLog();
+        tm.writeLogs();
+    }
+
+    @RequestMapping(value = { "/getTimeLogForActivity" }, method = {
+            RequestMethod.POST }) public @ResponseBody ActivityLog getTimeLogForActivity(@RequestBody String activityId)
+            throws IOException {
+        if (tm != null) {
+            return tm.getLogForActivityId(activityId);
+        } else {
+            return null;
+        }
+    }
+
 }

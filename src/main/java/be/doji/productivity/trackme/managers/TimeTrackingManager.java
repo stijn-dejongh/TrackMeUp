@@ -30,14 +30,19 @@ public class TimeTrackingManager {
         }
     }
 
+    public ActivityLog getLogForActivityId(String activityId) {
+        return getLogForActivityId(UUID.fromString(activityId));
+    }
+
     public ActivityLog getLogForActivityId(UUID activityId) {
-        ActivityLog foundLog = null;
         for (ActivityLog log : timelogs) {
             if (log.getActivityId().equals(activityId)) {
-                foundLog = log;
+                return log;
             }
         }
-        return foundLog;
+        ActivityLog activityLog = new ActivityLog(activityId);
+        this.timelogs.add(activityLog);
+        return activityLog;
     }
 
     public void writeLogs() throws IOException {
@@ -68,4 +73,7 @@ public class TimeTrackingManager {
         return UUID.fromString(uuidString);
     }
 
+    public void startTimer(String activityID) {
+
+    }
 }

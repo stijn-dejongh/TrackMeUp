@@ -11,8 +11,6 @@ public class TimeLog {
     private boolean isActive;
 
     public TimeLog() {
-        this.start();
-        isActive = true;
 
     }
 
