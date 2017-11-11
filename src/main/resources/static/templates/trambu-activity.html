@@ -17,6 +17,16 @@
                 x-ng-click="save(activity.name)">
             {{getTodoToggleText(activity.completed)}}
         </button>
+        <div class="trackingControls" x-ng-switch="isTimelogActive(activity.name)">
+            <button ng-switch-when="notActive" type="button" class="btn btn-success"
+                    ng-click="startTimeLog(activity.name)">
+                Start timer
+            </button>
+            <button ng-switch-when="active" type="button" class="btn btn-danger"
+                    ng-click="stopTimeLog(activity.name)">
+                Start timer
+            </button>
+        </div>
         <br/><br/>
 
         <pre ng-switch-when="editable"> Priority level is: <span><select ng-model="activity.priority"
@@ -74,7 +84,6 @@
                 ng-click="removeProject(activity.name, project)"
                 style="margin-right: 10px;">{{project}}</button></pre>
         <br/>
-
         <br/>
         <div ng-switch="displaySubActivities(activity.subActivities.length)">
             <div ng-switch-when="showSubActivities" class="bordered-component">

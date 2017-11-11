@@ -2,7 +2,7 @@ angular.module('activityOverview')
     .controller('home', function ($scope, $http) {
             $scope.activitiesWithHeader = [];
             $scope.activeFilter = "";
-            $scope.errorMessage = "";
+            $scope.statusMessage = "";
             $scope.hideCompleted = false;
 
             $scope.editMode = "uneditable";
@@ -11,6 +11,7 @@ angular.module('activityOverview')
             $scope.openHeaders = [];
 
             $scope.fileLocation = "default/todo.txt";
+            $scope.trackingFileLocation = "default/logs.txt";
 
             $scope.name = "";
             $scope.selectedPriority = "C";
@@ -21,6 +22,8 @@ angular.module('activityOverview')
             $scope.tags = "";
             $scope.projects = "";
             $scope.deadline = undefined;
+
+            $scope.activiveTimelogging = "";
 
 
             $scope.priorities = {
@@ -64,7 +67,7 @@ angular.module('activityOverview')
                     $scope.loadActivities();
                 },
                 function () {
-                    $scope.errorMessage = 'error initializing application';
+                    $scope.statusMessage = 'error initializing application';
                 });
 
             $scope.makeEditable = function (activityName) {
@@ -81,8 +84,8 @@ angular.module('activityOverview')
                 }
             };
 
-            $scope.getErrorMessage = function () {
-                return errorMessage;
+            $scope.getstatusMessage = function () {
+                return statusMessage;
             };
 
             $scope.resetDeadline = function () {
@@ -103,7 +106,7 @@ angular.module('activityOverview')
                         $scope.activitiesWithHeader = response.data;
                     },
                     function () {
-                        $scope.errorMessage = 'error getting activitiesWithHeader';
+                        $scope.statusMessage = 'error getting activitiesWithHeader';
                     });
 
                 $scope.editableActivites = {};
@@ -136,7 +139,7 @@ angular.module('activityOverview')
                         $scope.activitiesWithHeader = response.data;
                     },
                     function () {
-                        $scope.errorMessage = 'error getting activitiesWithHeader by tag';
+                        $scope.statusMessage = 'error getting activitiesWithHeader by tag';
                     });
             };
 
@@ -146,7 +149,15 @@ angular.module('activityOverview')
                         $scope.loadActivities();
                     },
                     function (errResponse) {
-                        $scope.errorMessage = 'error setting file: ' + errResponse;
+                        $scope.statusMessage = 'error setting todo file: ' + errResponse;
+                    });
+
+                let logFileLoc = $scope.trackingFileLocation;
+                $http.post('/updateLogFileLocation', logFileLoc).then(function () {
+
+                    },
+                    function (errResponse) {
+                        $scope.statusMessage = 'error setting log file: ' + errResponse;
                     });
             };
 
@@ -159,7 +170,7 @@ angular.module('activityOverview')
                         $scope.activitiesWithHeader = response.data;
                     },
                     function () {
-                        $scope.errorMessage = 'error getting activitiesWithHeader by project';
+                        $scope.statusMessage = 'error getting activitiesWithHeader by project';
                     });
             };
 
@@ -207,7 +218,7 @@ angular.module('activityOverview')
 
             $scope.removeTag = function (activityName, tagToRemove) {
                 let activity = $scope.findActivity(activityName);
-                $scope.errorMessage = "ActivityName: " + activityName + " Tag: [" + tagToRemove + "]";
+                $scope.statusMessage = "ActivityName: " + activityName + " Tag: [" + tagToRemove + "]";
                 let index = activity.tags.indexOf(tagToRemove);
                 activity.tags.splice(index, 1);
             };
@@ -216,7 +227,7 @@ angular.module('activityOverview')
                 $scope.editableActivites[name] = false;
                 let activityInMemory = $scope.findActivity(name);
                 if (activityInMemory === undefined) {
-                    $scope.errorMessage = "Activity not found!";
+                    $scope.statusMessage = "Activity not found!";
                     return;
                 }
                 let parentActivity = activityInMemory.parentActivity;
@@ -245,7 +256,7 @@ angular.module('activityOverview')
                         $scope.editableActivites[name] = "uneditable";
                     },
                     function () {
-                        $scope.errorMessage = "Error while saving activity";
+                        $scope.statusMessage = "Error while saving activity";
                     });
             };
 
@@ -290,11 +301,11 @@ angular.module('activityOverview')
                                 $scope.loadActivities();
                             },
                             function () {
-                                $scope.errorMessage = 'error deleting activitiesWithHeader';
+                                $scope.statusMessage = 'error deleting activitiesWithHeader';
                             });
                     },
                     function () {
-                        $scope.errorMessage = 'error deleting activitiesWithHeader';
+                        $scope.statusMessage = 'error deleting activitiesWithHeader';
                     });
             };
 
@@ -336,7 +347,7 @@ angular.module('activityOverview')
             };
 
             $scope.addActivity = function () {
-                $scope.errorMessage = "Saving activity";
+                $scope.statusMessage = "Saving activity";
                 let activity = {
                     name: $scope.name,
                     completed: false,
@@ -416,6 +427,36 @@ angular.module('activityOverview')
 
                 $scope.togglediv('addActivity');
             };
+
+            $scope.startTimeLog = function (activityName) {
+                let activity = $scope.findActivity(activityName);
+                $http.post('/startTimeLog', activity.id).then(function (response) {
+                        $scope.statusMessage = 'Timelogging started for activity [' + activity.name + ']';
+                        $scope.activiveTimelogging = activity.name;
+                    },
+                    function () {
+                        $scope.statusMessage = 'error starting timelogging for activity [' + activity.name + ']';
+                    });
+            }
+
+            $scope.stopTimeLog = function (activityName) {
+                let activity = $scope.findActivity(activityName);
+                $http.post('/stopTimeLog', activity.id).then(function (response) {
+                        $scope.statusMessage = 'Timelogging stopped for activity [' + activity.name + ']';
+                        $scope.activiveTimelogging = "";
+                    },
+                    function () {
+                        $scope.statusMessage = 'error stopping timelogging for activity [' + activity.name + ']';
+                    });
+            }
+
+            $scope.isTimelogActive = function (activityName) {
+                if ($scope.activiveTimelogging === activityName) {
+                    return 'active';
+                } else {
+                    return 'notActive';
+                }
+            }
 
             $scope.togglediv = function (id) {
                 let div = document.getElementById(id);

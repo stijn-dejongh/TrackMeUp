@@ -167,7 +167,7 @@ public class ActivityManager {
                 StandardCopyOption.REPLACE_EXISTING);
     }
 
-    public void updateTodoFileLocation(String location) throws IOException, ParseException {
+    public void updateFileLocation(String location) throws IOException, ParseException {
         Path filePath = Paths.get(location);
         if (filePath.toFile().exists()) {
             this.todoFile = filePath;

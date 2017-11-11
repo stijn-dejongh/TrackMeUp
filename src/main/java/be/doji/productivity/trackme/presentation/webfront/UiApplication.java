@@ -40,6 +40,7 @@ import java.util.Map;
         if (am == null) {
             this.initialize();
         }
+
         return am.getActivities();
     }
 
@@ -58,7 +59,20 @@ import java.util.Map;
         if (am == null) {
             am = new ActivityManager(location);
         }
-        am.updateTodoFileLocation(location);
+        am.updateFileLocation(location);
+        return true;
+    }
+
+    @RequestMapping(value = { "/updateLogFileLocation" }, method = {
+            RequestMethod.POST }) public @ResponseBody boolean updateLogFileLocation(@RequestBody String location)
+            throws IOException, ParseException {
+        System.out.println("Setting todo file to: " + location);
+        if (tm == null) {
+            tm = new TimeTrackingManager(location);
+        } else {
+            tm.updateFileLocation(location);
+        }
+
         return true;
     }
 

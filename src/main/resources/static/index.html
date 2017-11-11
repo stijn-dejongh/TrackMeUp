@@ -25,7 +25,7 @@
     <div ng-controller="home" ng-cloak class="ng-cloak bordered-component">
         <h2><u>Your Activities</u></h2>
         <div class="errorPanel">
-            <pre ng-show='errorMessage.length > 0' ng-model="errorMessage"> <em>{{errorMessage}}</em></pre>
+            <pre ng-show='statusMessage.length > 0' ng-model="statusMessage"> <em>{{statusMessage}}</em></pre>
         </div>
         <div id="topBar" name="topBar" ng-model="activeFilter" class="bordered-component">
             <pre id="filterDisplay" name="filterDisplay" class="filterDisplay"

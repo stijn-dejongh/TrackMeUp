@@ -30,6 +30,14 @@ public class TimeTrackingManager {
         }
     }
 
+    public void updateFileLocation(String location) throws IOException, ParseException {
+        Path filePath = Paths.get(location);
+        if (filePath.toFile().exists()) {
+            this.timelogFile = filePath;
+        }
+        this.readLogs();
+    }
+
     public ActivityLog getLogForActivityId(String activityId) {
         return getLogForActivityId(UUID.fromString(activityId));
     }
@@ -55,14 +63,16 @@ public class TimeTrackingManager {
 
     public void readLogs() throws IOException, ParseException {
         List<String> fileLines = Files.readAllLines(this.timelogFile);
+        ActivityLog readLog = null;
         for (String line : fileLines) {
-            ActivityLog readLog = null;
-            if (StringUtils.containsIgnoreCase(line, TrackMeConstants.INDICATOR_LOG_START)) {
-                readLog = new ActivityLog(getActivityIdFromLine(line));
-            } else if (StringUtils.containsIgnoreCase(line, TrackMeConstants.INDICATOR_LOG_END)) {
-                this.timelogs.add(readLog);
-            } else {
-                readLog.addLogPoint(TimeLogParser.parseToTimeLog(line));
+            if (StringUtils.isNotBlank(line)) {
+                if (StringUtils.containsIgnoreCase(line, TrackMeConstants.INDICATOR_LOG_START)) {
+                    readLog = new ActivityLog(getActivityIdFromLine(line));
+                } else if (StringUtils.containsIgnoreCase(line, TrackMeConstants.INDICATOR_LOG_END)) {
+                    this.timelogs.add(readLog);
+                } else {
+                    readLog.addLogPoint(TimeLogParser.parseToTimeLog(line));
+                }
             }
         }
     }

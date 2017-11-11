@@ -55,6 +55,6 @@ public class TimeLog {
         logPointString.append(" ");
         logPointString.append(TrackMeConstants.INDICATOR_LOGPOINT_END);
         logPointString.append(TrackMeConstants.getDateFormat().format(this.getEndTime()));
-        return "";
+        return logPointString.toString();
     }
 }

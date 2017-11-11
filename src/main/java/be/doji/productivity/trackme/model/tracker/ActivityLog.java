@@ -3,6 +3,7 @@ package be.doji.productivity.trackme.model.tracker;
 import be.doji.productivity.trackme.TrackMeConstants;
 import be.doji.productivity.trackme.model.tasks.Activity;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -13,7 +14,7 @@ import java.util.UUID;
 public class ActivityLog {
 
     private UUID activityId;
-    private List<TimeLog> logPoints;
+    private List<TimeLog> logPoints = new ArrayList<>();
 
     public ActivityLog(Activity activity) {
         this.activityId = activity.getId();
@@ -47,7 +48,7 @@ public class ActivityLog {
 
         logLine.append(System.lineSeparator());
         for (TimeLog logPoint : logPoints) {
-            logLine.append(logLine.toString());
+            logLine.append(logPoint.toString());
             logLine.append(System.lineSeparator());
         }
         logLine.append(TrackMeConstants.INDICATOR_LOG_END);
