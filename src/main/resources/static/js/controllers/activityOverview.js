@@ -1,6 +1,7 @@
 angular.module('activityOverview')
     .controller('home', function ($scope, $http) {
             $scope.activitiesWithHeader = [];
+            $scope.timelogs = [];
             $scope.activeFilter = "";
             $scope.statusMessage = "";
             $scope.hideCompleted = false;
@@ -437,7 +438,7 @@ angular.module('activityOverview')
                     function () {
                         $scope.statusMessage = 'error starting timelogging for activity [' + activity.name + ']';
                     });
-            }
+            };
 
             $scope.stopTimeLog = function (activityName) {
                 let activity = $scope.findActivity(activityName);
@@ -448,7 +449,7 @@ angular.module('activityOverview')
                     function () {
                         $scope.statusMessage = 'error stopping timelogging for activity [' + activity.name + ']';
                     });
-            }
+            };
 
             $scope.isTimelogActive = function (activityName) {
                 if ($scope.activiveTimelogging === activityName) {
@@ -456,6 +457,27 @@ angular.module('activityOverview')
                 } else {
                     return 'notActive';
                 }
+            };
+
+            $scope.loadLogs = function (activityName) {
+                let activity = $scope.findActivity(activityName);
+                $http.post('/getTimeLogForActivity', activity.id).then(function (response) {
+                        $scope.statusMessage = 'Loaded timelogging for activity [' + activity.name + ']';
+                        $scope.timelogs[activity.id] = response.data;
+                    },
+                    function () {
+                        $scope.statusMessage = 'error loading timelogging for activity [' + activity.name + ']';
+                    });
+            };
+
+            $scope.getLogs = function(activityId) {
+                if($scope.timelogs[activityId] !== undefined) {
+                    $scope.statusMessage = $scope.timelogs[activityId];
+                    return $scope.timelogs[activityId].logpoints;
+                } else {
+                    $scope.statusMessage = "No timelogs found for activity";
+                }
+
             }
 
             $scope.togglediv = function (id) {

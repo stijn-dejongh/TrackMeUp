@@ -5,4 +5,4 @@ document.writeln("<script type='text/javascript' src='js/directives/trambuAddAct
 document.writeln("<script type='text/javascript' src='js/directives/trambuDateHeader.js'></script>");
 document.writeln("<script type='text/javascript' src='js/directives/trambuFileSelector.js'></script>");
 document.writeln("<script type='text/javascript' src='js/directives/trambuActivityTopBar.js'></script>");
-
+document.writeln("<script type='text/javascript' src='js/directives/trambuActivityTimelog.js'></script>");

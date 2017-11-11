@@ -14,7 +14,7 @@ import java.util.UUID;
 public class ActivityLog {
 
     private UUID activityId;
-    private List<TimeLog> logPoints = new ArrayList<>();
+    private List<TimeLog> logpoints = new ArrayList<>();
 
     public ActivityLog(Activity activity) {
         this.activityId = activity.getId();
@@ -32,12 +32,12 @@ public class ActivityLog {
         this.activityId = activityId;
     }
 
-    public List<TimeLog> getLogPoints() {
-        return logPoints;
+    public List<TimeLog> getLogpoints() {
+        return logpoints;
     }
 
-    public void setLogPoints(List<TimeLog> logPoints) {
-        this.logPoints = logPoints;
+    public void setLogpoints(List<TimeLog> logpoints) {
+        this.logpoints = logpoints;
     }
 
     public String toString() {
@@ -47,7 +47,7 @@ public class ActivityLog {
         logLine.append(activityId.toString());
 
         logLine.append(System.lineSeparator());
-        for (TimeLog logPoint : logPoints) {
+        for (TimeLog logPoint : logpoints) {
             logLine.append(logPoint.toString());
             logLine.append(System.lineSeparator());
         }
@@ -56,7 +56,7 @@ public class ActivityLog {
     }
 
     public void addLogPoint(TimeLog timeLog) {
-        this.logPoints.add(timeLog);
+        this.logpoints.add(timeLog);
     }
 
     public void startLog() {
@@ -70,7 +70,7 @@ public class ActivityLog {
     }
 
     public Optional<TimeLog> getActiveLog() {
-        for (TimeLog log : this.logPoints) {
+        for (TimeLog log : this.logpoints) {
             if (log.isActive()) {
                 return Optional.of(log);
             }

@@ -26,12 +26,16 @@ public final class TimeLogParser {
 
         List<String> matches = TrackerUtils.findAllMatches(REGEX_START_DATETIME, line);
         if (!matches.isEmpty()) {
-            timeLog.setStartTime(TrackMeConstants.getDateFormat().parse(matches.get(0)));
+            String source = matches.get(0);
+            source = source.replace(TrackMeConstants.INDICATOR_LOGPOINT_START, "").trim();
+            timeLog.setStartTime(TrackMeConstants.getDateFormat().parse(source));
         }
 
         matches = TrackerUtils.findAllMatches(REGEX_END_DATETIME, line);
         if (!matches.isEmpty()) {
-            timeLog.setEndTime(TrackMeConstants.getDateFormat().parse(matches.get(0)));
+            String source = matches.get(0);
+            source = source.replace(TrackMeConstants.INDICATOR_LOGPOINT_END, "").trim();
+            timeLog.setEndTime(TrackMeConstants.getDateFormat().parse(source));
         }
 
         return timeLog;

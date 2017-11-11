@@ -129,6 +129,7 @@ import java.util.Map;
         System.out.println("Start timelog");
         ActivityLog timeLogForActivity = getTimeLogForActivity(activityID);
         timeLogForActivity.startLog();
+        tm.writeLogs();
     }
 
     @RequestMapping(value = { "/stopTimeLog" }, method = { RequestMethod.POST }) public void stopTimeLog(
@@ -142,6 +143,7 @@ import java.util.Map;
     @RequestMapping(value = { "/getTimeLogForActivity" }, method = {
             RequestMethod.POST }) public @ResponseBody ActivityLog getTimeLogForActivity(@RequestBody String activityId)
             throws IOException {
+        System.out.println("Loading timelog for activity");
         if (tm != null) {
             return tm.getLogForActivityId(activityId);
         } else {

@@ -85,6 +85,8 @@
                 style="margin-right: 10px;">{{project}}</button></pre>
         <br/>
         <br/>
+        <x-trambu-activity-timelog />
+        <br/>
         <div ng-switch="displaySubActivities(activity.subActivities.length)">
             <div ng-switch-when="showSubActivities" class="bordered-component">
                 Subactivities:
@@ -95,7 +97,7 @@
             </div>
             <pre ng-switch-when="noShowSubActivities"></pre>
         </div>
-
+        <br/>
         <button ng-switch-when="uneditable" type="button" class="btn btn-default" style="float: right"
                 ng-click="makeEditable(activity.name)">
             Edit
