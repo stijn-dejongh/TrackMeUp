@@ -470,14 +470,27 @@ angular.module('activityOverview')
                     });
             };
 
-            $scope.getLogs = function(activityId) {
-                if($scope.timelogs[activityId] !== undefined) {
-                    $scope.statusMessage = $scope.timelogs[activityId];
+            $scope.getLogs = function (activityId) {
+                if ($scope.timelogs[activityId] !== undefined) {
                     return $scope.timelogs[activityId].logpoints;
                 } else {
-                    $scope.statusMessage = "No timelogs found for activity";
+                    return [];
                 }
+            };
 
+            $scope.getTimeSpentInHours = function (activityId) {
+                let logpoints = $scope.getLogs(activityId);
+                let timePassed = 0;
+                for (let iterator in logpoints) {
+                    let log = logpoints[iterator];
+                    if (log.active) {
+                        timePassed = timePassed + (new Date().getTime() - log.startTime);
+                    } else {
+                        timePassed = timePassed + (log.endTime - log.startTime);
+                    }
+                }
+                let hoursPassed = timePassed / 3600000;
+                return Math.round(hoursPassed * 100) / 100;
             }
 
             $scope.togglediv = function (id) {

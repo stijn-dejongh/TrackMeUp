@@ -8,4 +8,7 @@
     <div x-ng-repeat="timelog in getLogs(activity.id)" class="timelogEntry">
         <pre>Entry: {{timelog.startTime | date:'medium' }} untill {{timelog.endTime | date:'medium' }}</pre>
     </div>
+    <div class="timeSpentOnAcitvity">
+        <pre>Hours spent on activity: {{getTimeSpentInHours(activity.id)}}</pre>
+    </div>
 </div>

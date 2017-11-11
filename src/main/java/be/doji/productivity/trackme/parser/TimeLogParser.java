@@ -29,6 +29,7 @@ public final class TimeLogParser {
             String source = matches.get(0);
             source = source.replace(TrackMeConstants.INDICATOR_LOGPOINT_START, "").trim();
             timeLog.setStartTime(TrackMeConstants.getDateFormat().parse(source));
+            timeLog.setActive(true);
         }
 
         matches = TrackerUtils.findAllMatches(REGEX_END_DATETIME, line);
@@ -36,6 +37,7 @@ public final class TimeLogParser {
             String source = matches.get(0);
             source = source.replace(TrackMeConstants.INDICATOR_LOGPOINT_END, "").trim();
             timeLog.setEndTime(TrackMeConstants.getDateFormat().parse(source));
+            timeLog.setActive(false);
         }
 
         return timeLog;
