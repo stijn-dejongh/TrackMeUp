@@ -45,4 +45,8 @@ public class TrambuApplication extends Application {
     public void start(Stage primaryStage) throws Exception {
 
     }
+
+    public static void main(String[] args) {
+        Application.launch(TrambuApplication.class);
+    }
 }
