@@ -1,5 +1,6 @@
 package be.doji.productivity.trambuweb.presentation.webfront;
 
+import be.doji.productivity.trackme.TrackMeConstants;
 import be.doji.productivity.trackme.managers.ActivityManager;
 import be.doji.productivity.trackme.managers.TimeTrackingManager;
 import be.doji.productivity.trackme.model.tasks.Activity;
@@ -19,19 +20,16 @@ import java.util.Map;
  * Created by Doji on 23/10/2017.
  */
 @SpringBootApplication @RestController @JsonIgnoreProperties(ignoreUnknown = true) public class UiApplication {
-
-    private static final String TODO_FILE_LOCATION = "data/todo.txt";
-    private static final String TIMELOG_FILE_LOCATION = "data/timelog.txt";
     private ActivityManager am;
     private TimeTrackingManager tm;
 
     @RequestMapping("/initialize") public void initialize() throws IOException, ParseException {
         if (am == null) {
-            am = new ActivityManager(TODO_FILE_LOCATION);
+            am = new ActivityManager(TrackMeConstants.DEFAULT_TODO_FILE_LOCATION);
             am.readActivitiesFromFile();
         }
         if (tm == null) {
-            tm = new TimeTrackingManager(TIMELOG_FILE_LOCATION);
+            tm = new TimeTrackingManager(TrackMeConstants.DEFAULT_TIMELOG_FILE_LOCATION);
             tm.readLogs();
         }
     }

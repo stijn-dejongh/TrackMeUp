@@ -16,6 +16,9 @@ public final class TrackMeConstants {
     private TrackMeConstants() {
     }
 
+    public static final String DEFAULT_TODO_FILE_LOCATION = "data/todo.txt";
+    public static final String DEFAULT_TIMELOG_FILE_LOCATION = "data/timelog.txt";
+
     public static final String DATA_DATE_FORMAT = "yyyy-MM-dd:HH:mm:ss.SSS";
     public static final Duration DEFAULT_WARNING_PERIOD = Duration.ofDays(1);
     public static final Date DEFAULT_DATE_HEADER = new Date(3550, 12, 31);

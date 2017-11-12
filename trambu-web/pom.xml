@@ -68,7 +68,7 @@
     </dependencies>
 
     <build>
-        <finalName>TraMBU-v${project.version}</finalName>
+        <finalName>TraMBU-web-v${project.version}</finalName>
         <resources>
             <resource>
                 <directory>${project.basedir}/src/main/resources</directory>
