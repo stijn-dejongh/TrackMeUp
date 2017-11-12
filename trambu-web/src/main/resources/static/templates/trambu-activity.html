@@ -1,0 +1,115 @@
+<div x-uib-accordion-group class="{{getPanelStyle(activity.name)}}"
+     is-open="openHeaders[activity.name]" ng-switch="getEditMode(activity.name)">
+    <div x-uib-accordion-heading>
+        <div style="{{getHeaderTemplate(activity.completed)}}">
+            <i class="{{getDone(activity.completed)}}" aria-hidden="true" style="float: left;"></i>
+            <div class="indent"></div>
+            {{activity.name}}
+
+            <div class="indent"></div>
+            <i class="pull-right glyphicon"
+               ng-class="{'glyphicon-chevron-down': openHeaders[activity.name], 'glyphicon-chevron-right': !openHeaders[activity.name]}"></i>
+        </div>
+    </div>
+    <div class="bordered-activity">
+        <button type="button" class="btn btn-primary" x-ng-model="activity.completed" x-uib-btn-checkbox
+                x-btn-checkbox-true="true" x-btn-checkbox-false="false"
+                x-ng-click="save(activity.name)">
+            {{getTodoToggleText(activity.completed)}}
+        </button>
+        <div class="trackingControls" x-ng-switch="isTimelogActive(activity.name)">
+            <button ng-switch-when="notActive" type="button" class="btn btn-success"
+                    ng-click="startTimeLog(activity.name)">
+                Start timer
+            </button>
+            <button ng-switch-when="active" type="button" class="btn btn-danger"
+                    ng-click="stopTimeLog(activity.name)">
+                Start timer
+            </button>
+        </div>
+        <br/><br/>
+
+        <pre ng-switch-when="editable"> Priority level is: <span><select ng-model="activity.priority"
+                                                                         ng-options="y for (x, y) in priorities"></select></span></pre>
+        <pre ng-show='activity.priority.length > 0'
+             ng-switch-when="uneditable"> Priority level is: <span><em>{{activity.priority}}</em></span></pre>
+        <br/>
+
+
+        <div ng-switch-when="editable">
+            Deadline:
+            <div class="input-group" style="width: 355px">
+                <input type="text" class="form-control" x-uib-datepicker-popup
+                       ng-model="activity.deadline"
+                       placeholder="Activity deadline"
+                       is-open="popup3.opened" datepicker-options="dateOptions"
+                       close-text="Close"/>
+                <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-click="open3()"><i
+                                    class="glyphicon glyphicon-calendar"></i></button>
+                            </span>
+
+            </div>
+            <div uib-timepicker ng-model="activity.deadline" hour-step="1" minute-step="1"
+                 show-meridian="false"
+                 value="12:00:00" style="width: 125px;">
+            </div>
+        </div>
+        <pre ng-show='activity.deadline'>Deadline is: <em>{{activity.deadline | date:'medium' }}</em></pre>
+
+        <pre ng-show='activity.tags.length > 0' ng-switch-when="uneditable">Tagged as: <button
+                type="button"
+                class="btn btn-sm btn-info"
+                ng-repeat="tag in activity.tags"
+                ng-click="loadActivtiesByTag(tag)"
+                style="margin-right: 10px;">{{tag}}</button></pre>
+        <pre ng-show='activity.tags.length > 0' ng-switch-when="editable">Tagged as: <button
+                type="button"
+                class="btn btn-sm btn-danger"
+                ng-repeat="tag in activity.tags"
+                ng-click="removeTag(activity.name, tag)"
+                style="margin-right: 10px;">{{tag}}</button></pre>
+
+
+        <pre ng-show='activity.projects.length > 0' ng-switch-when="uneditable">Activity contained in projects: <button
+                type="button"
+                class="btn btn-sm btn-success"
+                ng-repeat="project in activity.projects"
+                ng-click="loadActivtiesByProject(project)"
+                style="margin-right: 10px;">{{project}}</button></pre>
+        <pre ng-show='activity.projects.length > 0' ng-switch-when="editable">Activity contained in projects: <button
+                type="button"
+                class="btn btn-sm btn-danger"
+                ng-repeat="project in activity.projects"
+                ng-click="removeProject(activity.name, project)"
+                style="margin-right: 10px;">{{project}}</button></pre>
+        <br/>
+        <br/>
+        <x-trambu-activity-timelog />
+        <br/>
+        <div ng-switch="displaySubActivities(activity.subActivities.length)">
+            <div ng-switch-when="showSubActivities" class="bordered-component">
+                Subactivities:
+                <br/>
+                <div x-trambu-activity ng-repeat="activity in activity.subActivities"
+                     ng-show="!(activity.completed && getHideCompleted())">
+                </div>
+            </div>
+            <pre ng-switch-when="noShowSubActivities"></pre>
+        </div>
+        <br/>
+        <button ng-switch-when="uneditable" type="button" class="btn btn-default" style="float: right"
+                ng-click="makeEditable(activity.name)">
+            Edit
+        </button>
+        <button ng-switch-when="editable" type="button" class="btn btn-success" style="float: right"
+                ng-click="save(activity.name)">
+            Save changes
+        </button>
+        <button type="button" class="btn btn-danger" style="float: right"
+                ng-click="delete(activity.name)">
+            Delete
+        </button>
+    </div>
+</div>
+<br/>

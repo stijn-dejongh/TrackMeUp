@@ -1,0 +1,7 @@
+X (A) Create angular GUI for TraMBU +TraMBU @imnu @Programming @Java @lookMom @Angular 
+(A) Make activities editable +TraMBU @Programming @Java @Angular @UX 
+X (B) Replace datepicker with DateTimePicker +TraMBU @Java @Programming @Functionality 
+(B) Add weekly calendar view +TraMBU @Programming @Java @Angular 
+X (B) Project view +TraMBU @Programming @Java @Angular 
+(B) Add User management +TraMBU @Programming @Java @Angular @UX 
+X (C) Write my own todo.txt webapp +imnu +java +programming @development 

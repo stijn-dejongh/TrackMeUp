@@ -1,0 +1,71 @@
+<form role="form" ng-submit="addActivity()" class="addActivity">
+    <div class="form-group bordered">
+        <h4>Add a new activity</h4>
+        <div>
+            <input type="text" class="form-control" name="name"
+                   ng-model="name" placeholder="Activity Name"/>
+        </div>
+        <br/>
+        <div>
+            <label>Priority:</label>
+            <select ng-model="selectedPriority" name="selectedPriority"
+                    ng-options="y for (x, y) in priorities">
+            </select>
+        </div>
+        <br/>
+        <div>
+            <input type="text" class="form-control" name="tags"
+                   ng-model="tags" placeholder="Tags (comma separated)" ng-required="false"/>
+        </div>
+        <br/>
+        <div>
+            <input type="text" class="form-control" name="projects"
+                   ng-model="projects" placeholder="Projects (comma separated):" ng-required="false"/>
+        </div>
+        <br/>
+        <div class="bordered">
+            <label>Deadline</label><br/>
+            <div class="input-group">
+                <input type="text" class="form-control" uib-datepicker-popup ng-model="deadline"
+                       placeholder="Activity deadline"
+                       is-open="popup2.opened" datepicker-options="dateOptions"
+                       close-text="Close"/>
+                <span class="input-group-btn">
+                            <button type="button" class="btn btn-default" ng-click="open2()"><i
+                                    class="glyphicon glyphicon-calendar"></i></button>
+                            </span>
+
+            </div>
+            <div uib-timepicker ng-model="deadline" hour-step="1" minute-step="1" show-meridian="false"
+                 value="12:00:00" style="width: 125px;">
+            </div>
+        </div>
+        <br/>
+        <div class="bordered">
+            <label>Warning offset</label><br/>
+            <div class="input-group">
+                <input type="number" ng-pattern="/[0-9]+/" class="form-control" name="warningHours"
+                       ng-model="warningHours" ng-required="false"
+                       style="width: 105px"/>
+                <input type="number" ng-pattern="/[0-9]+/" class="form-control" name="warningMinutes"
+                       ng-model="warningMinutes" ng-required="false"
+                       style="width: 105px"/>
+                <input type="number" ng-pattern="/[0-9]+/" class="form-control" name="warningSeconds"
+                       ng-model="warningSeconds" ng-required="false"
+                       style="width: 105px"/>
+            </div>
+        </div>
+        <br/>
+        <div>
+            <input type="text" class="form-control" name="selectedParent"
+                   ng-model="selectedParent" placeholder="Parent activity name" ng-required="false"/>
+        </div>
+    </div>
+    <br/>
+    <div class="form-group">
+        <div style="padding-left:110px">
+            <input type="submit" value="Submit" class="btn btn-primary"/> <br/><br/>
+            <input type='reset' value='Reset' class="btn btn-primary" ng-click="resetDeadline()"/>
+        </div>
+    </div>
+</form>

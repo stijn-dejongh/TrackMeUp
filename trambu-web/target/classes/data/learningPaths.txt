@@ -1,0 +1,1 @@
+(A) 2017-10-21:14:13:0000 SkillName @Tag1 @Tag2 +LearningPath level:0
