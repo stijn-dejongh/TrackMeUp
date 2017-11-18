@@ -93,7 +93,7 @@ public class ActivityParserTest {
         Activity activity = ActivityParser.mapStringToActivity(ActivityTestData.SUB_ACTIVITY_ONE);
         Assert.assertNotNull(activity);
         Assert.assertNotNull(activity.getParentActivity());
-        Assert.assertEquals("Implement new project", activity.getParentActivity());
+        Assert.assertEquals("283b6271-b513-4e89-b757-10e98c9078ea", activity.getParentActivity());
         Assert.assertEquals("Set up IDE", activity.getName());
     }
 
