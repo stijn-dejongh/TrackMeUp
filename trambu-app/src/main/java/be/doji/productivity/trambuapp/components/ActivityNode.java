@@ -5,9 +5,8 @@ import be.doji.productivity.trackme.model.tasks.Activity;
 import be.doji.productivity.trackme.model.tracker.ActivityLog;
 import be.doji.productivity.trackme.model.tracker.TimeLog;
 import be.doji.productivity.trambuapp.presentation.TrambuApplication;
-import be.doji.productivity.trambuapp.presentation.util.DisplayUtils;
+import be.doji.productivity.trambuapp.utils.DisplayUtils;
 import be.doji.productivity.trambuapp.utils.TrambuApplicationConstants;
-import de.jensd.fx.glyphs.GlyphsStyle;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.collections.FXCollections;
@@ -25,6 +24,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -32,10 +32,13 @@ import java.util.stream.Collectors;
 
 public class ActivityNode extends TitledPane {
 
+    private static final String FIELD_SEPERATOR = ",";
     private TrambuApplication application;
     private boolean isEditable = false;
     private Activity activity;
     private TextField nameField;
+    private TextField projectsField;
+    private TextField tagsField;
 
     public ActivityNode(Activity activity, TrambuApplication trambuApplication) {
         super();
@@ -47,8 +50,7 @@ public class ActivityNode extends TitledPane {
         checkedCalendar.setGlyphStyle(TrambuApplicationConstants.GLYPH_DEFAULT_STYLE);
         FontAwesomeIconView uncheckedCalendar = new FontAwesomeIconView(FontAwesomeIcon.CALENDAR_ALT);
         uncheckedCalendar.setGlyphStyle(TrambuApplicationConstants.GLYPH_DEFAULT_STYLE);
-        titleLabel.setGraphic(activity.isCompleted()?checkedCalendar:
-                uncheckedCalendar);
+        titleLabel.setGraphic(activity.isCompleted()?checkedCalendar:uncheckedCalendar);
         titleLabel.getStyleClass().clear();
         titleLabel.getStyleClass().add("icon-button");
         this.setGraphic(titleLabel);
@@ -79,38 +81,28 @@ public class ActivityNode extends TitledPane {
             content.add(createDeadline(), 1, rowIndex++);
         }
 
-        HBox tags = new HBox(5);
-        tags.getChildren().addAll(activity.getTags().stream().map(tag -> {
-            Button button = new Button(tag);
-            button.setOnAction(e -> {
-                application.setTagFilter(tag);
-                application.updateActivities();
-            });
-            return button;
-        }).collect(Collectors.toList()));
         content.add(new Label("Tags: "), 0, rowIndex);
-        content.add(tags, 1, rowIndex++);
+        content.add(createTags(), 1, rowIndex++);
 
-        HBox projecs = new HBox();
-        projecs.getChildren().addAll(activity.getProjects().stream().map(project -> {
-            Button button = new Button(project);
-            button.setOnAction(e -> {
-                application.setProjectFilter(project);
-                application.updateActivities();
-            });
-            return button;
-        }).collect(Collectors.toList()));
         content.add(new Label("Projects: "), 0, rowIndex);
-        content.add(projecs, 1, rowIndex++);
+        content.add(createProjects(), 1, rowIndex++);
 
         content.add(createLogPoints(), 0, rowIndex++, 2, 1);
+
+        if (isEditable) {
+            Label parentTitle = new Label("Select parent: ");
+            parentTitle.getStyleClass().clear();
+            parentTitle.getStyleClass().add("separator-label");
+            content.add(parentTitle, 0, rowIndex++);
+            content.add(createParentSelector(), 0, rowIndex++, 2, 1);
+        }
 
         if (!activity.getSubActivities().isEmpty()) {
             Label subActivityTitle = new Label("Subactivities: ");
             subActivityTitle.getStyleClass().clear();
             subActivityTitle.getStyleClass().add("separator-label");
             content.add(subActivityTitle, 0, rowIndex++);
-            content.add(createSubActivities(), 0, rowIndex++, 2, 1);
+            content.add(createSubActivities(), 0, rowIndex, 2, 1);
         }
 
         content.setVisible(true);
@@ -126,9 +118,11 @@ public class ActivityNode extends TitledPane {
     private Node createActvityControls() {
         GridPane content = new GridPane();
         content.setVgap(4);
+        content.setHgap(4);
         content.setPadding(new Insets(5, 5, 5, 5));
         content.add(createDoneButton(), 0, 0);
         content.add(createEditButton(), 1, 0);
+        content.add(createDeleteButton(), 2, 0);
         return content;
     }
 
@@ -160,7 +154,7 @@ public class ActivityNode extends TitledPane {
         }
     }
 
-    LocalDate datePickerDate;
+    private LocalDate datePickerDate;
 
     private Node createEditableDeadline() {
         HBox deadlinePicker = new HBox();
@@ -185,6 +179,63 @@ public class ActivityNode extends TitledPane {
         return deadlineLabel;
     }
 
+    private Node createTags() {
+        if (isEditable) {
+            return createEditableTags();
+        } else {
+            return createUneditableTags();
+        }
+    }
+
+    private Node createEditableTags() {
+        Optional<String> reducedTags = activity.getTags().stream().reduce((s, s2) -> s + FIELD_SEPERATOR + " " + s2);
+        tagsField = new TextField();
+        reducedTags.ifPresent(s -> tagsField.setText(s));
+        return tagsField;
+    }
+
+    private HBox createUneditableTags() {
+        HBox tags = new HBox(5);
+        tags.getChildren().addAll(activity.getTags().stream().map(tag -> {
+            Button button = new Button(tag);
+            button.setOnAction(e -> {
+                application.setTagFilter(tag);
+                application.updateActivities();
+            });
+            return button;
+        }).collect(Collectors.toList()));
+        return tags;
+    }
+
+    private Node createProjects() {
+        if (isEditable) {
+            return createEditableProjects();
+        } else {
+            return createUneditableProjects();
+        }
+    }
+
+    private Node createEditableProjects() {
+        Optional<String> reducedProjects = activity.getProjects().stream()
+                .reduce((s, s2) -> s + FIELD_SEPERATOR + " " + s2);
+        projectsField = new TextField();
+        reducedProjects.ifPresent(s -> projectsField.setText(s));
+        return projectsField;
+    }
+
+    private HBox createUneditableProjects() {
+        HBox projecs = new HBox();
+        projecs.getChildren().addAll(activity.getProjects().stream().map(project -> {
+            Button button = new Button(project);
+            button.setOnAction(e -> {
+                application.setProjectFilter(project);
+                application.updateActivities();
+            });
+            return button;
+        }).collect(Collectors.toList()));
+        return projecs;
+    }
+
     private GridPane createLogPoints() {
         ActivityLog activityLog = application.getTimeTrackingManager().getLogForActivityId(activity.getId());
         List<TimeLog> logpoints = activityLog.getLogpoints();
@@ -204,8 +255,21 @@ public class ActivityNode extends TitledPane {
         }
 
         logpointGrid.add(new Label("Time spent on activity: "), 0, logRowIndex);
-        logpointGrid.add(new Label(activityLog.getTimeSpent()), 1, logRowIndex++);
+        logpointGrid.add(new Label(activityLog.getTimeSpent()), 1, logRowIndex);
         return logpointGrid;
+    }
+
+    private Node createParentSelector() {
+        ObservableList<String> options = FXCollections
+                .observableArrayList(application.getActivityManager().getAllActivityNames());
+        final ComboBox<String> parent = new ComboBox<>(options);
+        parent.valueProperty().addListener((ov, t, t1) -> {
+            Optional<Activity> savedParent = application.getActivityManager().getSavedActivityByName(t1);
+            if (savedParent.isPresent()) {
+                application.getActivityManager().addActivityAsSub(activity, savedParent.get());
+            }
+        });
+        return parent;
     }
 
     private Node createSubActivities() {
@@ -220,8 +284,29 @@ public class ActivityNode extends TitledPane {
                 .collect(Collectors.toList());
     }
 
+    private Button createDoneButton() {
+        Button done = new Button(DisplayUtils.getDoneButtonText(activity));
+        FontAwesomeIconView doneIcon = new FontAwesomeIconView(FontAwesomeIcon.REFRESH);
+        doneIcon.setGlyphStyle(TrambuApplicationConstants.GLYPH_DEFAULT_STYLE);
+        done.setGraphic(doneIcon);
+        done.setOnAction(event -> {
+            try {
+                this.activity.setCompleted(!activity.isCompleted());
+                done.setText(DisplayUtils.getDoneButtonText(activity));
+                save();
+            } catch (IOException | ParseException e) {
+                System.out.println("Error while saving activity: " + e.getMessage());
+            }
+        });
+
+        return done;
+    }
+
     private Button createEditButton() {
         Button edit = new Button(getEditButonText());
+        FontAwesomeIconView editIcon = new FontAwesomeIconView(FontAwesomeIcon.EDIT);
+        editIcon.setGlyphStyle(TrambuApplicationConstants.GLYPH_DEFAULT_STYLE);
+        edit.setGraphic(editIcon);
         edit.setOnAction(event -> {
             try {
                 if (isEditable) {
@@ -241,26 +326,63 @@ public class ActivityNode extends TitledPane {
         return edit;
     }
 
-    private Button createDoneButton() {
-        Button done = new Button(DisplayUtils.getDoneButtonText(activity));
-        done.setOnAction(event -> {
+    private Node createDeleteButton() {
+        Button delete = new Button("Delete");
+        FontAwesomeIconView removeIcon = new FontAwesomeIconView(FontAwesomeIcon.REMOVE);
+        removeIcon.setGlyphStyle(TrambuApplicationConstants.GLYPH_DEFAULT_STYLE);
+        delete.setGraphic(removeIcon);
+        delete.setOnAction(event -> {
             try {
                 this.activity.setCompleted(!activity.isCompleted());
-                done.setText(DisplayUtils.getDoneButtonText(activity));
-                save();
+                application.getActivityManager().delete(this.activity);
+                application.updateActivities();
             } catch (IOException | ParseException e) {
                 System.out.println("Error while saving activity: " + e.getMessage());
             }
         });
-        return done;
+        delete.getStyleClass().clear();
+        delete.getStyleClass().add("error-button");
+        return delete;
     }
 
     private void save() throws IOException, ParseException {
+        updateActivityFields();
+        application.getActivityManager().save(getActivityToSave());
+        application.updateActivities();
+    }
+
+    private void updateActivityFields() {
         if (nameField != null) {
             activity.setName(nameField.getText());
         }
-        application.getActivityManager().save(getActivityToSave());
-        application.updateActivities();
+        updateActivityProjects();
+        updateActivityTags();
+
+    }
+
+    private void updateActivityProjects() {
+        if (projectsField != null && StringUtils.isNotBlank(projectsField.getText())) {
+            String conctatenatedProjects = projectsField.getText();
+            List<String> newProjects = splitTextFieldValueOnSeperator(conctatenatedProjects, FIELD_SEPERATOR);
+            activity.setProjects(newProjects);
+        }
+    }
+
+    private void updateActivityTags() {
+        if (tagsField != null && StringUtils.isNotBlank(tagsField.getText())) {
+            String conctatenatedProjects = tagsField.getText();
+            List<String> newTags = splitTextFieldValueOnSeperator(conctatenatedProjects, FIELD_SEPERATOR);
+            activity.setTags(newTags);
+        }
+    }
+
+    private List<String> splitTextFieldValueOnSeperator(String conctatenatedProjects, String seperator) {
+        List<String> newTags = new ArrayList<>();
+        String[] split = conctatenatedProjects.split(seperator);
+        for (String aSplit : split) {
+            newTags.add(aSplit.trim());
+        }
+        return newTags;
     }
 
     private Activity getActivityToSave() {
@@ -283,11 +405,12 @@ public class ActivityNode extends TitledPane {
         this.isEditable = false;
     }
 
-    public String getEditButonText() {
+    private String getEditButonText() {
         return this.isEditable?"Save":"Edit";
     }
 
     public Activity getActivity() {
         return activity;
     }
+
 }

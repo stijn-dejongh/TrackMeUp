@@ -6,7 +6,7 @@ import be.doji.productivity.trackme.managers.TimeTrackingManager;
 import be.doji.productivity.trackme.model.tasks.Activity;
 import be.doji.productivity.trambuapp.components.ActivityNode;
 import be.doji.productivity.trambuapp.exception.InitialisationException;
-import be.doji.productivity.trambuapp.presentation.util.DisplayUtils;
+import be.doji.productivity.trambuapp.utils.DisplayUtils;
 import be.doji.productivity.trambuapp.utils.TrambuApplicationConstants;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
@@ -48,6 +48,17 @@ public class TrambuApplication extends Application {
     private boolean filterDone = false;
     private Label activeFilter;
 
+    public static void main(String[] args) {
+        Application.launch(TrambuApplication.class);
+    }
+
+    @Override public void start(Stage primaryStage) throws Exception {
+        initialize();
+        primaryStage = createPrimaryStage();
+        this.primaryStage = primaryStage;
+        primaryStage.show();
+    }
+
     private void initialize() throws InitialisationException {
         try {
             initializeActivities(TrackMeConstants.DEFAULT_TODO_FILE_LOCATION);
@@ -70,14 +81,6 @@ public class TrambuApplication extends Application {
             this.timeTrackingManager = new TimeTrackingManager(fileLocation);
             timeTrackingManager.readLogs();
         }
-    }
-
-    @Override public void start(Stage primaryStage) throws Exception {
-        initialize();
-        primaryStage = createPrimaryStage();
-        this.primaryStage = primaryStage;
-        primaryStage.show();
-
     }
 
     private Stage createPrimaryStage() {
@@ -278,10 +281,6 @@ public class TrambuApplication extends Application {
         headerPane.setCollapsible(false);
         headerPane.setStyle("-fx-start-margin: 15px;");
         return headerPane;
-    }
-
-    public static void main(String[] args) {
-        Application.launch(TrambuApplication.class);
     }
 
     public ActivityManager getActivityManager() {

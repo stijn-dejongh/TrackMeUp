@@ -1,4 +1,4 @@
-package be.doji.productivity.trambuapp.presentation.util;
+package be.doji.productivity.trambuapp.utils;
 
 import be.doji.productivity.trackme.model.tasks.Activity;
 

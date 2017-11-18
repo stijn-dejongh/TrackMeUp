@@ -102,6 +102,65 @@ public class ActivityManagerTest {
         Files.delete(tempFilePath);
     }
 
+    @Test public void testManageDeleteSubProjects() throws IOException, ParseException {
+        Path tempFilePath = createTempFile();
+        ActivityManager am = new ActivityManager(tempFilePath.toString());
+        am.addActivity(ActivityTestData.SUPER_ACTIVITY);
+        am.addActivity(ActivityTestData.SUB_ACTIVITY_ONE);
+        am.addActivity(ActivityTestData.SUB_ACTIVITY_TWO);
+        List<Activity> savedActivities = am.getActivities();
+        Assert.assertNotNull(savedActivities);
+        Assert.assertEquals(1, savedActivities.size());
+        Activity superActivity = savedActivities.get(0);
+        Assert.assertEquals("Implement new project", superActivity.getName());
+        List<Activity> subActivities = superActivity.getSubActivities();
+        Assert.assertNotNull(subActivities);
+        Assert.assertEquals(2, subActivities.size());
+        Assert.assertEquals("Set up IDE", subActivities.get(0).getName());
+        Activity subActivity = subActivities.get(1);
+        Assert.assertEquals("Read analisis", subActivity.getName());
+
+        am.delete(subActivity);
+
+        savedActivities = am.getActivities();
+        Assert.assertNotNull(savedActivities);
+        Assert.assertEquals(1, savedActivities.size());
+        superActivity = savedActivities.get(0);
+        Assert.assertEquals("Implement new project", superActivity.getName());
+        subActivities = superActivity.getSubActivities();
+        Assert.assertNotNull(subActivities);
+        Assert.assertEquals(1, subActivities.size());
+        Assert.assertEquals("Set up IDE", subActivities.get(0).getName());
+
+        Files.delete(tempFilePath);
+    }
+
+    @Test public void testAddSubProjectsToProject() throws IOException, ParseException {
+        Path tempFilePath = createTempFile();
+        ActivityManager am = new ActivityManager(tempFilePath.toString());
+        am.addActivity(ActivityTestData.SUPER_ACTIVITY);
+        am.addActivity(ActivityTestData.NO_PREFIX_DATA_LINE);
+        List<Activity> savedActivities = am.getActivities();
+        Assert.assertNotNull(savedActivities);
+        Assert.assertEquals(2, savedActivities.size());
+        Activity superActivity = savedActivities.get(0);
+        Assert.assertEquals("Implement new project", superActivity.getName());
+        Activity toBeSub = savedActivities.get(1);
+        Assert.assertEquals("Write my own todo.txt webapp", toBeSub.getName());
+
+        am.addActivityAsSub(toBeSub, superActivity);
+
+        savedActivities = am.getActivities();
+        Assert.assertEquals(1, savedActivities.size());
+        superActivity = savedActivities.get(0);
+        Assert.assertEquals("Implement new project", superActivity.getName());
+        List<Activity> subActivities = superActivity.getSubActivities();
+        Assert.assertFalse(subActivities.isEmpty());
+        Assert.assertEquals("Write my own todo.txt webapp", subActivities.get(0).getName());
+
+        Files.delete(tempFilePath);
+    }
+
     private Path createTempFile() throws IOException {
         Path directoryPath = Paths.get(FileUtils.getTestPath(DATA_TEST_ONE_TASK_TXT)).getParent();
         return Files.createTempFile(directoryPath, "temp", "txt");

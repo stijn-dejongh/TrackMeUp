@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.text.ParseException;
 import java.util.*;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 /**
@@ -104,17 +105,22 @@ public class ActivityManager {
     }
 
     public Optional<Activity> getSavedActivityById(String id) {
-        return findActivityInList(id, this.activities);
+        return findActivityInList(id, this.activities, ((activity, s) -> activity.getId().equals(UUID.fromString(id))));
     }
 
-    private Optional<Activity> findActivityInList(String id, List<Activity> activities) {
+    public Optional<Activity> getSavedActivityByName(String name) {
+        return findActivityInList(name, this.activities, ((activity, s) -> StringUtils.equals(activity.getName(), s)));
+    }
+
+    private Optional<Activity> findActivityInList(String name, List<Activity> activities,
+            BiFunction<Activity, String, Boolean> comparator) {
         for (Activity savedActivity : activities) {
-            Optional<Activity> foundSub = findActivityInList(id, savedActivity.getSubActivities());
+            Optional<Activity> foundSub = findActivityInList(name, savedActivity.getSubActivities(), comparator);
             if (foundSub.isPresent()) {
                 return foundSub;
             }
 
-            if (savedActivity.getId().equals(UUID.fromString(id))) {
+            if (comparator.apply(savedActivity, name)) {
                 return Optional.of(savedActivity);
             }
         }
@@ -206,5 +212,28 @@ public class ActivityManager {
             }
         }
         return activitiesWithDateHeader;
+    }
+
+    public void addActivityAsSub(Activity toBeSub, Activity superActivity) {
+        Optional<Activity> savedToBeSub = getSavedActivityById(toBeSub.getId().toString());
+        Optional<Activity> savedToBeSuper = getSavedActivityById(superActivity.getId().toString());
+        if (savedToBeSuper.isPresent() && savedToBeSub.isPresent()) {
+            savedToBeSub.get().setParentActivity(savedToBeSuper.get().getId().toString());
+            savedToBeSuper.get().addSubTask(savedToBeSub.get());
+            this.activities.remove(savedToBeSub.get());
+        }
+    }
+
+    public List<String> getAllActivityNames() {
+        return getRecursiveActivityNames(this.activities);
+    }
+
+    private List<String> getRecursiveActivityNames(List<Activity> activities) {
+        ArrayList<String> names = new ArrayList<>();
+        for (Activity activity : activities) {
+            names.addAll(getRecursiveActivityNames(activity.getSubActivities()));
+            names.add(activity.getName());
+        }
+        return names;
     }
 }
