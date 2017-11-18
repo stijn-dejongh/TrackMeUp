@@ -103,7 +103,8 @@ public class TrambuApplication extends Application {
 
     private Accordion createActivityAccordeon() {
         activityAcordeon = new Accordion();
-        activityAcordeon.getPanes().addAll(createActivityNodes(activityManager.getActivitiesWithDateHeader()));
+        List<TitledPane> activityNodes = createActivityNodes(activityManager.getActivitiesWithDateHeader());
+        activityAcordeon.getPanes().addAll(activityNodes);
         return activityAcordeon;
     }
 
@@ -272,7 +273,7 @@ public class TrambuApplication extends Application {
         return timeTrackingManager;
     }
 
-    public String getTagFilter() {
+    private String getTagFilter() {
         return tagFilter;
     }
 
@@ -282,7 +283,7 @@ public class TrambuApplication extends Application {
         this.updateFilterLabel();
     }
 
-    public String getProjectFilter() {
+    private String getProjectFilter() {
         return projectFilter;
     }
 
@@ -303,7 +304,7 @@ public class TrambuApplication extends Application {
         activeFilter.setText(getActiveFilter());
     }
 
-    public String getActiveFilter() {
+    private String getActiveFilter() {
         return StringUtils.isNotBlank(tagFilter)?
                 tagFilter:
                 StringUtils.isNotBlank(projectFilter)?

@@ -2,7 +2,9 @@ package be.doji.productivity.trackme;
 
 import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -40,5 +42,11 @@ public final class TrackMeConstants {
 
     public static SimpleDateFormat getDateFormat() {
         return new SimpleDateFormat(DATA_DATE_FORMAT, Locale.FRANCE);
+    }
+
+    public static List<String> getPriorityList() {
+        String[] priorities = { "A", "B", "C", "D", "E", "F", "G", "H" };
+        List<String> priorityList = Arrays.asList(priorities);
+        return priorityList;
     }
 }

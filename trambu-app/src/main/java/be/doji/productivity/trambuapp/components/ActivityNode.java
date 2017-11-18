@@ -8,10 +8,11 @@ import be.doji.productivity.trambuapp.presentation.TrambuApplication;
 import be.doji.productivity.trambuapp.presentation.util.DisplayUtils;
 import de.jensd.fx.fontawesome.AwesomeDude;
 import de.jensd.fx.fontawesome.AwesomeIcon;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TitledPane;
+import javafx.scene.Node;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 
@@ -19,15 +20,21 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class ActivityNode extends TitledPane {
 
     private TrambuApplication application;
+    private boolean isEditable = false;
+    private Activity activity;
 
     public ActivityNode(Activity activity, TrambuApplication trambuApplication) {
         super();
+        this.activity = activity;
         this.application = trambuApplication;
         this.setText(activity.getName());
         Button titleLabel = AwesomeDude
@@ -37,40 +44,25 @@ public class ActivityNode extends TitledPane {
         this.setGraphic(titleLabel);
         this.getStyleClass().clear();
         this.getStyleClass().add(activity.isCompleted()?"done":activity.isAlertActive()?"alert":"todo");
-        this.setContent(createActivityContent(activity));
+        this.setContent(createActivityContent());
         this.setVisible(true);
     }
 
-    private GridPane createActivityContent(Activity activity) {
+    private GridPane createActivityContent() {
         GridPane content = new GridPane();
         content.setVgap(4);
         content.setPadding(new Insets(5, 5, 5, 5));
         int rowIndex = 0;
 
-        Button done = new Button(DisplayUtils.getDoneButtonText(activity));
-        done.setOnAction(event -> {
-            try {
-                activity.setCompleted(!activity.isCompleted());
-                done.setText(DisplayUtils.getDoneButtonText(activity));
-                application.getActivityManager().save(activity);
-                application.updateActivities();
-            } catch (IOException | ParseException e) {
-                System.out.println("Error while saving activity: " + e.getMessage());
-            }
-        });
-        content.add(done, 0, rowIndex++);
+        content.add(createDoneButton(), 0, rowIndex);
+        content.add(createEditButton(), 1, rowIndex++);
 
         content.add(new Label("Priority: "), 0, rowIndex);
-        content.add(new Label(activity.getPriority()), 1, rowIndex++);
+        content.add(createPriority(), 1, rowIndex++);
 
-        if (activity.isSetDeadline()) {
+        if (activity.isSetDeadline() || isEditable) {
             content.add(new Label("Deadline: "), 0, rowIndex);
-            Label deadlineLabel = new Label(
-                    DateFormat.getDateInstance(DateFormat.DEFAULT).format(activity.getDeadline()));
-            if (activity.isAlertActive()) {
-                deadlineLabel.getStyleClass().add("warningLabel");
-            }
-            content.add(deadlineLabel, 1, rowIndex++);
+            content.add(createDeadline(), 1, rowIndex++);
         }
 
         HBox tags = new HBox(5);
@@ -111,9 +103,116 @@ public class ActivityNode extends TitledPane {
         content.add(new Label("Time spent on activity: "), 0, rowIndex);
         content.add(new Label(activityLog.getTimeSpent()), 1, rowIndex++);
 
-
         content.setVisible(true);
         return content;
     }
 
+    private Node createPriority() {
+        if (isEditable) {
+            return createEditablePriority();
+        } else {
+            return createUneditablePriority();
+        }
+    }
+
+    private Node createEditablePriority() {
+        ObservableList<String> options = FXCollections.observableArrayList(TrackMeConstants.getPriorityList());
+        final ComboBox<String> comboBox = new ComboBox<>(options);
+        comboBox.setValue(activity.getPriority());
+        comboBox.valueProperty().addListener((ov, t, t1) -> activity.setPriority(t1));
+        return comboBox;
+    }
+
+    private Node createUneditablePriority() {
+        return new Label(activity.getPriority());
+    }
+
+    private Node createDeadline() {
+        if (isEditable) {
+            return createEditableDeadline();
+        } else {
+            return createUneditableDeadline();
+        }
+    }
+
+    LocalDate datePickerDate;
+
+    private Node createEditableDeadline() {
+        HBox deadlinePicker = new HBox();
+        deadlinePicker.getChildren().add(createDatePicker());
+        return deadlinePicker;
+    }
+
+    private DatePicker createDatePicker() {
+        DatePicker datePicker = new DatePicker();
+        datePicker.setOnAction(event -> {
+            datePickerDate = datePicker.getValue();
+            activity.setDeadline(Date.from(datePickerDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
+        });
+        return datePicker;
+    }
+
+    private Node createUneditableDeadline() {
+        Label deadlineLabel = new Label(DateFormat.getDateInstance(DateFormat.DEFAULT).format(activity.getDeadline()));
+        if (activity.isAlertActive()) {
+            deadlineLabel.getStyleClass().add("warningLabel");
+        }
+        return deadlineLabel;
+    }
+
+    private Button createEditButton() {
+        Button edit = new Button(getEditButonText());
+        edit.setOnAction(event -> {
+            try {
+                if (isEditable) {
+                    makeUneditable();
+                    save();
+                    setContent(createActivityContent());
+
+                } else {
+                    makeEditable();
+                    setContent(createActivityContent());
+                }
+                edit.setText(getEditButonText());
+            } catch (IOException | ParseException e) {
+                System.out.println("Error while saving activity: " + e.getMessage());
+            }
+        });
+        return edit;
+    }
+
+    private Button createDoneButton() {
+        Button done = new Button(DisplayUtils.getDoneButtonText(activity));
+        done.setOnAction(event -> {
+            try {
+                this.activity.setCompleted(!activity.isCompleted());
+                done.setText(DisplayUtils.getDoneButtonText(activity));
+                save();
+            } catch (IOException | ParseException e) {
+                System.out.println("Error while saving activity: " + e.getMessage());
+            }
+        });
+        return done;
+    }
+
+    private void save() throws IOException, ParseException {
+        application.getActivityManager().save(this.getActivity());
+        application.updateActivities();
+    }
+
+    private void makeEditable() {
+        this.isEditable = true;
+    }
+
+    private void makeUneditable() {
+        this.isEditable = false;
+    }
+
+    public String getEditButonText() {
+        return this.isEditable?"Save":"Edit";
+    }
+
+    public Activity getActivity() {
+        return activity;
+    }
 }
