@@ -20,7 +20,7 @@ public class TimeTrackingManager {
     private List<ActivityLog> timelogs;
     private Path timelogFile;
 
-    public TimeTrackingManager(String fileLocation) throws IOException, ParseException {
+    public TimeTrackingManager(String fileLocation) throws IOException {
         this.timelogs = new ArrayList<>();
         Path filePath = Paths.get(fileLocation);
         if (filePath.toFile().exists()) {
@@ -81,9 +81,5 @@ public class TimeTrackingManager {
         String uuidString = line.replace(TrackMeConstants.INDICATOR_LOG_START, "");
         uuidString = uuidString.trim();
         return UUID.fromString(uuidString);
-    }
-
-    public void startTimer(String activityID) {
-
     }
 }

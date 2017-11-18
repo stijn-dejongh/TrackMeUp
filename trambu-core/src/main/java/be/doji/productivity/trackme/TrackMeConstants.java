@@ -46,7 +46,6 @@ public final class TrackMeConstants {
 
     public static List<String> getPriorityList() {
         String[] priorities = { "A", "B", "C", "D", "E", "F", "G", "H" };
-        List<String> priorityList = Arrays.asList(priorities);
-        return priorityList;
+        return Arrays.asList(priorities);
     }
 }

@@ -38,11 +38,11 @@ public class ActivityManager {
         }
     }
 
-    public void addActivity(String activity) throws IOException, ParseException {
+    public void addActivity(String activity) throws ParseException {
         addActivity(ActivityParser.mapStringToActivity(activity));
     }
 
-    private void addActivity(Activity activity) throws IOException {
+    private void addActivity(Activity activity) {
         String parentActivity = activity.getParentActivity();
         if (StringUtils.isNotBlank(parentActivity)) {
             Optional<Activity> parent = getSavedActivityById(parentActivity);
@@ -57,18 +57,19 @@ public class ActivityManager {
     }
 
     public List<Activity> getActivities() {
-        ArrayList<Activity> activities = new ArrayList<>(this.activities);
-        activities.sort((o1, o2) -> {
+        ArrayList<Activity> savedActivities = new ArrayList<>(this.activities);
+        savedActivities.sort((o1, o2) -> {
+            int priorityCompare = o1.getPriority().compareTo(o2.getPriority());
             if (o1.getDeadline() != null && o2.getDeadline() != null) {
                 return o1.getDeadline().compareTo(o2.getDeadline());
+            } else if (o1.getDeadline() == null) {
+                return o2.getDeadline() == null?priorityCompare:-1;
             } else {
-                int priorityCompare = o1.getPriority().compareTo(o2.getPriority());
-                return o1.getDeadline() == null?
-                        o2.getDeadline() == null?priorityCompare:-1:
-                        o2.getDeadline() == null?1:priorityCompare;
+                return o2.getDeadline() == null?1:priorityCompare;
             }
         });
-        return activities;
+
+        return savedActivities;
     }
 
     public Map<Date, List<Activity>> getActivitiesByTag(String tag) {
@@ -192,8 +193,7 @@ public class ActivityManager {
     }
 
     public Map<Date, List<Activity>> getActivitiesWithDateHeader() {
-        List<Activity> activities = this.getActivities();
-        return groupByDate(activities);
+        return groupByDate(this.getActivities());
     }
 
     private Map<Date, List<Activity>> groupByDate(List<Activity> activities) {
