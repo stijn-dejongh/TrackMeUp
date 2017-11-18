@@ -4,23 +4,27 @@ import be.doji.productivity.trackme.TrackMeConstants;
 import be.doji.productivity.trackme.managers.ActivityManager;
 import be.doji.productivity.trackme.managers.TimeTrackingManager;
 import be.doji.productivity.trackme.model.tasks.Activity;
+import be.doji.productivity.trambuapp.components.ActivityNode;
 import be.doji.productivity.trambuapp.exception.InitialisationException;
-import de.jensd.fx.fontawesome.AwesomeDude;
-import de.jensd.fx.fontawesome.AwesomeIcon;
+import be.doji.productivity.trambuapp.presentation.util.DisplayUtils;
 import javafx.application.Application;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -33,8 +37,10 @@ public class TrambuApplication extends Application {
 
     private ActivityManager am;
     private TimeTrackingManager tm;
+    private Stage primaryStage;
+    private Accordion activityAcordeon;
 
-    public void initialize() throws InitialisationException {
+    private void initialize() throws InitialisationException {
         try {
             initializeActivities(TrackMeConstants.DEFAULT_TODO_FILE_LOCATION);
             initializeTimeTracking(TrackMeConstants.DEFAULT_TIMELOG_FILE_LOCATION);
@@ -61,6 +67,7 @@ public class TrambuApplication extends Application {
     @Override public void start(Stage primaryStage) throws Exception {
         initialize();
         primaryStage = createPrimaryStage();
+        this.primaryStage = primaryStage;
         primaryStage.show();
 
     }
@@ -90,14 +97,17 @@ public class TrambuApplication extends Application {
     }
 
     private Accordion createActivityAccordeon() {
-        Accordion accordion = new Accordion();
-        accordion.getPanes().addAll(createActivityNodes());
-        return accordion;
+        activityAcordeon = new Accordion();
+        activityAcordeon.getPanes().addAll(createActivityNodes(am.getActivitiesWithDateHeader()));
+        return activityAcordeon;
     }
 
     private Accordion createControlsAccordeon() {
         Accordion accordion = new Accordion();
-        accordion.getPanes().addAll(createFileOptionsControls());
+        accordion.getPanes().add(createFileOptionsControls());
+        TitledPane generalControls = createGeneralControls();
+        accordion.getPanes().add(generalControls);
+        accordion.setExpandedPane(generalControls);
         accordion.getStylesheets().clear();
         accordion.getStylesheets().add("style/css/trambu-controls.css");
         return accordion;
@@ -109,12 +119,45 @@ public class TrambuApplication extends Application {
         grid.setVgap(4);
         grid.setPadding(new Insets(5, 5, 5, 5));
         grid.add(new Label("Todo file: "), 0, 0);
-        grid.add(new TextField(), 1, 0);
+
+        FileChooser todoFileChooser = new FileChooser();
+        todoFileChooser.setTitle("Open TODO list File");
+
+        Button openButton = new Button("Select TODO file");
+        openButton.setOnAction(e -> {
+            File file = todoFileChooser.showOpenDialog(primaryStage);
+            if (file != null) {
+                try {
+                    am.updateFileLocation(file.getAbsolutePath());
+                    updateActivities();
+                } catch (IOException | ParseException e1) {
+                    System.out.println("Error opening todo file: " + e1.getMessage());
+                }
+            }
+        });
+        grid.add(openButton, 1, 0);
+
         grid.add(new Label("Timetracking file: "), 0, 1);
+        FileChooser timeFileChooser = new FileChooser();
+        timeFileChooser.setTitle("Open time tracking File");
+
         grid.add(new TextField(), 1, 1);
         gridTitlePane.setText("File Options");
         gridTitlePane.setContent(grid);
         gridTitlePane.setVisible(true);
+        return gridTitlePane;
+    }
+
+    private TitledPane createGeneralControls() {
+        TitledPane gridTitlePane = new TitledPane();
+        GridPane grid = new GridPane();
+
+        Button resetFilter = new Button("Reset filter");
+        resetFilter.setOnAction(e -> updateActivities());
+        grid.add(resetFilter, 0, 0);
+
+        gridTitlePane.setContent(grid);
+        gridTitlePane.setText("General controls");
         return gridTitlePane;
     }
 
@@ -137,37 +180,35 @@ public class TrambuApplication extends Application {
         return rootScene;
     }
 
-    private List<TitledPane> createActivityNodes() {
-        return am.getActivities().stream().map(activity -> createActivityNode(activity)).collect(Collectors.toList());
+    private void updateActivities() {
+        ObservableList<TitledPane> panes = this.activityAcordeon.getPanes();
+        panes.clear();
+        panes.addAll(createActivityNodes(am.getActivitiesWithDateHeader()));
     }
 
-    private TitledPane createActivityNode(Activity activity) {
-        TitledPane titledPane = new TitledPane(activity.getName(), createActivityContent(activity));
-        Button titleLabel = AwesomeDude
-                .createIconButton(activity.isCompleted()?AwesomeIcon.CHECK_SIGN:AwesomeIcon.CHECK_EMPTY);
-        titledPane.setGraphic(titleLabel);
-        titledPane.getStyleClass().clear();
-        titledPane.getStyleClass().add(activity.isCompleted()?"done":"todo");
-        titledPane.setVisible(true);
-        return titledPane;
+    public void updateActivities(String tag) {
+        ObservableList<TitledPane> panes = this.activityAcordeon.getPanes();
+        panes.clear();
+        panes.addAll(createActivityNodes(am.getActivitiesByTag(tag)));
     }
 
-    private GridPane createActivityContent(Activity activity) {
-        GridPane content = new GridPane();
-        content.setVgap(4);
-        content.setPadding(new Insets(5, 5, 5, 5));
-        if (activity.isSetDeadline()) {
-            content.add(new Label("Deadline: "), 0, 0);
-            content.add(new Label(TrackMeConstants.getDateFormat().format(activity.getDeadline())), 1, 0);
+    private List<TitledPane> createActivityNodes(Map<Date, List<Activity>> activitiesWithHeader) {
+        List<TitledPane> panes = new ArrayList<>();
+        for (Map.Entry<Date, List<Activity>> activityWithHeader : activitiesWithHeader.entrySet()) {
+            panes.add(createSeperatorPane(activityWithHeader.getKey()));
+            panes.addAll(activityWithHeader.getValue().stream().map(activity -> new ActivityNode(activity, this))
+                    .collect(Collectors.toList()));
         }
+        return panes;
+    }
 
-        HBox tags = new HBox(5);
-        tags.getChildren().addAll(activity.getTags().stream().map(tag -> new Button(tag)).collect(Collectors.toList()));
-        content.add(new Label("Tags: "), 0, 1);
-        content.add(tags, 1, 1);
+    private TitledPane createSeperatorPane(Date key) {
+        TitledPane headerPane = new TitledPane();
+        String formattedDate = DisplayUtils.getDateSeperatorText(key);
 
-        content.setVisible(true);
-        return content;
+        headerPane.setText(formattedDate);
+        headerPane.setCollapsible(false);
+        return headerPane;
     }
 
     public static void main(String[] args) {
