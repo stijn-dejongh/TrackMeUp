@@ -7,6 +7,9 @@ import be.doji.productivity.trackme.model.tasks.Activity;
 import be.doji.productivity.trambuapp.components.ActivityNode;
 import be.doji.productivity.trambuapp.exception.InitialisationException;
 import be.doji.productivity.trambuapp.presentation.util.DisplayUtils;
+import be.doji.productivity.trambuapp.utils.TrambuApplicationConstants;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.application.Application;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -194,6 +197,22 @@ public class TrambuApplication extends Application {
             updateActivities();
         });
         grid.add(filterDone, 0, 1);
+
+        Button addActivity = new Button("Add activity");
+        FontAwesomeIconView addIcon = new FontAwesomeIconView(FontAwesomeIcon.PLUS_CIRCLE);
+        addIcon.setGlyphStyle(TrambuApplicationConstants.GLYPH_DEFAULT_STYLE);
+        addActivity.setGraphic(addIcon);
+
+        addActivity.setOnAction(event -> {
+            try {
+                Activity newActivity = new Activity("EDIT ME I AM A NEW ACTIVITY");
+                this.activityManager.save(newActivity);
+                this.updateActivities();
+            } catch (IOException | ParseException exception) {
+                System.out.println("Error creation new activity: " + exception.getMessage());
+            }
+        });
+        grid.add(addActivity, 0, 2);
 
         gridTitlePane.setContent(grid);
         gridTitlePane.setText("General controls");

@@ -6,8 +6,10 @@ import be.doji.productivity.trackme.model.tracker.ActivityLog;
 import be.doji.productivity.trackme.model.tracker.TimeLog;
 import be.doji.productivity.trambuapp.presentation.TrambuApplication;
 import be.doji.productivity.trambuapp.presentation.util.DisplayUtils;
-import de.jensd.fx.fontawesome.AwesomeDude;
-import de.jensd.fx.fontawesome.AwesomeIcon;
+import be.doji.productivity.trambuapp.utils.TrambuApplicationConstants;
+import de.jensd.fx.glyphs.GlyphsStyle;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -33,14 +35,20 @@ public class ActivityNode extends TitledPane {
     private TrambuApplication application;
     private boolean isEditable = false;
     private Activity activity;
+    private TextField nameField;
 
     public ActivityNode(Activity activity, TrambuApplication trambuApplication) {
         super();
         this.activity = activity;
         this.application = trambuApplication;
         this.setText(activity.getName());
-        Button titleLabel = AwesomeDude
-                .createIconButton(activity.isCompleted()?AwesomeIcon.CHECK_SIGN:AwesomeIcon.CHECK_EMPTY);
+        Button titleLabel = new Button();
+        FontAwesomeIconView checkedCalendar = new FontAwesomeIconView(FontAwesomeIcon.CALENDAR_CHECK_ALT);
+        checkedCalendar.setGlyphStyle(TrambuApplicationConstants.GLYPH_DEFAULT_STYLE);
+        FontAwesomeIconView uncheckedCalendar = new FontAwesomeIconView(FontAwesomeIcon.CALENDAR_ALT);
+        uncheckedCalendar.setGlyphStyle(TrambuApplicationConstants.GLYPH_DEFAULT_STYLE);
+        titleLabel.setGraphic(activity.isCompleted()?checkedCalendar:
+                uncheckedCalendar);
         titleLabel.getStyleClass().clear();
         titleLabel.getStyleClass().add("icon-button");
         this.setGraphic(titleLabel);
@@ -56,8 +64,12 @@ public class ActivityNode extends TitledPane {
         content.setPadding(new Insets(5, 5, 5, 5));
         int rowIndex = 0;
 
-        content.add(createDoneButton(), 0, rowIndex);
-        content.add(createEditButton(), 1, rowIndex++);
+        content.add(createActvityControls(), 0, rowIndex++, 2, 1);
+
+        if (isEditable) {
+            content.add(new Label("Change activity name:"), 0, rowIndex);
+            content.add(createNameEdit(), 1, rowIndex++);
+        }
 
         content.add(new Label("Priority: "), 0, rowIndex);
         content.add(createPriority(), 1, rowIndex++);
@@ -102,6 +114,21 @@ public class ActivityNode extends TitledPane {
         }
 
         content.setVisible(true);
+        return content;
+    }
+
+    private Node createNameEdit() {
+        nameField = new TextField();
+        nameField.setText(activity.getName());
+        return nameField;
+    }
+
+    private Node createActvityControls() {
+        GridPane content = new GridPane();
+        content.setVgap(4);
+        content.setPadding(new Insets(5, 5, 5, 5));
+        content.add(createDoneButton(), 0, 0);
+        content.add(createEditButton(), 1, 0);
         return content;
     }
 
@@ -229,6 +256,9 @@ public class ActivityNode extends TitledPane {
     }
 
     private void save() throws IOException, ParseException {
+        if (nameField != null) {
+            activity.setName(nameField.getText());
+        }
         application.getActivityManager().save(getActivityToSave());
         application.updateActivities();
     }
