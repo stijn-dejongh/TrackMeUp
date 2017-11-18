@@ -70,7 +70,7 @@ public class TimeTrackingManager {
                     readLog = new ActivityLog(getActivityIdFromLine(line));
                 } else if (StringUtils.containsIgnoreCase(line, TrackMeConstants.INDICATOR_LOG_END)) {
                     this.timelogs.add(readLog);
-                } else {
+                } else if (readLog != null) {
                     readLog.addLogPoint(TimeLogParser.parseToTimeLog(line));
                 }
             }

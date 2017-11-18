@@ -54,9 +54,9 @@ public class TrambuApplication extends Application {
 
     @Override public void start(Stage primaryStage) throws Exception {
         initialize();
-        primaryStage = createPrimaryStage();
-        this.primaryStage = primaryStage;
-        primaryStage.show();
+        Stage mainStage = createPrimaryStage();
+        this.primaryStage = mainStage;
+        mainStage.show();
     }
 
     private void initialize() throws InitialisationException {
