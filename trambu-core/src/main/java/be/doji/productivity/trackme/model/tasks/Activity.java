@@ -188,4 +188,8 @@ import java.util.UUID;
     public void setId(String uuidString) {
         this.id = UUID.fromString(uuidString);
     }
+
+    public boolean isSetDeadline() {
+        return this.deadline != null;
+    }
 }

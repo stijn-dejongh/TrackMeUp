@@ -14,6 +14,8 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -74,15 +76,16 @@ public class TrambuApplication extends Application {
     }
 
     private SplitPane createContentSplitPane() {
-        Accordion accordion = createActivityAccordeon();
+        Accordion activities = createActivityAccordeon();
         Accordion controls = createControlsAccordeon();
 
         SplitPane splitPane = new SplitPane();
         splitPane.setPrefHeight(DEFAULT_WINDOW_HEIGHT);
         splitPane.setPrefWidth(DEFAULT_WINDOW_WIDTH);
         splitPane.setOrientation(Orientation.HORIZONTAL);
-        splitPane.getItems().add(accordion);
+        splitPane.getItems().add(activities);
         splitPane.getItems().add(controls);
+        splitPane.setDividerPosition(0, 0.65);
         return splitPane;
     }
 
@@ -105,13 +108,10 @@ public class TrambuApplication extends Application {
         GridPane grid = new GridPane();
         grid.setVgap(4);
         grid.setPadding(new Insets(5, 5, 5, 5));
-        grid.add(new Label("To: "), 0, 0);
+        grid.add(new Label("Todo file: "), 0, 0);
         grid.add(new TextField(), 1, 0);
-        grid.add(new Label("Cc: "), 0, 1);
+        grid.add(new Label("Timetracking file: "), 0, 1);
         grid.add(new TextField(), 1, 1);
-        grid.add(new Label("Subject: "), 0, 2);
-        grid.add(new TextField(), 1, 2);
-        grid.add(new Label("Attachment: "), 0, 3);
         gridTitlePane.setText("File Options");
         gridTitlePane.setContent(grid);
         gridTitlePane.setVisible(true);
@@ -121,6 +121,7 @@ public class TrambuApplication extends Application {
     private Scene createRootScene(SplitPane splitPane) {
         Scene rootScene = new Scene(new Group(), DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
         rootScene.getStylesheets().add("style/css/trambu-main.css");
+
         rootScene.widthProperty().addListener((observableValue, oldSceneWidth, newSceneWidth) -> {
             System.out.println("Width: " + newSceneWidth);
             splitPane.setPrefWidth((Double) newSceneWidth);
@@ -141,15 +142,32 @@ public class TrambuApplication extends Application {
     }
 
     private TitledPane createActivityNode(Activity activity) {
-        Label content = new Label();
-        content.setText("This will contain information about the activity");
-        TitledPane titledPane = new TitledPane(activity.getName(), content);
+        TitledPane titledPane = new TitledPane(activity.getName(), createActivityContent(activity));
         Button titleLabel = AwesomeDude
                 .createIconButton(activity.isCompleted()?AwesomeIcon.CHECK_SIGN:AwesomeIcon.CHECK_EMPTY);
         titledPane.setGraphic(titleLabel);
         titledPane.getStyleClass().clear();
-        titledPane.getStyleClass().add(activity.isCompleted()?"done" :"todo");
+        titledPane.getStyleClass().add(activity.isCompleted()?"done":"todo");
+        titledPane.setVisible(true);
         return titledPane;
+    }
+
+    private GridPane createActivityContent(Activity activity) {
+        GridPane content = new GridPane();
+        content.setVgap(4);
+        content.setPadding(new Insets(5, 5, 5, 5));
+        if (activity.isSetDeadline()) {
+            content.add(new Label("Deadline: "), 0, 0);
+            content.add(new Label(TrackMeConstants.getDateFormat().format(activity.getDeadline())), 1, 0);
+        }
+
+        HBox tags = new HBox(5);
+        tags.getChildren().addAll(activity.getTags().stream().map(tag -> new Button(tag)).collect(Collectors.toList()));
+        content.add(new Label("Tags: "), 0, 1);
+        content.add(tags, 1, 1);
+
+        content.setVisible(true);
+        return content;
     }
 
     public static void main(String[] args) {
