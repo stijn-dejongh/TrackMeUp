@@ -192,4 +192,13 @@ import java.util.UUID;
     public boolean isSetDeadline() {
         return this.deadline != null;
     }
+
+    public boolean isAlertActive() {
+        if (isSetDeadline()) {
+            return ((this.deadline.getTime() - new Date().getTime()) / 1000) < this.warningTimeFrame.getSeconds();
+        } else {
+            return false;
+        }
+
+    }
 }

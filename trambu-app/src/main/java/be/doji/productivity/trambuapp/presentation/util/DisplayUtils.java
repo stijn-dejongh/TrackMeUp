@@ -1,5 +1,7 @@
 package be.doji.productivity.trambuapp.presentation.util;
 
+import be.doji.productivity.trackme.model.tasks.Activity;
+
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -26,4 +28,7 @@ public final class DisplayUtils {
         return calendarOfHeader.get(Calendar.YEAR) - calendarOfToday.get(Calendar.YEAR) < 25;
     }
 
+    public static String getDoneButtonText(Activity activity) {
+        return activity.isCompleted()? "Not Done" : "Done";
+    }
 }

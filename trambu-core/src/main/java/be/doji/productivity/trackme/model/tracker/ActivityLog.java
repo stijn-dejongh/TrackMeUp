@@ -3,10 +3,7 @@ package be.doji.productivity.trackme.model.tracker;
 import be.doji.productivity.trackme.TrackMeConstants;
 import be.doji.productivity.trackme.model.tasks.Activity;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by Doji on 22/10/2017.
@@ -83,5 +80,18 @@ public class ActivityLog {
         if (activeLog.isPresent()) {
             activeLog.get().stop();
         }
+    }
+
+    public String getTimeSpent() {
+        double timeSpentInMilies = 0;
+        for (TimeLog log : this.logpoints) {
+            if (log.isActive()) {
+                timeSpentInMilies += new Date().getTime() - log.getStartTime().getTime();
+            } else {
+                timeSpentInMilies += log.getEndTime().getTime() - log.getStartTime().getTime();
+            }
+        }
+        double timeSpentInHours = (timeSpentInMilies / (1000 * 60 * 60));
+        return String.valueOf(timeSpentInHours) + " hours";
     }
 }
