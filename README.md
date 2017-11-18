@@ -44,9 +44,17 @@ follow these steps:
 * Download the source code
 * In the root directory (which contains the pom) execute 'mvn clean install'
 * For each module, a 'target' directory will be created
+
+### Run the web application
 * Open a terminal window and navigate to the 'trambu-web/target' directory
 * Execute 'java -jar XXXX' , where XXXX is the name of the TraMBU jar
 * Navigate your browser to 'http://localhost:9666'
+* Set up the application to use your own 'todo.txt' file
+
+### Run the standalone application
+* Open a terminal window and navigate to the 'trambu-app/target' directory
+* Execute 'java -jar XXXX' , where XXXX is the name of the TraMBU jar
+* The application will now open in a desktop window
 * Set up the application to use your own 'todo.txt' file
 
 ## Code quality
