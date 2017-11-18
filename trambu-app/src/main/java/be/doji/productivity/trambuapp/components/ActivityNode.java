@@ -15,6 +15,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -24,6 +25,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ActivityNode extends TitledPane {
@@ -89,19 +91,15 @@ public class ActivityNode extends TitledPane {
         content.add(new Label("Projects: "), 0, rowIndex);
         content.add(projecs, 1, rowIndex++);
 
-        ActivityLog activityLog = application.getTimeTrackingManager().getLogForActivityId(activity.getId());
-        System.out.println(activity.getId());
-        List<TimeLog> logpoints = activityLog.getLogpoints();
+        content.add(createLogPoints(), 0, rowIndex++, 2, 1);
 
-        SimpleDateFormat dateFormat = TrackMeConstants.getDateFormat();
-        content.add(new Label("Logpoints: "), 0, rowIndex++);
-        for (TimeLog log : logpoints) {
-            content.add(new Label(
-                            "from " + dateFormat.format(log.getStartTime()) + " to " + dateFormat.format(log.getEndTime())), 1,
-                    rowIndex++);
+        if (!activity.getSubActivities().isEmpty()) {
+            Label subActivityTitle = new Label("Subactivities: ");
+            subActivityTitle.getStyleClass().clear();
+            subActivityTitle.getStyleClass().add("separator-label");
+            content.add(subActivityTitle, 0, rowIndex++);
+            content.add(createSubActivities(), 0, rowIndex++, 2, 1);
         }
-        content.add(new Label("Time spent on activity: "), 0, rowIndex);
-        content.add(new Label(activityLog.getTimeSpent()), 1, rowIndex++);
 
         content.setVisible(true);
         return content;
@@ -160,6 +158,41 @@ public class ActivityNode extends TitledPane {
         return deadlineLabel;
     }
 
+    private GridPane createLogPoints() {
+        ActivityLog activityLog = application.getTimeTrackingManager().getLogForActivityId(activity.getId());
+        List<TimeLog> logpoints = activityLog.getLogpoints();
+
+        GridPane logpointGrid = new GridPane();
+        logpointGrid.setVgap(4);
+        logpointGrid.setPadding(new Insets(5, 5, 5, 5));
+        int logRowIndex = 0;
+        if (!logpoints.isEmpty()) {
+            SimpleDateFormat dateFormat = TrackMeConstants.getDateFormat();
+            logpointGrid.add(new Label("Logpoints: "), 0, logRowIndex++);
+            for (TimeLog log : logpoints) {
+                logpointGrid.add(new Label(
+                                "from " + dateFormat.format(log.getStartTime()) + " to " + dateFormat.format(log.getEndTime())),
+                        1, logRowIndex++);
+            }
+        }
+
+        logpointGrid.add(new Label("Time spent on activity: "), 0, logRowIndex);
+        logpointGrid.add(new Label(activityLog.getTimeSpent()), 1, logRowIndex++);
+        return logpointGrid;
+    }
+
+    private Node createSubActivities() {
+        Accordion activityAcordeon = new Accordion();
+        List<TitledPane> activityNodes = createSubActivityNodes();
+        activityAcordeon.getPanes().addAll(activityNodes);
+        return activityAcordeon;
+    }
+
+    private List<TitledPane> createSubActivityNodes() {
+        return activity.getSubActivities().stream().map(sub -> new ActivityNode(sub, application))
+                .collect(Collectors.toList());
+    }
+
     private Button createEditButton() {
         Button edit = new Button(getEditButonText());
         edit.setOnAction(event -> {
@@ -196,8 +229,20 @@ public class ActivityNode extends TitledPane {
     }
 
     private void save() throws IOException, ParseException {
-        application.getActivityManager().save(this.getActivity());
+        application.getActivityManager().save(getActivityToSave());
         application.updateActivities();
+    }
+
+    private Activity getActivityToSave() {
+        Activity activityToSave = this.getActivity();
+        while (StringUtils.isNotBlank(activityToSave.getParentActivity())) {
+            Optional<Activity> savedParent = application.getActivityManager()
+                    .getSavedActivityById(activityToSave.getParentActivity());
+            if (savedParent.isPresent()) {
+                activityToSave = savedParent.get();
+            }
+        }
+        return activityToSave;
     }
 
     private void makeEditable() {

@@ -44,7 +44,7 @@ public class ActivityManager {
     private void addActivity(Activity activity) throws IOException {
         String parentActivity = activity.getParentActivity();
         if (StringUtils.isNotBlank(parentActivity)) {
-            Optional<Activity> parent = getSavedActivityByName(parentActivity);
+            Optional<Activity> parent = getSavedActivityById(parentActivity);
             if (parent.isPresent()) {
                 parent.get().addSubTask(activity);
             } else {
@@ -87,7 +87,8 @@ public class ActivityManager {
 
     public Activity save(Activity activity) throws IOException, ParseException {
 
-        Optional<Activity> savedActivity = getSavedActivityByName(activity.getName());
+        Optional<Activity> savedActivity = getSavedActivityById(activity.getId().toString());
+
         savedActivity.ifPresent(activity1 -> this.activities.remove(activity1));
         this.addActivity(activity);
         writeAllToFileAndReload();
@@ -102,9 +103,18 @@ public class ActivityManager {
         return matchingActivity;
     }
 
-    private Optional<Activity> getSavedActivityByName(String name) {
-        for (Activity savedActivity : this.activities) {
-            if (StringUtils.equals(savedActivity.getName(), name)) {
+    public Optional<Activity> getSavedActivityById(String id) {
+        return findActivityInList(id, this.activities);
+    }
+
+    private Optional<Activity> findActivityInList(String id, List<Activity> activities) {
+        for (Activity savedActivity : activities) {
+            Optional<Activity> foundSub = findActivityInList(id, savedActivity.getSubActivities());
+            if (foundSub.isPresent()) {
+                return foundSub;
+            }
+
+            if (savedActivity.getId().equals(UUID.fromString(id))) {
                 return Optional.of(savedActivity);
             }
         }
