@@ -1,8 +1,8 @@
-package be.doji.productivity.trackme.managers;
+package be.doji.productivity.trambucore.managers;
 
-import be.doji.productivity.trackme.TrackMeConstants;
-import be.doji.productivity.trackme.model.tasks.Activity;
-import be.doji.productivity.trackme.parser.ActivityParser;
+import be.doji.productivity.trambucore.TrackMeConstants;
+import be.doji.productivity.trambucore.model.tasks.Activity;
+import be.doji.productivity.trambucore.parser.ActivityParser;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

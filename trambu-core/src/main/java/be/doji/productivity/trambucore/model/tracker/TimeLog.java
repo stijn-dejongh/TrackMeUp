@@ -1,6 +1,6 @@
-package be.doji.productivity.trackme.model.tracker;
+package be.doji.productivity.trambucore.model.tracker;
 
-import be.doji.productivity.trackme.TrackMeConstants;
+import be.doji.productivity.trambucore.TrackMeConstants;
 
 import java.util.Date;
 

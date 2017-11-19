@@ -1,4 +1,4 @@
-package be.doji.productivity.trackme.model.tasks;
+package be.doji.productivity.trambucore.model.tasks;
 
 /**
  * Created by Doji on 22/10/2017.

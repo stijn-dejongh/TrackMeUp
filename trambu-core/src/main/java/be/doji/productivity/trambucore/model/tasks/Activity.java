@@ -1,6 +1,6 @@
-package be.doji.productivity.trackme.model.tasks;
+package be.doji.productivity.trambucore.model.tasks;
 
-import be.doji.productivity.trackme.TrackMeConstants;
+import be.doji.productivity.trambucore.TrackMeConstants;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.commons.lang3.StringUtils;
 

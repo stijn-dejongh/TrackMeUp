@@ -1,7 +1,7 @@
-package be.doji.productivity.trackme.model.tracker;
+package be.doji.productivity.trambucore.model.tracker;
 
-import be.doji.productivity.trackme.TrackMeConstants;
-import be.doji.productivity.trackme.model.tasks.Activity;
+import be.doji.productivity.trambucore.TrackMeConstants;
+import be.doji.productivity.trambucore.model.tasks.Activity;
 
 import java.util.*;
 

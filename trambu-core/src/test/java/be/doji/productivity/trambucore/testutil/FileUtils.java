@@ -1,4 +1,4 @@
-package be.doji.productivity.trackme.testutil;
+package be.doji.productivity.trambucore.testutil;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;

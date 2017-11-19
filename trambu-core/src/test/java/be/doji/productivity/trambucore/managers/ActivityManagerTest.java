@@ -1,10 +1,9 @@
-package be.doji.productivity.trackme.managers;
+package be.doji.productivity.trambucore.managers;
 
-import be.doji.productivity.trackme.TrackMeConstants;
-import be.doji.productivity.trackme.managers.ActivityManager;
-import be.doji.productivity.trackme.model.tasks.Activity;
-import be.doji.productivity.trackme.testutil.ActivityTestData;
-import be.doji.productivity.trackme.testutil.FileUtils;
+import be.doji.productivity.trambucore.TrackMeConstants;
+import be.doji.productivity.trambucore.model.tasks.Activity;
+import be.doji.productivity.trambucore.testutil.ActivityTestData;
+import be.doji.productivity.trambucore.testutil.FileUtils;
 import org.junit.Assert;
 import org.junit.Test;
 

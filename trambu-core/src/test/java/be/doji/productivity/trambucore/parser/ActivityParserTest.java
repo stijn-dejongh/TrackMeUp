@@ -1,16 +1,14 @@
-package be.doji.productivity.trackme.parser;
+package be.doji.productivity.trambucore.parser;
 
 
-import be.doji.productivity.trackme.model.tasks.Activity;
+import be.doji.productivity.trambucore.model.tasks.Activity;
 
-import be.doji.productivity.trackme.testutil.ActivityTestData;
+import be.doji.productivity.trambucore.testutil.ActivityTestData;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;

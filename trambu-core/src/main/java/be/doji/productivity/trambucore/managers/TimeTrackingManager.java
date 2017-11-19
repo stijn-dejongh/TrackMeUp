@@ -1,8 +1,8 @@
-package be.doji.productivity.trackme.managers;
+package be.doji.productivity.trambucore.managers;
 
-import be.doji.productivity.trackme.TrackMeConstants;
-import be.doji.productivity.trackme.model.tracker.ActivityLog;
-import be.doji.productivity.trackme.parser.TimeLogParser;
+import be.doji.productivity.trambucore.TrackMeConstants;
+import be.doji.productivity.trambucore.model.tracker.ActivityLog;
+import be.doji.productivity.trambucore.parser.TimeLogParser;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
