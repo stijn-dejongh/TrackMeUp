@@ -24,27 +24,27 @@ public class UserConfigurationManager {
 
     private void createFilesIfNeeded(String configurationName) throws IOException {
         this.configFilePath = PATH_CONFIGURATION_DIRECTORY.resolve(configurationName);
-        if (!Files.exists(PATH_CONFIGURATION_DIRECTORY)) {
+        if (!PATH_CONFIGURATION_DIRECTORY.toFile().exists()) {
             Files.createDirectories(PATH_CONFIGURATION_DIRECTORY);
         }
 
-        if (!Files.exists(configFilePath)) {
+        if (!configFilePath.toFile().exists()) {
             Files.createFile(configFilePath);
         }
     }
 
     private Map<String, String> readProperties() throws IOException {
         List<String> fileContents = Files.readAllLines(configFilePath);
-        Map<String, String> properties = new HashMap<>();
+        Map<String, String> readProperties = new HashMap<>();
         for (String line : fileContents) {
             if (StringUtils.isNotBlank(line)) {
                 String[] splitLine = line.split(SEPARATOR_PROPERTY, 2);
                 String propertyKey = splitLine[0].trim();
                 String propertyValue = splitLine[1].trim();
-                properties.put(propertyKey, propertyValue);
+                readProperties.put(propertyKey, propertyValue);
             }
         }
-        return properties;
+        return readProperties;
     }
 
     public void writeToFile() throws IOException {
