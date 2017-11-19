@@ -68,7 +68,7 @@ public class ActivityNode extends TitledPane {
         this.getStyleClass().add(getActivityStyle());
     }
 
-    protected String getActivityStyle() {
+    String getActivityStyle() {
         if (this.activity.isCompleted()) {
             return DisplayConstants.STYLE_CLASS_ACTIVITY_DONE;
         } else {
@@ -78,7 +78,7 @@ public class ActivityNode extends TitledPane {
         }
     }
 
-    private GridPane createActivityContent() {
+    GridPane createActivityContent() {
         GridPane content = new GridPane();
         content.setVgap(4);
         content.setPadding(new Insets(5, 5, 5, 5));
@@ -133,7 +133,7 @@ public class ActivityNode extends TitledPane {
         return nameField;
     }
 
-    private Node createActvityControls() {
+    protected GridPane createActvityControls() {
         GridPane content = new GridPane();
         content.setVgap(4);
         content.setHgap(4);
@@ -144,7 +144,7 @@ public class ActivityNode extends TitledPane {
         return content;
     }
 
-    private Node createPriority() {
+    Node createPriority() {
         if (isEditable) {
             return createEditablePriority();
         } else {
@@ -152,7 +152,7 @@ public class ActivityNode extends TitledPane {
         }
     }
 
-    private Node createEditablePriority() {
+    Node createEditablePriority() {
         ObservableList<String> options = FXCollections.observableArrayList(TrackMeConstants.getPriorityList());
         final ComboBox<String> comboBox = new ComboBox<>(options);
         comboBox.setValue(activity.getPriority());
@@ -160,7 +160,7 @@ public class ActivityNode extends TitledPane {
         return comboBox;
     }
 
-    private Node createUneditablePriority() {
+    Node createUneditablePriority() {
         return new Label(activity.getPriority());
     }
 
@@ -345,7 +345,7 @@ public class ActivityNode extends TitledPane {
     }
 
     private Node createDeleteButton() {
-        Button delete = new Button("Delete");
+        Button delete = new Button(DisplayConstants.BUTTON_TEXT_DELETE);
         FontAwesomeIconView removeIcon = new FontAwesomeIconView(FontAwesomeIcon.REMOVE);
         removeIcon.setGlyphStyle(DisplayConstants.STYLE_GLYPH_DEFAULT);
         delete.setGraphic(removeIcon);
@@ -415,20 +415,24 @@ public class ActivityNode extends TitledPane {
         return activityToSave;
     }
 
-    private void makeEditable() {
+    void makeEditable() {
         this.isEditable = true;
     }
 
-    private void makeUneditable() {
+    void makeUneditable() {
         this.isEditable = false;
     }
 
     private String getEditButonText() {
-        return this.isEditable?"Save":"Edit";
+        return this.isEditable?DisplayConstants.BUTTON_TEXT_SAVE:DisplayConstants.BUTTON_TEXT_EDIT;
     }
 
-    public Activity getActivity() {
+    Activity getActivity() {
         return activity;
+    }
+
+    boolean isEditable() {
+        return isEditable;
     }
 
 }

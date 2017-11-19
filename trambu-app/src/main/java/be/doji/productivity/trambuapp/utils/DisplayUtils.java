@@ -12,7 +12,8 @@ public final class DisplayUtils {
     /**
      * Utility classes should now have a public or default constructor
      */
-    private DisplayUtils() {}
+    private DisplayUtils() {
+    }
 
     public static String getDateSeperatorText(Date key) {
         GregorianCalendar calendarOfHeader = new GregorianCalendar();
@@ -29,6 +30,6 @@ public final class DisplayUtils {
     }
 
     public static String getDoneButtonText(Activity activity) {
-        return activity.isCompleted()? "Not Done" : "Done";
+        return activity.isCompleted()?DisplayConstants.BUTTON_TEXT_IS_NOT_DONE:DisplayConstants.BUTTON_TEXT_IS_DONE;
     }
 }

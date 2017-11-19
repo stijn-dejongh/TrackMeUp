@@ -1,9 +1,5 @@
 package be.doji.productivity.trambucore;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.*;
@@ -12,8 +8,6 @@ import java.util.*;
  * Created by Doji on 22/10/2017.
  */
 public final class TrackMeConstants {
-
-    private static final Logger LOG = LoggerFactory.getLogger(TrackMeConstants.class);
 
     /**
      * Utility classes should not have a public or default constructor
@@ -26,7 +20,6 @@ public final class TrackMeConstants {
 
     private static final String DATA_DATE_FORMAT = "yyyy-MM-dd:HH:mm:ss.SSS";
     public static final Duration DEFAULT_WARNING_PERIOD = Duration.ofDays(1);
-    public static final String DEFAULT_DATE_HEADER = "3550-12-31:00:00:00.000";
 
     public static final String INDICATOR_DONE = "X";
     public static final String INDICATOR_PROJECT = "+";
@@ -53,13 +46,7 @@ public final class TrackMeConstants {
     }
 
     public static Date getDefaultDateHeader() {
-        try {
-            return getDateFormat().parse(DEFAULT_DATE_HEADER);
-        } catch (ParseException e) {
-            LOG.error("Error while creating default date: " + e.getMessage());
-            GregorianCalendar calendar = new GregorianCalendar();
-            calendar.set(3550, 12, 31);
-            return calendar.getTime();
-        }
+        GregorianCalendar calendar = new GregorianCalendar(3550, Calendar.DECEMBER, 31, 0, 0, 0);
+        return calendar.getTime();
     }
 }

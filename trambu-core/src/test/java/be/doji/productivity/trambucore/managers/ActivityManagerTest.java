@@ -76,7 +76,7 @@ public class ActivityManagerTest {
         Date deadLineDate = TrackMeConstants.getDateFormat().parse("2017-12-21:16:15:00.000");
         List<Activity> activitiesWithDeadline = activitiesWithDateHeader.get(deadLineDate);
         Assert.assertNotNull(activitiesWithDeadline);
-        Assert.assertEquals(2, activitiesWithDateHeader.size());
+        Assert.assertEquals(2, activitiesWithDeadline.size());
         Assert.assertNotNull(activitiesWithDateHeader.get(TrackMeConstants.getDefaultDateHeader()));
         Assert.assertEquals(1, activitiesWithDateHeader.get(TrackMeConstants.getDefaultDateHeader()).size());
         Files.delete(tempFilePath);
