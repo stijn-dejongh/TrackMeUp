@@ -63,3 +63,11 @@ In order to keep the code maintainable and of reasonably high quality,
 I use SonarCloud to point out any issues that exist.
 The report can be found at:
 https://sonarcloud.io/dashboard?id=be.doji.productivity%3Atrambu
+
+
+## Acknowledgements 
+
+Big shoutout to the awesome people that created the libraries I used to create this application:
+
+* https://bitbucket.org/Jerady/fontawesomefx
+* https://github.com/TestFX/TestFX
