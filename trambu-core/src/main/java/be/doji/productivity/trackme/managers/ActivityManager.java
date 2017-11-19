@@ -4,6 +4,8 @@ import be.doji.productivity.trackme.TrackMeConstants;
 import be.doji.productivity.trackme.model.tasks.Activity;
 import be.doji.productivity.trackme.parser.ActivityParser;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -17,6 +19,7 @@ import java.util.stream.Collectors;
  */
 public class ActivityManager {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ActivityManager.class);
     private List<Activity> activities = new ArrayList<>();
     private Path todoFile;
 
@@ -129,13 +132,13 @@ public class ActivityManager {
     }
 
     private void writeAllToFileAndReload() throws IOException, ParseException {
-        System.out.println(">> Updating TODO.txt");
+        LOG.info(">> Updating TODO.txt");
         backUpTodoFile();
         Files.write(this.todoFile, "".getBytes());
         for (Activity activity : this.getActivities()) {
             writeActivityToFile(activity);
         }
-        System.out.println(">> TODO.txt was updated");
+        LOG.info(">> TODO.txt was updated");
         this.readActivitiesFromFile();
     }
 

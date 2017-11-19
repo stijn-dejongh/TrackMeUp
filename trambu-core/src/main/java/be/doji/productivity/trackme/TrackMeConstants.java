@@ -1,5 +1,8 @@
 package be.doji.productivity.trackme;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
@@ -9,6 +12,8 @@ import java.util.*;
  * Created by Doji on 22/10/2017.
  */
 public final class TrackMeConstants {
+
+    private static final Logger LOG = LoggerFactory.getLogger(TrackMeConstants.class);
 
     /**
      * Utility classes should not have a public or default constructor
@@ -51,7 +56,7 @@ public final class TrackMeConstants {
         try {
             return getDateFormat().parse(DEFAULT_DATE_HEADER);
         } catch (ParseException e) {
-            System.out.println("Error while creating default date");
+            LOG.error("Error while creating default date: " + e.getMessage());
             GregorianCalendar calendar = new GregorianCalendar();
             calendar.set(3550, 12, 31);
             return calendar.getTime();

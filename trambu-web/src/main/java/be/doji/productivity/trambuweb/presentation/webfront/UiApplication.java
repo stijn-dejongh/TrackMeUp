@@ -6,6 +6,8 @@ import be.doji.productivity.trackme.managers.TimeTrackingManager;
 import be.doji.productivity.trackme.model.tasks.Activity;
 import be.doji.productivity.trackme.model.tracker.ActivityLog;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +22,9 @@ import java.util.Map;
  * Created by Doji on 23/10/2017.
  */
 @SpringBootApplication @RestController @JsonIgnoreProperties(ignoreUnknown = true) public class UiApplication {
+
+    private static final Logger LOG = LoggerFactory.getLogger(UiApplication.class);
+
     private ActivityManager am;
     private TimeTrackingManager tm;
 
@@ -44,8 +49,8 @@ import java.util.Map;
 
     @RequestMapping(value = { "/getActivitiesByTag" }, method = {
             RequestMethod.POST }) public @ResponseBody Map<Date, List<Activity>> getActivitiesByTag(
-            @RequestBody String tag) throws IOException {
-        System.out.println("Loading activitiesWithHeader for tag: " + tag);
+            @RequestBody String tag) {
+        LOG.debug("Loading activitiesWithHeader for tag: {0}", tag);
         return am.getActivitiesByTag(tag);
 
     }
@@ -53,7 +58,7 @@ import java.util.Map;
     @RequestMapping(value = { "/updateFileLocation" }, method = {
             RequestMethod.POST }) public @ResponseBody boolean updateFileLocation(@RequestBody String location)
             throws IOException, ParseException {
-        System.out.println("Setting todo file to: " + location);
+        LOG.info("Setting todo file to: {0}", location);
         if (am == null) {
             am = new ActivityManager(location);
         }
@@ -64,7 +69,7 @@ import java.util.Map;
     @RequestMapping(value = { "/updateLogFileLocation" }, method = {
             RequestMethod.POST }) public @ResponseBody boolean updateLogFileLocation(@RequestBody String location)
             throws IOException, ParseException {
-        System.out.println("Setting todo file to: " + location);
+        LOG.info("Setting todo file to: {0}", location);
         if (tm == null) {
             tm = new TimeTrackingManager(location);
         } else {
@@ -76,8 +81,8 @@ import java.util.Map;
 
     @RequestMapping(value = { "/getActivitiesByProject" }, method = {
             RequestMethod.POST }) public @ResponseBody Map<Date, List<Activity>> getActivitiesByProject(
-            @RequestBody String tag) throws IOException {
-        System.out.println("Loading activitiesWithHeader for tag: " + tag);
+            @RequestBody String tag) {
+        LOG.debug("Loading activitiesWithHeader for tag: {0}", tag);
         if (am != null) {
             return am.getActivitiesByProject(tag);
         } else {
@@ -86,8 +91,7 @@ import java.util.Map;
     }
 
     @RequestMapping(value = { "/getActivitiesWithDateHeader" }, method = {
-            RequestMethod.GET }) public @ResponseBody Map<Date, List<Activity>> getActivitiesWithDateHeader()
-            throws IOException {
+            RequestMethod.GET }) public @ResponseBody Map<Date, List<Activity>> getActivitiesWithDateHeader() {
         if (am != null) {
             return am.getActivitiesWithDateHeader();
         } else {
@@ -97,7 +101,7 @@ import java.util.Map;
 
     @RequestMapping(value = { "/save" }, method = { RequestMethod.POST }) public @ResponseBody boolean saveActivity(
             @RequestBody Activity activity) throws IOException, ParseException {
-        System.out.println("Saving activity");
+        LOG.debug("Saving activity");
         if (am != null && activity != null) {
             am.save(activity);
             return true;
@@ -109,7 +113,7 @@ import java.util.Map;
 
     @RequestMapping(value = { "/delete" }, method = { RequestMethod.POST }) public @ResponseBody boolean deleteActivity(
             @RequestBody Activity activity) throws IOException, ParseException {
-        System.out.println("Deleting Activity!");
+        LOG.debug("Deleting Activity!");
         if (am == null) {
             initialize();
         }
@@ -123,25 +127,24 @@ import java.util.Map;
     }
 
     @RequestMapping(value = { "/startTimeLog" }, method = { RequestMethod.POST }) public void startTimeLog(
-            @RequestBody String activityID) throws IOException, ParseException {
-        System.out.println("Start timelog");
+            @RequestBody String activityID) throws IOException {
+        LOG.debug("Start timelog");
         ActivityLog timeLogForActivity = getTimeLogForActivity(activityID);
         timeLogForActivity.startLog();
         tm.writeLogs();
     }
 
     @RequestMapping(value = { "/stopTimeLog" }, method = { RequestMethod.POST }) public void stopTimeLog(
-            @RequestBody String activityID) throws IOException, ParseException {
-        System.out.println("Start timelog");
+            @RequestBody String activityID) throws IOException {
+        LOG.debug("Start timelog");
         ActivityLog timeLogForActivity = getTimeLogForActivity(activityID);
         timeLogForActivity.stopActiveLog();
         tm.writeLogs();
     }
 
     @RequestMapping(value = { "/getTimeLogForActivity" }, method = {
-            RequestMethod.POST }) public @ResponseBody ActivityLog getTimeLogForActivity(@RequestBody String activityId)
-            throws IOException {
-        System.out.println("Loading timelog for activity");
+            RequestMethod.POST }) public @ResponseBody ActivityLog getTimeLogForActivity(@RequestBody String activityId) {
+        LOG.debug("Loading timelog for activity");
         if (tm != null) {
             return tm.getLogForActivityId(activityId);
         } else {

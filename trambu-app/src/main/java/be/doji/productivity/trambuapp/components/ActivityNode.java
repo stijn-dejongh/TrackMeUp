@@ -59,9 +59,17 @@ public class ActivityNode extends TitledPane {
         titleLabel.getStyleClass().add("icon-button");
         this.setGraphic(titleLabel);
         this.getStyleClass().clear();
-        this.getStyleClass().add(activity.isCompleted()?"done":activity.isAlertActive()?"alert":"todo");
+        this.getStyleClass().add(getActivityStyle(activity));
         this.setContent(createActivityContent());
         this.setVisible(true);
+    }
+
+    private String getActivityStyle(Activity activity) {
+        if (activity.isCompleted()) {
+            return "done";
+        } else {
+            return activity.isAlertActive()?"alert":"todo";
+        }
     }
 
     private GridPane createActivityContent() {
@@ -299,7 +307,7 @@ public class ActivityNode extends TitledPane {
                 done.setText(DisplayUtils.getDoneButtonText(activity));
                 save();
             } catch (IOException | ParseException e) {
-                LOG.error("Error while saving activity: " + e.getMessage());
+                LOG.error(TrambuApplicationConstants.ERROR_MESSAGE_ACTIVITY_SAVING + ": " + e.getMessage());
             }
         });
 
@@ -324,7 +332,7 @@ public class ActivityNode extends TitledPane {
                 }
                 edit.setText(getEditButonText());
             } catch (IOException | ParseException e) {
-                LOG.error("Error while saving activity: " + e.getMessage());
+                LOG.error(TrambuApplicationConstants.ERROR_MESSAGE_ACTIVITY_SAVING + ": " + e.getMessage());
             }
         });
         return edit;
@@ -341,7 +349,7 @@ public class ActivityNode extends TitledPane {
                 application.getActivityManager().delete(this.activity);
                 application.updateActivities();
             } catch (IOException | ParseException e) {
-                LOG.error("Error while saving activity: " + e.getMessage());
+                LOG.error(TrambuApplicationConstants.ERROR_MESSAGE_ACTIVITY_SAVING + ": " + e.getMessage());
             }
         });
         delete.getStyleClass().clear();

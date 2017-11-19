@@ -13,7 +13,6 @@ public final class TimeLogParser {
             TrackMeConstants.INDICATOR_LOGPOINT_START + TrackMeConstants.REGEX_DATE + "(\\s|$)";
     private static final String REGEX_END_DATETIME =
             TrackMeConstants.INDICATOR_LOGPOINT_END + TrackMeConstants.REGEX_DATE + "(\\s|$)";
-    ;
 
     /**
      * Utility classes should not have a public or default constructor

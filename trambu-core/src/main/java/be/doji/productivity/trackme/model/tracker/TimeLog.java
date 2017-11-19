@@ -10,10 +10,6 @@ public class TimeLog {
     private Date endTime;
     private boolean isActive;
 
-    public TimeLog() {
-
-    }
-
     public void start() {
         this.startTime = new Date();
         isActive = true;

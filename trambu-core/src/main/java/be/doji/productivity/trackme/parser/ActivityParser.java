@@ -14,7 +14,8 @@ import java.util.List;
  */
 public final class ActivityParser {
 
-    private static String REGEX_UUID = "([a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12})";
+    private static final String REGEX_TERMINATOR = "(\\s|$)";
+    private static final String REGEX_UUID = "([a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12})";
     private static final String COMPLETED_REGEX =
             "^[" + TrackMeConstants.INDICATOR_DONE + StringUtils.lowerCase(TrackMeConstants.INDICATOR_DONE) + "]";
     private static final String PRIORITY_REGEX = "\\([a-zA-Z]\\)";
@@ -22,18 +23,20 @@ public final class ActivityParser {
             "\\b[a-zA-Z]([\\w\\s\\.\\- && [^\\+]])*(\\s\\+|$|\\s\\@|\\s" + TrackMeConstants.INDICATOR_WARNING_PERIOD
                     + "|\\s" + TrackMeConstants.INDICATOR_DEADLINE + "|\\s" + TrackMeConstants.INDICATOR_PARENT_ACTIVITY
                     + "|\\s" + TrackMeConstants.INDICATOR_UUID + ")";
-    private static final String TAG_REGEX = "\\" + TrackMeConstants.INDICATOR_TAG + "([a-zA-Z0-9]*)(\\s|$)";
-    private static final String PROJECT_REGEX = "\\" + TrackMeConstants.INDICATOR_PROJECT + "([a-zA-Z0-9]*)(\\s|$)";
+    private static final String TAG_REGEX = "\\" + TrackMeConstants.INDICATOR_TAG + "([a-zA-Z0-9]*)" + REGEX_TERMINATOR;
+    private static final String PROJECT_REGEX =
+            "\\" + TrackMeConstants.INDICATOR_PROJECT + "([a-zA-Z0-9]*)" + REGEX_TERMINATOR;
     private static final String DUE_DATE_REGEX =
-            TrackMeConstants.INDICATOR_DEADLINE + TrackMeConstants.REGEX_DATE + "(\\s|$)";
+            TrackMeConstants.INDICATOR_DEADLINE + TrackMeConstants.REGEX_DATE + REGEX_TERMINATOR;
     private static final String DURATION_REGEX = "P((0-9|.)+(T)*(D|H|M|S))*";
+
     private static final String WARNING_PERIOD_REGEX =
-            TrackMeConstants.INDICATOR_WARNING_PERIOD + DURATION_REGEX + "(\\s|$)";
+            TrackMeConstants.INDICATOR_WARNING_PERIOD + DURATION_REGEX + REGEX_TERMINATOR;
     private static final String SUPER_ACTIVITY_REGEX =
             TrackMeConstants.INDICATOR_PARENT_ACTIVITY + REGEX_UUID + "(\\s\\+|$|\\s\\@|\\s"
                     + TrackMeConstants.INDICATOR_WARNING_PERIOD + "|\\s" + TrackMeConstants.INDICATOR_DEADLINE + "|\\s"
-                    + TrackMeConstants.INDICATOR_UUID + ")";
-    private static final String REGEX_ID = TrackMeConstants.INDICATOR_UUID + REGEX_UUID + "(\\s|$)";
+                    + TrackMeConstants.INDICATOR_UUID + "|" + REGEX_TERMINATOR + ")";
+    private static final String REGEX_ID = TrackMeConstants.INDICATOR_UUID + REGEX_UUID + REGEX_TERMINATOR;
 
     /**
      * Utility classes should not have a public or default constructor

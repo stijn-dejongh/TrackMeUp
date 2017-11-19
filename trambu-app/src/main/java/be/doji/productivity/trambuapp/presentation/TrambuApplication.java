@@ -59,9 +59,8 @@ public class TrambuApplication extends Application {
 
     @Override public void start(Stage primaryStage) throws Exception {
         initialize();
-        Stage mainStage = createPrimaryStage();
-        this.primaryStage = mainStage;
-        mainStage.show();
+        this.primaryStage = createPrimaryStage();
+        this.primaryStage.show();
     }
 
     private void initialize() throws InitialisationException {
@@ -69,9 +68,8 @@ public class TrambuApplication extends Application {
             initializeActivities(TrackMeConstants.DEFAULT_TODO_FILE_LOCATION);
             initializeTimeTracking(TrackMeConstants.DEFAULT_TIMELOG_FILE_LOCATION);
         } catch (IOException | ParseException e) {
-            String errorMessage = "Error while initializing the application.";
-            LOG.error(errorMessage + ": " + e.getMessage());
-            throw new InitialisationException(errorMessage, e);
+            LOG.error(TrambuApplicationConstants.ERROR_MESSAGE_ACTIVITY_SAVING + ": " + e.getMessage());
+            throw new InitialisationException(TrambuApplicationConstants.ERROR_MESSAGE_ACTIVITY_SAVING, e);
         }
     }
 
@@ -90,13 +88,12 @@ public class TrambuApplication extends Application {
     }
 
     private Stage createPrimaryStage() {
-        Stage primaryStage;
-        primaryStage = new Stage();
-        primaryStage.setTitle("Track My Bitch Up");
-        primaryStage.setMinWidth(DEFAULT_WINDOW_WIDTH);
-        primaryStage.setMinHeight(DEFAULT_WINDOW_HEIGHT);
-        primaryStage.setScene(createRootScene(createContentSplitPane()));
-        return primaryStage;
+        Stage rootStage = new Stage();
+        rootStage.setTitle("Track My Bitch Up");
+        rootStage.setMinWidth(DEFAULT_WINDOW_WIDTH);
+        rootStage.setMinHeight(DEFAULT_WINDOW_HEIGHT);
+        rootStage.setScene(createRootScene(createContentSplitPane()));
+        return rootStage;
     }
 
     private SplitPane createContentSplitPane() {
@@ -202,13 +199,13 @@ public class TrambuApplication extends Application {
         });
         grid.add(resetFilter, 1, 1);
 
-        Button filterDone = new Button("Filter completed");
-        filterDone.setOnAction(e -> {
+        Button filterButton = new Button("Filter completed");
+        filterButton.setOnAction(e -> {
             this.filterDone = true;
             updateFilterLabel();
             updateActivities();
         });
-        grid.add(filterDone, 0, 1);
+        grid.add(filterButton, 0, 1);
 
         Button addActivity = new Button("Add activity");
         FontAwesomeIconView addIcon = new FontAwesomeIconView(FontAwesomeIcon.PLUS_CIRCLE);
@@ -332,10 +329,14 @@ public class TrambuApplication extends Application {
     }
 
     private String getActiveFilter() {
-        return StringUtils.isNotBlank(tagFilter)?
-                tagFilter:
-                StringUtils.isNotBlank(projectFilter)?
-                        projectFilter:
-                        this.filterDone?"Filter completed activities":"No active filter";
+        if (StringUtils.isNotBlank(tagFilter)) {
+            return tagFilter;
+        } else if (StringUtils.isNotBlank(projectFilter)) {
+            return projectFilter;
+        } else if (this.filterDone) {
+            return "Filter completed activities";
+        } else {
+            return "No active filter";
+        }
     }
 }
