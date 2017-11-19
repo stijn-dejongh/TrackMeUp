@@ -7,7 +7,7 @@ import be.doji.productivity.trambucore.model.tasks.Activity;
 import be.doji.productivity.trambuapp.components.ActivityNode;
 import be.doji.productivity.trambuapp.exception.InitialisationException;
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
-import be.doji.productivity.trambuapp.utils.TrambuApplicationConstants;
+import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.application.Application;
@@ -68,8 +68,8 @@ public class TrambuApplication extends Application {
             initializeActivities(TrackMeConstants.DEFAULT_TODO_FILE_LOCATION);
             initializeTimeTracking(TrackMeConstants.DEFAULT_TIMELOG_FILE_LOCATION);
         } catch (IOException | ParseException e) {
-            LOG.error(TrambuApplicationConstants.ERROR_MESSAGE_ACTIVITY_SAVING + ": " + e.getMessage());
-            throw new InitialisationException(TrambuApplicationConstants.ERROR_MESSAGE_ACTIVITY_SAVING, e);
+            LOG.error(DisplayConstants.ERROR_MESSAGE_ACTIVITY_SAVING + ": " + e.getMessage());
+            throw new InitialisationException(DisplayConstants.ERROR_MESSAGE_ACTIVITY_SAVING, e);
         }
     }
 
@@ -209,7 +209,7 @@ public class TrambuApplication extends Application {
 
         Button addActivity = new Button("Add activity");
         FontAwesomeIconView addIcon = new FontAwesomeIconView(FontAwesomeIcon.PLUS_CIRCLE);
-        addIcon.setGlyphStyle(TrambuApplicationConstants.GLYPH_DEFAULT_STYLE);
+        addIcon.setGlyphStyle(DisplayConstants.STYLE_GLYPH_DEFAULT);
         addActivity.setGraphic(addIcon);
 
         addActivity.setOnAction(event -> {

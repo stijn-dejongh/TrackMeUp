@@ -18,8 +18,8 @@ public class FileUtils {
     private FileUtils() {
     }
 
-    public static String getTestPath(String path) throws FileNotFoundException {
-        File testFile = ResourceUtils.getFile(FileUtils.class.getClassLoader().getResource(path));
+    public static String getTestPath(String path, ClassLoader classLoader) throws FileNotFoundException {
+        File testFile = ResourceUtils.getFile(classLoader.getResource(path));
         Assert.assertTrue(testFile.exists());
         String testPath = testFile.getAbsolutePath();
         Assert.assertFalse(StringUtils.isBlank(testPath));

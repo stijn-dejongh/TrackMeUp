@@ -1,8 +1,8 @@
 package be.doji.productivity.trambuapp.components;
 
 import be.doji.productivity.trambuapp.presentation.TrambuApplication;
+import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
-import be.doji.productivity.trambuapp.utils.TrambuApplicationConstants;
 import be.doji.productivity.trambucore.TrackMeConstants;
 import be.doji.productivity.trambucore.model.tasks.Activity;
 import be.doji.productivity.trambucore.model.tracker.ActivityLog;
@@ -48,27 +48,33 @@ public class ActivityNode extends TitledPane {
         super();
         this.activity = activity;
         this.application = trambuApplication;
+        createHeader(activity);
+        this.setContent(createActivityContent());
+        this.setVisible(true);
+    }
+
+    private void createHeader(Activity activity) {
         this.setText(activity.getName());
         Button titleLabel = new Button();
         FontAwesomeIconView checkedCalendar = new FontAwesomeIconView(FontAwesomeIcon.CALENDAR_CHECK_ALT);
-        checkedCalendar.setGlyphStyle(TrambuApplicationConstants.GLYPH_DEFAULT_STYLE);
+        checkedCalendar.setGlyphStyle(DisplayConstants.STYLE_GLYPH_DEFAULT);
         FontAwesomeIconView uncheckedCalendar = new FontAwesomeIconView(FontAwesomeIcon.CALENDAR_ALT);
-        uncheckedCalendar.setGlyphStyle(TrambuApplicationConstants.GLYPH_DEFAULT_STYLE);
+        uncheckedCalendar.setGlyphStyle(DisplayConstants.STYLE_GLYPH_DEFAULT);
         titleLabel.setGraphic(activity.isCompleted()?checkedCalendar:uncheckedCalendar);
         titleLabel.getStyleClass().clear();
         titleLabel.getStyleClass().add("icon-button");
         this.setGraphic(titleLabel);
         this.getStyleClass().clear();
-        this.getStyleClass().add(getActivityStyle(activity));
-        this.setContent(createActivityContent());
-        this.setVisible(true);
+        this.getStyleClass().add(getActivityStyle());
     }
 
-    private String getActivityStyle(Activity activity) {
-        if (activity.isCompleted()) {
-            return "done";
+    protected String getActivityStyle() {
+        if (this.activity.isCompleted()) {
+            return DisplayConstants.STYLE_CLASS_ACTIVITY_DONE;
         } else {
-            return activity.isAlertActive()?"alert":"todo";
+            return this.activity.isAlertActive()?
+                    DisplayConstants.STYLE_CLASS_ACTIVITY_ALERT:
+                    DisplayConstants.STYLE_CLASS_ACTIVITY_TODO;
         }
     }
 
@@ -299,7 +305,7 @@ public class ActivityNode extends TitledPane {
     private Button createDoneButton() {
         Button done = new Button(DisplayUtils.getDoneButtonText(activity));
         FontAwesomeIconView doneIcon = new FontAwesomeIconView(FontAwesomeIcon.REFRESH);
-        doneIcon.setGlyphStyle(TrambuApplicationConstants.GLYPH_DEFAULT_STYLE);
+        doneIcon.setGlyphStyle(DisplayConstants.STYLE_GLYPH_DEFAULT);
         done.setGraphic(doneIcon);
         done.setOnAction(event -> {
             try {
@@ -307,7 +313,7 @@ public class ActivityNode extends TitledPane {
                 done.setText(DisplayUtils.getDoneButtonText(activity));
                 save();
             } catch (IOException | ParseException e) {
-                LOG.error(TrambuApplicationConstants.ERROR_MESSAGE_ACTIVITY_SAVING + ": " + e.getMessage());
+                LOG.error(DisplayConstants.ERROR_MESSAGE_ACTIVITY_SAVING + ": " + e.getMessage());
             }
         });
 
@@ -317,7 +323,7 @@ public class ActivityNode extends TitledPane {
     private Button createEditButton() {
         Button edit = new Button(getEditButonText());
         FontAwesomeIconView editIcon = new FontAwesomeIconView(FontAwesomeIcon.EDIT);
-        editIcon.setGlyphStyle(TrambuApplicationConstants.GLYPH_DEFAULT_STYLE);
+        editIcon.setGlyphStyle(DisplayConstants.STYLE_GLYPH_DEFAULT);
         edit.setGraphic(editIcon);
         edit.setOnAction(event -> {
             try {
@@ -332,7 +338,7 @@ public class ActivityNode extends TitledPane {
                 }
                 edit.setText(getEditButonText());
             } catch (IOException | ParseException e) {
-                LOG.error(TrambuApplicationConstants.ERROR_MESSAGE_ACTIVITY_SAVING + ": " + e.getMessage());
+                LOG.error(DisplayConstants.ERROR_MESSAGE_ACTIVITY_SAVING + ": " + e.getMessage());
             }
         });
         return edit;
@@ -341,7 +347,7 @@ public class ActivityNode extends TitledPane {
     private Node createDeleteButton() {
         Button delete = new Button("Delete");
         FontAwesomeIconView removeIcon = new FontAwesomeIconView(FontAwesomeIcon.REMOVE);
-        removeIcon.setGlyphStyle(TrambuApplicationConstants.GLYPH_DEFAULT_STYLE);
+        removeIcon.setGlyphStyle(DisplayConstants.STYLE_GLYPH_DEFAULT);
         delete.setGraphic(removeIcon);
         delete.setOnAction(event -> {
             try {
@@ -349,7 +355,7 @@ public class ActivityNode extends TitledPane {
                 application.getActivityManager().delete(this.activity);
                 application.updateActivities();
             } catch (IOException | ParseException e) {
-                LOG.error(TrambuApplicationConstants.ERROR_MESSAGE_ACTIVITY_SAVING + ": " + e.getMessage());
+                LOG.error(DisplayConstants.ERROR_MESSAGE_ACTIVITY_SAVING + ": " + e.getMessage());
             }
         });
         delete.getStyleClass().clear();

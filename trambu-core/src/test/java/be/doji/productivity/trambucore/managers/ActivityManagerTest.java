@@ -24,7 +24,7 @@ public class ActivityManagerTest {
     public static final String DATA_TEST_ONE_TASK_TXT = "data/testOneTask.txt";
 
     @Test public void testReadAcitvities() throws IOException, ParseException {
-        ActivityManager am = new ActivityManager(FileUtils.getTestPath(DATA_TEST_ONE_TASK_TXT));
+        ActivityManager am = new ActivityManager(FileUtils.getTestPath(DATA_TEST_ONE_TASK_TXT, this.getClass().getClassLoader()));
         am.readActivitiesFromFile();
         List<Activity> readActivities = am.getActivities();
         Assert.assertFalse(readActivities.isEmpty());
@@ -161,7 +161,7 @@ public class ActivityManagerTest {
     }
 
     private Path createTempFile() throws IOException {
-        Path directoryPath = Paths.get(FileUtils.getTestPath(DATA_TEST_ONE_TASK_TXT)).getParent();
+        Path directoryPath = Paths.get(FileUtils.getTestPath(DATA_TEST_ONE_TASK_TXT, this.getClass().getClassLoader())).getParent();
         return Files.createTempFile(directoryPath, "temp", "txt");
     }
 }
