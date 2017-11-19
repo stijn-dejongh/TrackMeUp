@@ -6,14 +6,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class UserConfigurationManager {
 
-    private static final Path PATH_CONFIGURATION_DIRECTORY = Paths.get(System.getProperty("user.home"), ".trambu");
+    static final Path PATH_CONFIGURATION_DIRECTORY = Paths.get(System.getProperty("user.home"), ".trambu");
 
     private static final String SEPARATOR_PROPERTY = "=";
 
@@ -64,5 +61,28 @@ public class UserConfigurationManager {
 
     public Map<String, String> getProperties() {
         return properties;
+    }
+
+    public Optional<String> getProperty(String key) {
+        if (containsProperty(key)) {
+            return Optional.of(this.getProperties().get(key));
+        } else {
+            return Optional.empty();
+        }
+
+    }
+
+    public boolean containsProperty(String key) {
+        return this.getProperties().containsKey(key);
+    }
+
+    public void addProperty(String key, String value) {
+        if (StringUtils.isNotBlank(key) && StringUtils.isNotBlank(value)) {
+            this.properties.put(key, value);
+        }
+    }
+
+    public Path getConfigFilePath() {
+        return configFilePath;
     }
 }

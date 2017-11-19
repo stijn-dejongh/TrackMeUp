@@ -1,13 +1,14 @@
 package be.doji.productivity.trambuapp.presentation;
 
+import be.doji.productivity.trambuapp.components.ActivityNode;
+import be.doji.productivity.trambuapp.exception.InitialisationException;
+import be.doji.productivity.trambuapp.userconfiguration.UserConfigurationManager;
+import be.doji.productivity.trambuapp.utils.DisplayConstants;
+import be.doji.productivity.trambuapp.utils.DisplayUtils;
 import be.doji.productivity.trambucore.TrackMeConstants;
 import be.doji.productivity.trambucore.managers.ActivityManager;
 import be.doji.productivity.trambucore.managers.TimeTrackingManager;
 import be.doji.productivity.trambucore.model.tasks.Activity;
-import be.doji.productivity.trambuapp.components.ActivityNode;
-import be.doji.productivity.trambuapp.exception.InitialisationException;
-import be.doji.productivity.trambuapp.utils.DisplayUtils;
-import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.application.Application;
@@ -27,10 +28,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -44,6 +42,7 @@ public class TrambuApplication extends Application {
     private static final double DEFAULT_WINDOW_WIDTH = 750.0;
     private static final double DEFAULT_WINDOW_HEIGHT = 850.0;
 
+    private UserConfigurationManager configManager;
     private ActivityManager activityManager;
     private TimeTrackingManager timeTrackingManager;
     private Stage primaryStage;
@@ -52,6 +51,9 @@ public class TrambuApplication extends Application {
     private String projectFilter;
     private boolean filterDone = false;
     private Label activeFilter;
+
+    private String configuredTodoLocation;
+    private String configuredTimeLocation;
 
     public static void main(String[] args) {
         Application.launch(TrambuApplication.class);
@@ -65,11 +67,14 @@ public class TrambuApplication extends Application {
 
     private void initialize() throws InitialisationException {
         try {
-            initializeActivities(TrackMeConstants.DEFAULT_TODO_FILE_LOCATION);
-            initializeTimeTracking(TrackMeConstants.DEFAULT_TIMELOG_FILE_LOCATION);
+            configManager = new UserConfigurationManager(DisplayConstants.NAME_CONFIGURATION_FILE);
+            Optional<String> todoLocation = configManager.getProperty(DisplayConstants.NAME_PROPERTY_TODO_LOCATION);
+            initializeActivities(todoLocation.orElse(TrackMeConstants.DEFAULT_TODO_FILE_LOCATION));
+            Optional<String> timeLocation = configManager.getProperty(DisplayConstants.NAME_PROPERTY_TIME_LOCATION);
+            initializeTimeTracking(timeLocation.orElse(TrackMeConstants.DEFAULT_TIMELOG_FILE_LOCATION));
         } catch (IOException | ParseException e) {
-            LOG.error(DisplayConstants.ERROR_MESSAGE_ACTIVITY_SAVING + ": " + e.getMessage());
-            throw new InitialisationException(DisplayConstants.ERROR_MESSAGE_ACTIVITY_SAVING, e);
+            LOG.error(DisplayConstants.ERROR_MESSAGE_INITIALIZATION + ": " + e.getMessage());
+            throw new InitialisationException(DisplayConstants.ERROR_MESSAGE_INITIALIZATION, e);
         }
     }
 
@@ -119,10 +124,16 @@ public class TrambuApplication extends Application {
 
     private Accordion createControlsAccordeon() {
         Accordion accordion = new Accordion();
-        accordion.getPanes().add(createFileOptionsControls());
+        TitledPane fileOptionsControls = createFileOptionsControls();
+        accordion.getPanes().add(fileOptionsControls);
         TitledPane generalControls = createGeneralControls();
         accordion.getPanes().add(generalControls);
-        accordion.setExpandedPane(generalControls);
+        if (!isSetFileOptions()) {
+            accordion.setExpandedPane(fileOptionsControls);
+        } else {
+            accordion.setExpandedPane(generalControls);
+        }
+
         accordion.getStylesheets().clear();
         accordion.getStylesheets().add("style/css/trambu-controls.css");
         return accordion;
@@ -140,10 +151,12 @@ public class TrambuApplication extends Application {
 
         Button openTodoButton = createOpenFileButton("Select TODO file", todoFileChooser, file -> {
             try {
-                activityManager.updateFileLocation(file.getAbsolutePath());
+                String filePath = file.getAbsolutePath();
+                this.configuredTodoLocation = filePath;
+                activityManager.updateFileLocation(filePath);
                 updateActivities();
             } catch (IOException | ParseException e) {
-                LOG.error("Error opening todo file: " + e.getMessage());
+                LOG.error("Error opening todo file", e);
             }
         });
         grid.add(openTodoButton, 1, 0);
@@ -154,17 +167,42 @@ public class TrambuApplication extends Application {
 
         Button openTimeButton = createOpenFileButton("Select timelog file", timeFileChooser, file -> {
             try {
-                timeTrackingManager.updateFileLocation(file.getAbsolutePath());
+                String filePath = file.getAbsolutePath();
+                this.configuredTimeLocation = filePath;
+                timeTrackingManager.updateFileLocation(filePath);
             } catch (IOException | ParseException e) {
-                LOG.error("Error opening time tracking file: " + e.getMessage());
+                LOG.error("Error opening time tracking file", e);
             }
         });
         grid.add(openTimeButton, 1, 1);
+        grid.add(createHorizontalSpacer(), 0, 2, 2, 1);
+
+        Button savePreferences = new Button("Remember choices");
+        savePreferences.setOnAction(event -> {
+            if (StringUtils.isNotBlank(configuredTodoLocation)) {
+                configManager.addProperty(DisplayConstants.NAME_PROPERTY_TODO_LOCATION, configuredTodoLocation);
+            }
+            if (StringUtils.isNotBlank(configuredTimeLocation)) {
+                configManager.addProperty(DisplayConstants.NAME_PROPERTY_TIME_LOCATION, configuredTimeLocation);
+            }
+            try {
+                configManager.writeToFile();
+            } catch (IOException e) {
+                LOG.error(DisplayConstants.ERROR_MESSAGE_WRITE_PROPERTIES, e);
+            }
+        });
+        grid.add(savePreferences, 0, 3);
 
         gridTitlePane.setText("File Options");
         gridTitlePane.setContent(grid);
         gridTitlePane.setVisible(true);
         return gridTitlePane;
+    }
+
+    private Separator createHorizontalSpacer() {
+        Separator sep = new Separator();
+        sep.setOrientation(Orientation.HORIZONTAL);
+        return sep;
     }
 
     private Button createOpenFileButton(String buttonText, FileChooser fileChooser, Consumer<File> fileLambda) {
@@ -183,6 +221,7 @@ public class TrambuApplication extends Application {
         TitledPane gridTitlePane = new TitledPane();
         GridPane grid = new GridPane();
         grid.setVgap(8);
+        grid.setHgap(5);
         grid.setPadding(new Insets(5, 5, 5, 5));
 
         Label filterLabel = new Label("Active filter: ");
@@ -192,13 +231,6 @@ public class TrambuApplication extends Application {
         grid.add(filterLabel, 0, 0);
         grid.add(activeFilter, 1, 0);
 
-        Button resetFilter = new Button("Reset filter");
-        resetFilter.setOnAction(e -> {
-            this.resetFilter();
-            updateActivities();
-        });
-        grid.add(resetFilter, 1, 1);
-
         Button filterButton = new Button("Filter completed");
         filterButton.setOnAction(e -> {
             this.filterDone = true;
@@ -206,6 +238,15 @@ public class TrambuApplication extends Application {
             updateActivities();
         });
         grid.add(filterButton, 0, 1);
+
+        Button resetFilter = new Button("Reset filter");
+        resetFilter.setOnAction(e -> {
+            this.resetFilter();
+            updateActivities();
+        });
+        grid.add(resetFilter, 1, 1);
+
+        grid.add(createHorizontalSpacer(), 0, 2, 2, 1);
 
         Button addActivity = new Button("Add activity");
         FontAwesomeIconView addIcon = new FontAwesomeIconView(FontAwesomeIcon.PLUS_CIRCLE);
@@ -218,10 +259,10 @@ public class TrambuApplication extends Application {
                 this.activityManager.save(newActivity);
                 this.updateActivities();
             } catch (IOException | ParseException exception) {
-                LOG.error("Error creation new activity: " + exception.getMessage());
+                LOG.error("Error creation new activity", exception);
             }
         });
-        grid.add(addActivity, 0, 2);
+        grid.add(addActivity, 0, 3);
 
         gridTitlePane.setContent(grid);
         gridTitlePane.setText("General controls");
@@ -334,9 +375,14 @@ public class TrambuApplication extends Application {
         } else if (StringUtils.isNotBlank(projectFilter)) {
             return projectFilter;
         } else if (this.filterDone) {
-            return "Filter completed activities";
+            return DisplayConstants.LABEL_TEXT_FILTER_COMPLETED;
         } else {
-            return "No active filter";
+            return DisplayConstants.LABEL_TEXT_FILTER_NONE;
         }
+    }
+
+    public boolean isSetFileOptions() {
+        return configManager.containsProperty(DisplayConstants.NAME_PROPERTY_TODO_LOCATION) || configManager
+                .containsProperty(DisplayConstants.NAME_PROPERTY_TIME_LOCATION);
     }
 }
