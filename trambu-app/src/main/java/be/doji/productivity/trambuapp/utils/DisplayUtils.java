@@ -1,6 +1,6 @@
 package be.doji.productivity.trambuapp.utils;
 
-import be.doji.productivity.trackme.model.tasks.Activity;
+import be.doji.productivity.trambucore.model.tasks.Activity;
 
 import java.text.DateFormat;
 import java.util.Calendar;

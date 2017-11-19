@@ -28,11 +28,14 @@
         <dependency>
             <groupId>be.doji.productivity</groupId>
             <artifactId>trambu-core</artifactId>
+            <version>${parent.version}</version>
         </dependency>
         <dependency>
             <groupId>be.doji.productivity</groupId>
             <artifactId>trambu-core</artifactId>
-            <version>0.2.0-SNAPSHOT</version>
+            <version>${parent.version}</version>
+            <type>test-jar</type>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>de.jensd</groupId>

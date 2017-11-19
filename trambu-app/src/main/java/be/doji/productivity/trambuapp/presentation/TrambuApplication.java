@@ -1,9 +1,9 @@
 package be.doji.productivity.trambuapp.presentation;
 
-import be.doji.productivity.trackme.TrackMeConstants;
-import be.doji.productivity.trackme.managers.ActivityManager;
-import be.doji.productivity.trackme.managers.TimeTrackingManager;
-import be.doji.productivity.trackme.model.tasks.Activity;
+import be.doji.productivity.trambucore.TrackMeConstants;
+import be.doji.productivity.trambucore.managers.ActivityManager;
+import be.doji.productivity.trambucore.managers.TimeTrackingManager;
+import be.doji.productivity.trambucore.model.tasks.Activity;
 import be.doji.productivity.trambuapp.components.ActivityNode;
 import be.doji.productivity.trambuapp.exception.InitialisationException;
 import be.doji.productivity.trambuapp.utils.DisplayUtils;

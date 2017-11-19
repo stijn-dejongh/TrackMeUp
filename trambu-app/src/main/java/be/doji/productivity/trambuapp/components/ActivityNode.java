@@ -1,12 +1,12 @@
 package be.doji.productivity.trambuapp.components;
 
-import be.doji.productivity.trackme.TrackMeConstants;
-import be.doji.productivity.trackme.model.tasks.Activity;
-import be.doji.productivity.trackme.model.tracker.ActivityLog;
-import be.doji.productivity.trackme.model.tracker.TimeLog;
 import be.doji.productivity.trambuapp.presentation.TrambuApplication;
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
 import be.doji.productivity.trambuapp.utils.TrambuApplicationConstants;
+import be.doji.productivity.trambucore.TrackMeConstants;
+import be.doji.productivity.trambucore.model.tasks.Activity;
+import be.doji.productivity.trambucore.model.tracker.ActivityLog;
+import be.doji.productivity.trambucore.model.tracker.TimeLog;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.collections.FXCollections;
