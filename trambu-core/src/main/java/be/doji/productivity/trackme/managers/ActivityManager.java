@@ -215,6 +215,10 @@ public class ActivityManager {
     }
 
     public void addActivityAsSub(Activity toBeSub, Activity superActivity) {
+        if (toBeSub.getId() == superActivity.getId() || getParentIds(superActivity).contains(toBeSub.getId())) {
+            return;
+        }
+
         Optional<Activity> savedToBeSub = getSavedActivityById(toBeSub.getId().toString());
         Optional<Activity> savedToBeSuper = getSavedActivityById(superActivity.getId().toString());
         if (savedToBeSuper.isPresent() && savedToBeSub.isPresent()) {
@@ -222,6 +226,19 @@ public class ActivityManager {
             savedToBeSuper.get().addSubTask(savedToBeSub.get());
             this.activities.remove(savedToBeSub.get());
         }
+    }
+
+    private List<UUID> getParentIds(Activity superActivity) {
+        List<UUID> parents = new ArrayList<>();
+        Activity activityToCheck = superActivity;
+        while (StringUtils.isNotBlank(activityToCheck.getParentActivity())) {
+            parents.add(activityToCheck.getId());
+            Optional<Activity> savedActivityById = getSavedActivityById(activityToCheck.getParentActivity());
+            if (savedActivityById.isPresent()) {
+                activityToCheck = savedActivityById.get();
+            }
+        }
+        return parents;
     }
 
     public List<String> getAllActivityNames() {
