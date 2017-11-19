@@ -1,11 +1,9 @@
 package be.doji.productivity.trackme;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * Created by Doji on 22/10/2017.
@@ -21,9 +19,9 @@ public final class TrackMeConstants {
     public static final String DEFAULT_TODO_FILE_LOCATION = "data/todo.txt";
     public static final String DEFAULT_TIMELOG_FILE_LOCATION = "data/timelog.txt";
 
-    public static final String DATA_DATE_FORMAT = "yyyy-MM-dd:HH:mm:ss.SSS";
+    private static final String DATA_DATE_FORMAT = "yyyy-MM-dd:HH:mm:ss.SSS";
     public static final Duration DEFAULT_WARNING_PERIOD = Duration.ofDays(1);
-    public static final Date DEFAULT_DATE_HEADER = new Date(3550, 12, 31);
+    public static final String DEFAULT_DATE_HEADER = "3550-12-31:00:00:00.000";
 
     public static final String INDICATOR_DONE = "X";
     public static final String INDICATOR_PROJECT = "+";
@@ -47,5 +45,16 @@ public final class TrackMeConstants {
     public static List<String> getPriorityList() {
         String[] priorities = { "A", "B", "C", "D", "E", "F", "G", "H" };
         return Arrays.asList(priorities);
+    }
+
+    public static Date getDefaultDateHeader() {
+        try {
+            return getDateFormat().parse(DEFAULT_DATE_HEADER);
+        } catch (ParseException e) {
+            System.out.println("Error while creating default date");
+            GregorianCalendar calendar = new GregorianCalendar();
+            calendar.set(3550, 12, 31);
+            return calendar.getTime();
+        }
     }
 }

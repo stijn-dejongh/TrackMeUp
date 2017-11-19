@@ -21,6 +21,8 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,12 +31,15 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
  * @author Doji
  */
 public class TrambuApplication extends Application {
+
+    private static final Logger LOG = LoggerFactory.getLogger(TrambuApplication.class);
 
     private static final double DEFAULT_WINDOW_WIDTH = 750.0;
     private static final double DEFAULT_WINDOW_HEIGHT = 850.0;
@@ -65,6 +70,7 @@ public class TrambuApplication extends Application {
             initializeTimeTracking(TrackMeConstants.DEFAULT_TIMELOG_FILE_LOCATION);
         } catch (IOException | ParseException e) {
             String errorMessage = "Error while initializing the application.";
+            LOG.error(errorMessage + ": " + e.getMessage());
             throw new InitialisationException(errorMessage, e);
         }
     }
@@ -135,16 +141,12 @@ public class TrambuApplication extends Application {
         FileChooser todoFileChooser = new FileChooser();
         todoFileChooser.setTitle("Open TODO list File");
 
-        Button openTodoButton = new Button("Select TODO file");
-        openTodoButton.setOnAction(e -> {
-            File file = todoFileChooser.showOpenDialog(primaryStage);
-            if (file != null) {
-                try {
-                    activityManager.updateFileLocation(file.getAbsolutePath());
-                    updateActivities();
-                } catch (IOException | ParseException e1) {
-                    System.out.println("Error opening todo file: " + e1.getMessage());
-                }
+        Button openTodoButton = createOpenFileButton("Select TODO file", todoFileChooser, file -> {
+            try {
+                activityManager.updateFileLocation(file.getAbsolutePath());
+                updateActivities();
+            } catch (IOException | ParseException e) {
+                LOG.error("Error opening todo file: " + e.getMessage());
             }
         });
         grid.add(openTodoButton, 1, 0);
@@ -153,16 +155,11 @@ public class TrambuApplication extends Application {
         FileChooser timeFileChooser = new FileChooser();
         timeFileChooser.setTitle("Open time tracking File");
 
-        Button openTimeButton = new Button("Select timelog file");
-        openTimeButton.setOnAction(e -> {
-            File file = timeFileChooser.showOpenDialog(primaryStage);
-            if (file != null) {
-                try {
-                    timeTrackingManager.updateFileLocation(file.getAbsolutePath());
-                    updateActivities();
-                } catch (IOException | ParseException e1) {
-                    System.out.println("Error opening todo file: " + e1.getMessage());
-                }
+        Button openTimeButton = createOpenFileButton("Select timelog file", timeFileChooser, file -> {
+            try {
+                timeTrackingManager.updateFileLocation(file.getAbsolutePath());
+            } catch (IOException | ParseException e) {
+                LOG.error("Error opening time tracking file: " + e.getMessage());
             }
         });
         grid.add(openTimeButton, 1, 1);
@@ -171,6 +168,18 @@ public class TrambuApplication extends Application {
         gridTitlePane.setContent(grid);
         gridTitlePane.setVisible(true);
         return gridTitlePane;
+    }
+
+    private Button createOpenFileButton(String buttonText, FileChooser fileChooser, Consumer<File> fileLambda) {
+        Button button = new Button(buttonText);
+        button.setOnAction(e -> {
+            File file = fileChooser.showOpenDialog(primaryStage);
+            if (file != null) {
+                fileLambda.accept(file);
+                updateActivities();
+            }
+        });
+        return button;
     }
 
     private TitledPane createGeneralControls() {
@@ -212,7 +221,7 @@ public class TrambuApplication extends Application {
                 this.activityManager.save(newActivity);
                 this.updateActivities();
             } catch (IOException | ParseException exception) {
-                System.out.println("Error creation new activity: " + exception.getMessage());
+                LOG.error("Error creation new activity: " + exception.getMessage());
             }
         });
         grid.add(addActivity, 0, 2);
@@ -227,11 +236,11 @@ public class TrambuApplication extends Application {
         rootScene.getStylesheets().add("style/css/trambu-main.css");
 
         rootScene.widthProperty().addListener((observableValue, oldSceneWidth, newSceneWidth) -> {
-            System.out.println("Width: " + newSceneWidth);
+            LOG.debug("Width: " + newSceneWidth);
             splitPane.setPrefWidth((Double) newSceneWidth);
         });
         rootScene.heightProperty().addListener((observableValue, oldSceneHeight, newSceneHeight) -> {
-            System.out.println("Height: " + newSceneHeight);
+            LOG.debug("Height: " + newSceneHeight);
             splitPane.setPrefHeight((Double) newSceneHeight);
         });
 

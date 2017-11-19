@@ -1,4 +1,4 @@
-package test.java.be.doji.productivity.trackme.managers;
+package be.doji.productivity.trackme.managers;
 
 import be.doji.productivity.trackme.TrackMeConstants;
 import be.doji.productivity.trackme.managers.ActivityManager;
@@ -78,8 +78,8 @@ public class ActivityManagerTest {
         List<Activity> activitiesWithDeadline = activitiesWithDateHeader.get(deadLineDate);
         Assert.assertNotNull(activitiesWithDeadline);
         Assert.assertEquals(2, activitiesWithDateHeader.size());
-        Assert.assertNotNull(activitiesWithDateHeader.get(TrackMeConstants.DEFAULT_DATE_HEADER));
-        Assert.assertEquals(1, activitiesWithDateHeader.get(TrackMeConstants.DEFAULT_DATE_HEADER).size());
+        Assert.assertNotNull(activitiesWithDateHeader.get(TrackMeConstants.getDefaultDateHeader()));
+        Assert.assertEquals(1, activitiesWithDateHeader.get(TrackMeConstants.getDefaultDateHeader()).size());
         Files.delete(tempFilePath);
     }
 

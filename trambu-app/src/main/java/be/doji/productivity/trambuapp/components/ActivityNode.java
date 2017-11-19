@@ -17,6 +17,8 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -31,6 +33,8 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ActivityNode extends TitledPane {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ActivityNode.class);
 
     private static final String FIELD_SEPERATOR = ",";
     private TrambuApplication application;
@@ -295,7 +299,7 @@ public class ActivityNode extends TitledPane {
                 done.setText(DisplayUtils.getDoneButtonText(activity));
                 save();
             } catch (IOException | ParseException e) {
-                System.out.println("Error while saving activity: " + e.getMessage());
+                LOG.error("Error while saving activity: " + e.getMessage());
             }
         });
 
@@ -320,7 +324,7 @@ public class ActivityNode extends TitledPane {
                 }
                 edit.setText(getEditButonText());
             } catch (IOException | ParseException e) {
-                System.out.println("Error while saving activity: " + e.getMessage());
+                LOG.error("Error while saving activity: " + e.getMessage());
             }
         });
         return edit;
@@ -337,7 +341,7 @@ public class ActivityNode extends TitledPane {
                 application.getActivityManager().delete(this.activity);
                 application.updateActivities();
             } catch (IOException | ParseException e) {
-                System.out.println("Error while saving activity: " + e.getMessage());
+                LOG.error("Error while saving activity: " + e.getMessage());
             }
         });
         delete.getStyleClass().clear();

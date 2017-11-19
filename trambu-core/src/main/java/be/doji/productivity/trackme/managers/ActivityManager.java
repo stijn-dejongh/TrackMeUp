@@ -201,7 +201,7 @@ public class ActivityManager {
         for (Activity activity : activities) {
             Date deadline = activity.getDeadline();
             if (deadline == null) {
-                deadline = TrackMeConstants.DEFAULT_DATE_HEADER;
+                deadline = TrackMeConstants.getDefaultDateHeader();
             }
             if (activitiesWithDateHeader.containsKey(deadline)) {
                 activitiesWithDateHeader.get(deadline).add(activity);
