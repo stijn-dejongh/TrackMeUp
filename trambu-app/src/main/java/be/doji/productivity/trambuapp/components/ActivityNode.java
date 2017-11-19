@@ -43,11 +43,13 @@ public class ActivityNode extends TitledPane {
     private TextField nameField;
     private TextField projectsField;
     private TextField tagsField;
+    private ActivityLog activityLog;
 
     public ActivityNode(Activity activity, TrambuApplication trambuApplication) {
         super();
         this.activity = activity;
         this.application = trambuApplication;
+        this.activityLog = application.getTimeTrackingManager().getLogForActivityId(activity.getId());
         createHeader(activity);
         this.setContent(createActivityContent());
         this.setVisible(true);
@@ -85,6 +87,10 @@ public class ActivityNode extends TitledPane {
         int rowIndex = 0;
 
         content.add(createActvityControls(), 0, rowIndex++, 2, 1);
+
+        content.add(DisplayUtils.createHorizontalSpacer(), 0, rowIndex++, 2, 1);
+
+        content.add(createTimingControls(), 0, rowIndex++, 2, 1);
 
         if (isEditable) {
             content.add(new Label("Change activity name:"), 0, rowIndex);
@@ -255,7 +261,6 @@ public class ActivityNode extends TitledPane {
     }
 
     private GridPane createLogPoints() {
-        ActivityLog activityLog = application.getTimeTrackingManager().getLogForActivityId(activity.getId());
         List<TimeLog> logpoints = activityLog.getLogpoints();
 
         GridPane logpointGrid = new GridPane();
@@ -266,9 +271,9 @@ public class ActivityNode extends TitledPane {
             SimpleDateFormat dateFormat = TrackMeConstants.getDateFormat();
             logpointGrid.add(new Label("Logpoints: "), 0, logRowIndex++);
             for (TimeLog log : logpoints) {
-                logpointGrid.add(new Label(
-                                "from " + dateFormat.format(log.getStartTime()) + " to " + dateFormat.format(log.getEndTime())),
-                        1, logRowIndex++);
+                logpointGrid.add(new Label("from " + dateFormat.format(log.getStartTime()) +
+                                (log.getEndTime() == null?"":(" to " + dateFormat.format(log.getEndTime()))))
+                        , 1, logRowIndex++);
             }
         }
 
@@ -344,6 +349,10 @@ public class ActivityNode extends TitledPane {
         return edit;
     }
 
+    private String getEditButonText() {
+        return this.isEditable?DisplayConstants.BUTTON_TEXT_SAVE:DisplayConstants.BUTTON_TEXT_EDIT;
+    }
+
     private Node createDeleteButton() {
         Button delete = new Button(DisplayConstants.BUTTON_TEXT_DELETE);
         FontAwesomeIconView removeIcon = new FontAwesomeIconView(FontAwesomeIcon.REMOVE);
@@ -361,6 +370,53 @@ public class ActivityNode extends TitledPane {
         delete.getStyleClass().clear();
         delete.getStyleClass().add("error-button");
         return delete;
+    }
+
+    HBox createTimingControls() {
+        activityLog = application.getTimeTrackingManager().getLogForActivityId(this.activity.getId());
+        HBox timingControls = new HBox();
+
+        Button startStopButton = new Button(getTimingButtonText());
+        startStopButton.setOnAction(event -> {
+            Optional<TimeLog> activeLog = activityLog.getActiveLog();
+            if (activeLog.isPresent()) {
+                activityLog.stopActiveLog();
+            } else {
+                activityLog.startLog();
+            }
+            startStopButton.setText(getEditButonText());
+            startStopButton.setGraphic(getTimingButtonIcon());
+            application.getTimeTrackingManager().save(activityLog);
+            this.setContent(createActivityContent());
+        });
+
+        FontAwesomeIconView iconView = getTimingButtonIcon();
+        startStopButton.setGraphic(iconView);
+
+        timingControls.getChildren().add(startStopButton);
+
+        return timingControls;
+    }
+
+    private FontAwesomeIconView getTimingButtonIcon() {
+        FontAwesomeIcon icon = FontAwesomeIcon.HOURGLASS_START;
+        if (activityLog.getActiveLog().isPresent()) {
+            icon = FontAwesomeIcon.HOURGLASS_END;
+        }
+
+        FontAwesomeIconView iconView = new FontAwesomeIconView(icon);
+        iconView.setGlyphStyle(DisplayConstants.STYLE_GLYPH_DEFAULT);
+        return iconView;
+    }
+
+    private String getTimingButtonText() {
+        activityLog = application.getTimeTrackingManager().getLogForActivityId(this.activity.getId());
+        Optional<TimeLog> activeLog = activityLog.getActiveLog();
+        if (activeLog.isPresent()) {
+            return DisplayConstants.BUTTON_TEXT_TIMER_STOP;
+        } else {
+            return DisplayConstants.BUTTON_TEXT_TIMER_START;
+        }
     }
 
     private void save() throws IOException, ParseException {
@@ -421,10 +477,6 @@ public class ActivityNode extends TitledPane {
 
     void makeUneditable() {
         this.isEditable = false;
-    }
-
-    private String getEditButonText() {
-        return this.isEditable?DisplayConstants.BUTTON_TEXT_SAVE:DisplayConstants.BUTTON_TEXT_EDIT;
     }
 
     Activity getActivity() {

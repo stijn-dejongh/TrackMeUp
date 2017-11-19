@@ -1,6 +1,8 @@
 package be.doji.productivity.trambuapp.utils;
 
 import be.doji.productivity.trambucore.model.tasks.Activity;
+import javafx.geometry.Orientation;
+import javafx.scene.control.Separator;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -31,5 +33,11 @@ public final class DisplayUtils {
 
     public static String getDoneButtonText(Activity activity) {
         return activity.isCompleted()?DisplayConstants.BUTTON_TEXT_IS_NOT_DONE:DisplayConstants.BUTTON_TEXT_IS_DONE;
+    }
+
+    public static Separator createHorizontalSpacer() {
+        Separator sep = new Separator();
+        sep.setOrientation(Orientation.HORIZONTAL);
+        return sep;
     }
 }

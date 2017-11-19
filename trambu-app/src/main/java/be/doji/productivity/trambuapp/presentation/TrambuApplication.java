@@ -175,7 +175,7 @@ public class TrambuApplication extends Application {
             }
         });
         grid.add(openTimeButton, 1, 1);
-        grid.add(createHorizontalSpacer(), 0, 2, 2, 1);
+        grid.add(DisplayUtils.createHorizontalSpacer(), 0, 2, 2, 1);
 
         Button savePreferences = new Button("Remember choices");
         savePreferences.setOnAction(event -> {
@@ -197,12 +197,6 @@ public class TrambuApplication extends Application {
         gridTitlePane.setContent(grid);
         gridTitlePane.setVisible(true);
         return gridTitlePane;
-    }
-
-    private Separator createHorizontalSpacer() {
-        Separator sep = new Separator();
-        sep.setOrientation(Orientation.HORIZONTAL);
-        return sep;
     }
 
     private Button createOpenFileButton(String buttonText, FileChooser fileChooser, Consumer<File> fileLambda) {
@@ -246,7 +240,7 @@ public class TrambuApplication extends Application {
         });
         grid.add(resetFilter, 1, 1);
 
-        grid.add(createHorizontalSpacer(), 0, 2, 2, 1);
+        grid.add(DisplayUtils.createHorizontalSpacer(), 0, 2, 2, 1);
 
         Button addActivity = new Button("Add activity");
         FontAwesomeIconView addIcon = new FontAwesomeIconView(FontAwesomeIcon.PLUS_CIRCLE);
@@ -263,6 +257,16 @@ public class TrambuApplication extends Application {
             }
         });
         grid.add(addActivity, 0, 3);
+
+        grid.add(DisplayUtils.createHorizontalSpacer(), 0, 4, 2, 1);
+
+        Button refresh = new Button("");
+        refresh.setOnAction(event -> this.updateActivities());
+        FontAwesomeIconView glyph = new FontAwesomeIconView(FontAwesomeIcon.REFRESH);
+        glyph.setGlyphStyle(DisplayConstants.STYLE_GLYPH_DEFAULT);
+        refresh.setGraphic(glyph);
+
+        grid.add(refresh, 0, 5);
 
         gridTitlePane.setContent(grid);
         gridTitlePane.setText("General controls");

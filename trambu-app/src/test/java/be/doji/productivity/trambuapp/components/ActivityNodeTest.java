@@ -6,7 +6,9 @@ import be.doji.productivity.trambucore.TrackMeConstants;
 import be.doji.productivity.trambucore.managers.ActivityManager;
 import be.doji.productivity.trambucore.managers.TimeTrackingManager;
 import be.doji.productivity.trambucore.model.tasks.Activity;
+import be.doji.productivity.trambucore.model.tracker.ActivityLog;
 import be.doji.productivity.trambucore.testutil.FileUtils;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -33,12 +35,14 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 public class ActivityNodeTest extends ApplicationTest {
     private static final Logger LOG = LoggerFactory.getLogger(ActivityNodeTest.class);
 
     @Mock private TrambuApplication mockApplication;
     private ActivityManager activityManager;
+
     private TimeTrackingManager timeTrackingManager;
 
     private Path activityTestFile;
@@ -143,6 +147,46 @@ public class ActivityNodeTest extends ApplicationTest {
 
         Button shouldBeDeleteButton = (Button) controls.get(2);
         Assert.assertEquals(DisplayConstants.BUTTON_TEXT_DELETE, shouldBeDeleteButton.getText());
+    }
+
+    @Test public void testCreateTimerStartNoActiveTiming() {
+
+        TimeTrackingManager mockTimeManager = Mockito.mock(TimeTrackingManager.class);
+        Activity testActivity = new Activity("DefaultActivity");
+        ActivityLog activityLog = new ActivityLog(testActivity);
+        Mockito.when(mockTimeManager.getLogForActivityId(Mockito.any(UUID.class))).thenReturn(activityLog);
+
+
+        Mockito.when(mockApplication.getTimeTrackingManager()).thenReturn(mockTimeManager);
+
+        ActivityNode testNode = new ActivityNode(testActivity, mockApplication);
+        HBox timingControls = testNode.createTimingControls();
+        Assert.assertNotNull(timingControls.getChildren());
+        Assert.assertEquals(1, timingControls.getChildren().size());
+        Button timingControlButton = (Button) timingControls.getChildren().get(0);
+        Assert.assertEquals(DisplayConstants.BUTTON_TEXT_TIMER_START, timingControlButton.getText());
+        FontAwesomeIconView graphic = (FontAwesomeIconView) timingControlButton.getGraphic();
+        Assert.assertEquals("HOURGLASS_START", graphic.getGlyphName());
+    }
+
+    @Test public void testCreateTimerStartWithActiveTiming() {
+        TimeTrackingManager mockTimeManager = Mockito.mock(TimeTrackingManager.class);
+        Activity testActivity = new Activity("DefaultActivity");
+        ActivityLog activityLog = new ActivityLog(testActivity);
+        activityLog.startLog();
+        Mockito.when(mockTimeManager.getLogForActivityId(Mockito.any(UUID.class))).thenReturn(activityLog);
+
+
+        Mockito.when(mockApplication.getTimeTrackingManager()).thenReturn(mockTimeManager);
+
+        ActivityNode testNode = new ActivityNode(testActivity, mockApplication);
+        HBox timingControls = testNode.createTimingControls();
+        Assert.assertNotNull(timingControls.getChildren());
+        Assert.assertEquals(1, timingControls.getChildren().size());
+        Button timingControlButton = (Button) timingControls.getChildren().get(0);
+        Assert.assertEquals(DisplayConstants.BUTTON_TEXT_TIMER_STOP, timingControlButton.getText());
+        FontAwesomeIconView graphic = (FontAwesomeIconView) timingControlButton.getGraphic();
+        Assert.assertEquals("HOURGLASS_END", graphic.getGlyphName());
     }
 
     @Test public void testCreatePriority() {

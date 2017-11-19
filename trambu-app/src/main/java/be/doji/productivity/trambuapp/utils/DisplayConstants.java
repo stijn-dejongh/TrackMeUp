@@ -20,6 +20,8 @@ public final class DisplayConstants {
     public static final String BUTTON_TEXT_SAVE = "Save";
     public static final String BUTTON_TEXT_EDIT = "Edit";
     public static final String BUTTON_TEXT_DELETE = "Delete";
+    public static final String BUTTON_TEXT_TIMER_START = "Start timing";
+    public static final String BUTTON_TEXT_TIMER_STOP = "Stop timing";
 
     public static final String LABEL_TEXT_FILTER_COMPLETED = "Filter completed activities";
     public static final String LABEL_TEXT_FILTER_NONE = "No active filter";

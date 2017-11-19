@@ -49,8 +49,10 @@ public class TimeLog {
         logPointString.append(TrackMeConstants.INDICATOR_LOGPOINT_START);
         logPointString.append(TrackMeConstants.getDateFormat().format(this.getStartTime()));
         logPointString.append(" ");
-        logPointString.append(TrackMeConstants.INDICATOR_LOGPOINT_END);
-        logPointString.append(TrackMeConstants.getDateFormat().format(this.getEndTime()));
+        if(this.getEndTime() != null) {
+            logPointString.append(TrackMeConstants.INDICATOR_LOGPOINT_END);
+            logPointString.append(TrackMeConstants.getDateFormat().format(this.getEndTime()));
+        }
         return logPointString.toString();
     }
 }

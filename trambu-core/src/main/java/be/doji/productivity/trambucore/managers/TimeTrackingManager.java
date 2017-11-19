@@ -4,6 +4,8 @@ import be.doji.productivity.trambucore.TrackMeConstants;
 import be.doji.productivity.trambucore.model.tracker.ActivityLog;
 import be.doji.productivity.trambucore.parser.TimeLogParser;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,9 +15,12 @@ import java.nio.file.StandardOpenOption;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class TimeTrackingManager {
+
+    private static final Logger LOG = LoggerFactory.getLogger(TimeTrackingManager.class);
 
     private List<ActivityLog> timelogs;
     private Path timelogFile;
@@ -81,5 +86,25 @@ public class TimeTrackingManager {
         String uuidString = line.replace(TrackMeConstants.INDICATOR_LOG_START, "");
         uuidString = uuidString.trim();
         return UUID.fromString(uuidString);
+    }
+
+    public void save(ActivityLog activityLog) {
+        try {
+            getExistingActivityLogForId(activityLog.getActivityId())
+                    .ifPresent(savedLog -> this.timelogs.remove(savedLog));
+            this.timelogs.add(activityLog);
+            this.writeLogs();
+        } catch (IOException e) {
+            LOG.error("Error saving activity", e);
+        }
+    }
+
+    private Optional<ActivityLog> getExistingActivityLogForId(UUID activityId) {
+        for (ActivityLog log : this.timelogs) {
+            if (log.getActivityId().equals(activityId)) {
+                return Optional.of(log);
+            }
+        }
+        return Optional.empty();
     }
 }
