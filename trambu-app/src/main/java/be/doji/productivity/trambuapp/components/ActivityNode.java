@@ -164,7 +164,7 @@ public class ActivityNode extends TitledPane {
         return new Label(activity.getPriority());
     }
 
-    private Node createDeadline() {
+    Node createDeadline() {
         if (isEditable) {
             return createEditableDeadline();
         } else {
@@ -174,7 +174,7 @@ public class ActivityNode extends TitledPane {
 
     private LocalDate datePickerDate;
 
-    private Node createEditableDeadline() {
+    Node createEditableDeadline() {
         HBox deadlinePicker = new HBox();
         deadlinePicker.getChildren().add(createDatePicker());
         return deadlinePicker;
@@ -189,7 +189,7 @@ public class ActivityNode extends TitledPane {
         return datePicker;
     }
 
-    private Node createUneditableDeadline() {
+    Node createUneditableDeadline() {
         Label deadlineLabel = new Label(DateFormat.getDateInstance(DateFormat.DEFAULT).format(activity.getDeadline()));
         if (activity.isAlertActive()) {
             deadlineLabel.getStyleClass().add("warningLabel");
@@ -197,7 +197,7 @@ public class ActivityNode extends TitledPane {
         return deadlineLabel;
     }
 
-    private Node createTags() {
+    Node createTags() {
         if (isEditable) {
             return createEditableTags();
         } else {
@@ -225,7 +225,7 @@ public class ActivityNode extends TitledPane {
         return tags;
     }
 
-    private Node createProjects() {
+    Node createProjects() {
         if (isEditable) {
             return createEditableProjects();
         } else {

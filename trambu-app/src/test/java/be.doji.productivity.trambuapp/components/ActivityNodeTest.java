@@ -12,7 +12,9 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Assert;
@@ -168,6 +170,129 @@ public class ActivityNodeTest extends ApplicationTest {
         for (String option : constantPriorities) {
             Assert.assertTrue(StringUtils.equals(option, options.get(constantPriorities.indexOf(option))));
         }
+    }
+
+    @Test public void testCreateDeadline() {
+        Activity testActivity = new Activity("DefaultActivity");
+        ActivityNode testNode = new ActivityNode(testActivity, mockApplication);
+        testActivity.setDeadline(new Date());
+        Assert.assertFalse(testNode.isEditable());
+        Assert.assertEquals(Label.class, testNode.createDeadline().getClass());
+        testNode.makeEditable();
+        Assert.assertTrue(testNode.isEditable());
+        Assert.assertEquals(HBox.class, testNode.createDeadline().getClass());
+    }
+
+    @Test public void testCreateTags() {
+        Activity testActivity = new Activity("DefaultActivity");
+        ActivityNode testNode = new ActivityNode(testActivity, mockApplication);
+        Assert.assertFalse(testNode.isEditable());
+        Node tags = testNode.createTags();
+        Assert.assertEquals(HBox.class, tags.getClass());
+
+        testNode.makeEditable();
+        tags = testNode.createTags();
+        Assert.assertEquals(TextField.class, tags.getClass());
+    }
+
+    @Test public void testCreateTagsEditableNoTags() {
+        Activity testActivity = new Activity("DefaultActivity");
+        ActivityNode testNode = new ActivityNode(testActivity, mockApplication);
+        testNode.makeEditable();
+        Assert.assertTrue(testNode.isEditable());
+        Node tags = testNode.createTags();
+        Assert.assertEquals(TextField.class, tags.getClass());
+        TextField castedTags = (TextField) tags;
+        Assert.assertTrue(StringUtils.isBlank(castedTags.getText()));
+    }
+
+    @Test public void testCreateTagsEditableWithTags() {
+        Activity testActivity = new Activity("DefaultActivity");
+        testActivity.addTag("TagOne");
+        testActivity.addTag("TagTwo");
+        Assert.assertEquals(2, testActivity.getTags().size());
+        ActivityNode testNode = new ActivityNode(testActivity, mockApplication);
+        testNode.makeEditable();
+        Assert.assertTrue(testNode.isEditable());
+        Node tags = testNode.createTags();
+        Assert.assertEquals(TextField.class, tags.getClass());
+        TextField castedTags = (TextField) tags;
+        Assert.assertTrue(StringUtils.isNotBlank(castedTags.getText()));
+        Assert.assertTrue(castedTags.getText().contains("TagOne"));
+        Assert.assertTrue(castedTags.getText().contains("TagTwo"));
+    }
+
+    @Test public void testCreateTagsUneditableWithTags() {
+        Activity testActivity = new Activity("DefaultActivity");
+        testActivity.addTag("TagOne");
+        testActivity.addTag("TagTwo");
+        int initialTagSize = testActivity.getTags().size();
+        Assert.assertEquals(2, initialTagSize);
+        ActivityNode testNode = new ActivityNode(testActivity, mockApplication);
+        Assert.assertFalse(testNode.isEditable());
+        Node tags = testNode.createTags();
+        Assert.assertEquals(HBox.class, tags.getClass());
+        HBox castedTags = (HBox) tags;
+        ObservableList<Node> tagsChildren = castedTags.getChildren();
+        Assert.assertNotNull(tagsChildren);
+        Assert.assertFalse(tagsChildren.isEmpty());
+        Assert.assertEquals(initialTagSize, tagsChildren.size());
+    }
+
+    @Test public void testCreateProjects() {
+        Activity testActivity = new Activity("DefaultActivity");
+        ActivityNode testNode = new ActivityNode(testActivity, mockApplication);
+        Assert.assertFalse(testNode.isEditable());
+        Node projects = testNode.createProjects();
+        Assert.assertEquals(HBox.class, projects.getClass());
+
+        testNode.makeEditable();
+        projects = testNode.createProjects();
+        Assert.assertEquals(TextField.class, projects.getClass());
+    }
+
+    @Test public void testCreateProjectsEditableNoProjects() {
+        Activity testActivity = new Activity("DefaultActivity");
+        ActivityNode testNode = new ActivityNode(testActivity, mockApplication);
+        testNode.makeEditable();
+        Assert.assertTrue(testNode.isEditable());
+        Node projects = testNode.createProjects();
+        Assert.assertEquals(TextField.class, projects.getClass());
+        TextField castedProjects = (TextField) projects;
+        Assert.assertTrue(StringUtils.isBlank(castedProjects.getText()));
+    }
+
+    @Test public void testCreateProjectsEditableWithProjects() {
+        Activity testActivity = new Activity("DefaultActivity");
+        ActivityNode testNode = new ActivityNode(testActivity, mockApplication);
+        testActivity.addProject("ProjectOne");
+        testActivity.addProject("ProjectTwo");
+        Assert.assertEquals(2, testActivity.getProjects().size());
+        testNode.makeEditable();
+        Assert.assertTrue(testNode.isEditable());
+        Node projects = testNode.createProjects();
+        Assert.assertEquals(TextField.class, projects.getClass());
+        TextField castedProjects = (TextField) projects;
+        Assert.assertTrue(StringUtils.isNotBlank(castedProjects.getText()));
+        Assert.assertTrue(castedProjects.getText().contains("ProjectOne"));
+        Assert.assertTrue(castedProjects.getText().contains("ProjectTwo"));
+    }
+
+    @Test public void testCreateProjectsUneditableWithProjects() {
+        Activity testActivity = new Activity("DefaultActivity");
+        testActivity.addProject("TagOne");
+        testActivity.addProject("TagTwo");
+        int initialProjectSize = testActivity.getProjects().size();
+        Assert.assertEquals(2, initialProjectSize);
+        ActivityNode testNode = new ActivityNode(testActivity, mockApplication);
+        Assert.assertFalse(testNode.isEditable());
+        Node tags = testNode.createProjects();
+        Assert.assertEquals(HBox.class, tags.getClass());
+        HBox castedProjects = (HBox) tags;
+        ObservableList<Node> projectChildren = castedProjects.getChildren();
+        Assert.assertNotNull(projectChildren);
+        Assert.assertFalse(projectChildren.isEmpty());
+        Assert.assertEquals(initialProjectSize, projectChildren.size());
     }
 
     @After public void cleanUp() throws IOException {
