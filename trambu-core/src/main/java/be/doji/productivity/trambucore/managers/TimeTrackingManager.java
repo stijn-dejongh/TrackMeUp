@@ -2,6 +2,7 @@ package be.doji.productivity.trambucore.managers;
 
 import be.doji.productivity.trambucore.TrackMeConstants;
 import be.doji.productivity.trambucore.model.tracker.ActivityLog;
+import be.doji.productivity.trambucore.model.tracker.TimeLog;
 import be.doji.productivity.trambucore.parser.TimeLogParser;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -106,5 +107,11 @@ public class TimeTrackingManager {
             }
         }
         return Optional.empty();
+    }
+
+    public void stopAll() {
+        for (ActivityLog log : this.timelogs) {
+            log.getActiveLog().ifPresent(TimeLog::stop);
+        }
     }
 }

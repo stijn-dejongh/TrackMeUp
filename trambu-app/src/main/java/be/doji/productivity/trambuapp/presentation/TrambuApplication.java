@@ -65,6 +65,10 @@ public class TrambuApplication extends Application {
         this.primaryStage.show();
     }
 
+    @Override  public void stop() {
+        getTimeTrackingManager().stopAll();
+    }
+
     private void initialize() throws InitialisationException {
         try {
             configManager = new UserConfigurationManager(DisplayConstants.NAME_CONFIGURATION_FILE);
@@ -102,14 +106,18 @@ public class TrambuApplication extends Application {
     }
 
     private SplitPane createContentSplitPane() {
+        ScrollPane activitySplitPane = new ScrollPane();
         Accordion activities = createActivityAccordeon();
+        activitySplitPane.setContent(activities);
+        activitySplitPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
         Accordion controls = createControlsAccordeon();
 
         SplitPane splitPane = new SplitPane();
         splitPane.setPrefHeight(DEFAULT_WINDOW_HEIGHT);
         splitPane.setPrefWidth(DEFAULT_WINDOW_WIDTH);
         splitPane.setOrientation(Orientation.HORIZONTAL);
-        splitPane.getItems().add(activities);
+        splitPane.getItems().add(activitySplitPane);
         splitPane.getItems().add(controls);
         splitPane.setDividerPosition(0, 0.65);
         return splitPane;
