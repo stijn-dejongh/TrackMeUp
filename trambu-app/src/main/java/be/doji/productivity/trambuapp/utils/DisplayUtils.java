@@ -1,15 +1,23 @@
 package be.doji.productivity.trambuapp.utils;
 
+import be.doji.productivity.trambuapp.components.ActivityNode;
 import be.doji.productivity.trambucore.model.tasks.Activity;
 import javafx.geometry.Orientation;
+import javafx.scene.control.Accordion;
 import javafx.scene.control.Separator;
+import javafx.scene.control.TitledPane;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Optional;
 
 public final class DisplayUtils {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DisplayUtils.class);
 
     /**
      * Utility classes should now have a public or default constructor
@@ -39,5 +47,23 @@ public final class DisplayUtils {
         Separator sep = new Separator();
         sep.setOrientation(Orientation.HORIZONTAL);
         return sep;
+    }
+
+    public static void updateActivePane(Accordion activityAcordeon) {
+        getActivePane(activityAcordeon).ifPresent(pane -> activityAcordeon.setExpandedPane(pane));
+    }
+
+    private static Optional<ActivityNode> getActivePane(Accordion activityAcordeon) {
+        LOG.debug("Looking for active pane");
+        for (TitledPane pane : activityAcordeon.getPanes()) {
+            if (pane.getClass().equals(ActivityNode.class)) {
+                ActivityNode castedPane = (ActivityNode) pane;
+                if (castedPane.isActive()) {
+                    LOG.debug("Found active Pane");
+                    return Optional.of(castedPane);
+                }
+            }
+        }
+        return Optional.empty();
     }
 }

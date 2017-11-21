@@ -223,7 +223,7 @@ public class ActivityNode extends TitledPane {
             Button button = new Button(tag);
             button.setOnAction(e -> {
                 application.setTagFilter(tag);
-                application.updateActivities();
+                application.reloadActivities();
             });
             return button;
         }).collect(Collectors.toList()));
@@ -252,7 +252,7 @@ public class ActivityNode extends TitledPane {
             Button button = new Button(project);
             button.setOnAction(e -> {
                 application.setProjectFilter(project);
-                application.updateActivities();
+                application.reloadActivities();
             });
             return button;
         }).collect(Collectors.toList()));
@@ -298,6 +298,7 @@ public class ActivityNode extends TitledPane {
         Accordion activityAcordeon = new Accordion();
         List<TitledPane> activityNodes = createSubActivityNodes();
         activityAcordeon.getPanes().addAll(activityNodes);
+        DisplayUtils.updateActivePane(activityAcordeon);
         return activityAcordeon;
     }
 
@@ -361,7 +362,7 @@ public class ActivityNode extends TitledPane {
             try {
                 this.activity.setCompleted(!activity.isCompleted());
                 application.getActivityManager().delete(this.activity);
-                application.updateActivities();
+                application.reloadActivities();
             } catch (IOException | ParseException e) {
                 LOG.error(DisplayConstants.ERROR_MESSAGE_ACTIVITY_SAVING + ": " + e.getMessage());
             }
@@ -421,7 +422,7 @@ public class ActivityNode extends TitledPane {
     private void save() throws IOException, ParseException {
         updateActivityFields();
         application.getActivityManager().save(getActivityToSave());
-        application.updateActivities();
+        application.refreshActivities();
     }
 
     private void updateActivityFields() {
@@ -495,11 +496,13 @@ public class ActivityNode extends TitledPane {
     }
 
     public void setActive(boolean active) {
+        LOG.debug("Making pane active: " + this.activity.getName());
         this.isActive = active;
-        if (active) {
-            application.setActivePane(this);
-        } else {
-            application.ressetActiveActivityId();
-        }
+    }
+
+    public void refresh() {
+        application.getActivityManager().getSavedActivityById(this.activity.getId().toString())
+                .ifPresent(savedActivity -> this.activity = savedActivity);
+        this.setContent(this.createActivityContent());
     }
 }

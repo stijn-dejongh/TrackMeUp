@@ -51,7 +51,6 @@ public class TrambuApplication extends Application {
     private String projectFilter;
     private boolean filterDone = false;
     private Label activeFilter;
-    private UUID activeActivityId;
 
     private String configuredTodoLocation;
     private String configuredTimeLocation;
@@ -128,27 +127,8 @@ public class TrambuApplication extends Application {
         activityAcordeon = new Accordion();
         List<TitledPane> activityNodes = createActivityNodes(activityManager.getActivitiesWithDateHeader());
         activityAcordeon.getPanes().addAll(activityNodes);
-        updateActivePane();
+        DisplayUtils.updateActivePane(activityAcordeon);
         return activityAcordeon;
-    }
-
-    private void updateActivePane() {
-        if (this.activeActivityId != null) {
-            LOG.debug("Making pane expanded");
-            getActivityPaneForId(this.activeActivityId).ifPresent(pane -> activityAcordeon.setExpandedPane(pane));
-        }
-    }
-
-    private Optional<ActivityNode> getActivityPaneForId(UUID activeActivityId) {
-        for (TitledPane pane : this.activityAcordeon.getPanes()) {
-            if (pane.getClass().equals(ActivityNode.class)) {
-                ActivityNode castedPane = (ActivityNode) pane;
-                if (castedPane.getActivityId().equals(activeActivityId)) {
-                    return Optional.of(castedPane);
-                }
-            }
-        }
-        return Optional.empty();
     }
 
     private Accordion createControlsAccordeon() {
@@ -183,7 +163,7 @@ public class TrambuApplication extends Application {
                 String filePath = file.getAbsolutePath();
                 this.configuredTodoLocation = filePath;
                 activityManager.updateFileLocation(filePath);
-                updateActivities();
+                reloadActivities();
             } catch (IOException | ParseException e) {
                 LOG.error("Error opening todo file", e);
             }
@@ -234,7 +214,7 @@ public class TrambuApplication extends Application {
             File file = fileChooser.showOpenDialog(primaryStage);
             if (file != null) {
                 fileLambda.accept(file);
-                updateActivities();
+                reloadActivities();
             }
         });
         return button;
@@ -258,14 +238,14 @@ public class TrambuApplication extends Application {
         filterButton.setOnAction(e -> {
             this.filterDone = true;
             updateFilterLabel();
-            updateActivities();
+            reloadActivities();
         });
         grid.add(filterButton, 0, 1);
 
         Button resetFilter = new Button("Reset filter");
         resetFilter.setOnAction(e -> {
             this.resetFilter();
-            updateActivities();
+            reloadActivities();
         });
         grid.add(resetFilter, 1, 1);
 
@@ -280,7 +260,7 @@ public class TrambuApplication extends Application {
             try {
                 Activity newActivity = new Activity("EDIT ME I AM A NEW ACTIVITY");
                 this.activityManager.save(newActivity);
-                this.updateActivities();
+                this.reloadActivities();
             } catch (IOException | ParseException exception) {
                 LOG.error("Error creation new activity", exception);
             }
@@ -290,7 +270,7 @@ public class TrambuApplication extends Application {
         grid.add(DisplayUtils.createHorizontalSpacer(), 0, 4, 2, 1);
 
         Button refresh = new Button("");
-        refresh.setOnAction(event -> this.updateActivities());
+        refresh.setOnAction(event -> this.reloadActivities());
         FontAwesomeIconView glyph = new FontAwesomeIconView(FontAwesomeIcon.REFRESH);
         glyph.setGlyphStyle(DisplayConstants.STYLE_GLYPH_DEFAULT);
         refresh.setGraphic(glyph);
@@ -321,21 +301,30 @@ public class TrambuApplication extends Application {
         return rootScene;
     }
 
-    public void updateActivities() {
+    public void reloadActivities() {
         if (StringUtils.isNotBlank(getProjectFilter())) {
-            this.updateActivities(activityManager.getActivitiesByProject(projectFilter));
+            this.reloadActivities(activityManager.getActivitiesByProject(projectFilter));
         } else if (StringUtils.isNotBlank(this.getTagFilter())) {
-            this.updateActivities(activityManager.getActivitiesByTag(tagFilter));
+            this.reloadActivities(activityManager.getActivitiesByTag(tagFilter));
         } else {
-            this.updateActivities(activityManager.getActivitiesWithDateHeader());
+            this.reloadActivities(activityManager.getActivitiesWithDateHeader());
         }
     }
 
-    private void updateActivities(Map<Date, List<Activity>> activities) {
+    private void reloadActivities(Map<Date, List<Activity>> activities) {
         ObservableList<TitledPane> panes = this.activityAcordeon.getPanes();
         panes.clear();
         panes.addAll(createActivityNodes(activities));
-        updateActivePane();
+    }
+
+    public void refreshActivities() {
+        for(TitledPane pane : this.activityAcordeon.getPanes()) {
+            if(pane.getClass().equals(ActivityNode.class)) {
+                ActivityNode castedPane = (ActivityNode) pane;
+                castedPane.refresh();
+            }
+        }
+        DisplayUtils.updateActivePane(this.activityAcordeon);
     }
 
     private List<TitledPane> createActivityNodes(Map<Date, List<Activity>> activitiesWithHeader) {
@@ -418,21 +407,5 @@ public class TrambuApplication extends Application {
     public boolean isSetFileOptions() {
         return configManager.containsProperty(DisplayConstants.NAME_PROPERTY_TODO_LOCATION) || configManager
                 .containsProperty(DisplayConstants.NAME_PROPERTY_TIME_LOCATION);
-    }
-
-    public void setActivePane(ActivityNode activePane) {
-
-        Activity paneActivity = activePane.getActivity();
-        if (StringUtils.isBlank(paneActivity.getParentActivity())) {
-            this.activeActivityId = paneActivity.getId();
-        } else {
-            getActivityPaneForId(UUID.fromString(paneActivity.getParentActivity()))
-                    .ifPresent(this::setActivePane);
-        }
-
-    }
-
-    public void ressetActiveActivityId() {
-        this.activeActivityId = null;
     }
 }
