@@ -26,10 +26,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ActivityNode extends TitledPane {
@@ -37,6 +34,7 @@ public class ActivityNode extends TitledPane {
     private static final Logger LOG = LoggerFactory.getLogger(ActivityNode.class);
 
     private static final String FIELD_SEPERATOR = ",";
+    private boolean isActive;
     private TrambuApplication application;
     private boolean isEditable = false;
     private Activity activity;
@@ -53,6 +51,7 @@ public class ActivityNode extends TitledPane {
         createHeader(activity);
         this.setContent(createActivityContent());
         this.setVisible(true);
+        this.setOnMouseClicked(event -> this.setActive(!this.isActive));
     }
 
     private void createHeader(Activity activity) {
@@ -271,9 +270,9 @@ public class ActivityNode extends TitledPane {
             SimpleDateFormat dateFormat = TrackMeConstants.getDateFormat();
             logpointGrid.add(new Label("Logpoints: "), 0, logRowIndex++);
             for (TimeLog log : logpoints) {
-                logpointGrid.add(new Label("from " + dateFormat.format(log.getStartTime()) +
-                                (log.getEndTime() == null?"":(" to " + dateFormat.format(log.getEndTime()))))
-                        , 1, logRowIndex++);
+                logpointGrid.add(new Label("from " + dateFormat.format(log.getStartTime()) + (log.getEndTime() == null?
+                        "":
+                        (" to " + dateFormat.format(log.getEndTime())))), 1, logRowIndex++);
             }
         }
 
@@ -471,6 +470,10 @@ public class ActivityNode extends TitledPane {
         return activityToSave;
     }
 
+    public UUID getActivityId() {
+        return this.activity.getId();
+    }
+
     void makeEditable() {
         this.isEditable = true;
     }
@@ -479,7 +482,7 @@ public class ActivityNode extends TitledPane {
         this.isEditable = false;
     }
 
-    Activity getActivity() {
+    public Activity getActivity() {
         return activity;
     }
 
@@ -487,4 +490,16 @@ public class ActivityNode extends TitledPane {
         return isEditable;
     }
 
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        this.isActive = active;
+        if (active) {
+            application.setActivePane(this);
+        } else {
+            application.ressetActiveActivityId();
+        }
+    }
 }
