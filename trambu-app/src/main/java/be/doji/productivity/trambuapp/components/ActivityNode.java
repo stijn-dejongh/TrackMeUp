@@ -42,6 +42,7 @@ public class ActivityNode extends TitledPane {
     private TextField projectsField;
     private TextField tagsField;
     private ActivityLog activityLog;
+    private boolean parentChanged;
 
     public ActivityNode(Activity activity, TrambuApplication trambuApplication) {
         super();
@@ -290,6 +291,7 @@ public class ActivityNode extends TitledPane {
             if (savedParent.isPresent()) {
                 application.getActivityManager().addActivityAsSub(activity, savedParent.get());
             }
+            this.parentChanged = true;
         });
         return parent;
     }
@@ -422,7 +424,12 @@ public class ActivityNode extends TitledPane {
     private void save() throws IOException, ParseException {
         updateActivityFields();
         application.getActivityManager().save(getActivityToSave());
-        application.refreshActivities();
+        if (!this.parentChanged) {
+            application.refreshActivities();
+        } else {
+            application.reloadActivities();
+        }
+
     }
 
     private void updateActivityFields() {
