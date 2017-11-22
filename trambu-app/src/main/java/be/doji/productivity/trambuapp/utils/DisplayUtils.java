@@ -48,22 +48,4 @@ public final class DisplayUtils {
         sep.setOrientation(Orientation.HORIZONTAL);
         return sep;
     }
-
-    public static void updateActivePane(Accordion activityAcordeon) {
-        getActivePane(activityAcordeon).ifPresent(pane -> activityAcordeon.setExpandedPane(pane));
-    }
-
-    private static Optional<ActivityNode> getActivePane(Accordion activityAcordeon) {
-        LOG.debug("Looking for active pane");
-        for (TitledPane pane : activityAcordeon.getPanes()) {
-            if (pane.getClass().equals(ActivityNode.class)) {
-                ActivityNode castedPane = (ActivityNode) pane;
-                if (castedPane.isActive()) {
-                    LOG.debug("Found active Pane");
-                    return Optional.of(castedPane);
-                }
-            }
-        }
-        return Optional.empty();
-    }
 }

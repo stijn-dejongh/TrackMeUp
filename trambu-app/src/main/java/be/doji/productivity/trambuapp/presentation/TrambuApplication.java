@@ -1,5 +1,6 @@
 package be.doji.productivity.trambuapp.presentation;
 
+import be.doji.productivity.trambuapp.components.ActivityAcordeon;
 import be.doji.productivity.trambuapp.components.ActivityNode;
 import be.doji.productivity.trambuapp.exception.InitialisationException;
 import be.doji.productivity.trambuapp.userconfiguration.UserConfigurationManager;
@@ -46,7 +47,7 @@ public class TrambuApplication extends Application {
     private ActivityManager activityManager;
     private TimeTrackingManager timeTrackingManager;
     private Stage primaryStage;
-    private Accordion activityAcordeon;
+    private ActivityAcordeon activityAcordeon;
     private String tagFilter;
     private String projectFilter;
     private boolean filterDone = false;
@@ -124,10 +125,7 @@ public class TrambuApplication extends Application {
     }
 
     private Accordion createActivityAccordeon() {
-        activityAcordeon = new Accordion();
-        List<TitledPane> activityNodes = createActivityNodes(activityManager.getActivitiesWithDateHeader());
-        activityAcordeon.getPanes().addAll(activityNodes);
-        DisplayUtils.updateActivePane(activityAcordeon);
+        activityAcordeon = new ActivityAcordeon(this, activityManager.getActivitiesWithDateHeader());
         return activityAcordeon;
     }
 
@@ -303,54 +301,12 @@ public class TrambuApplication extends Application {
 
     public void reloadActivities() {
         if (StringUtils.isNotBlank(getProjectFilter())) {
-            this.reloadActivities(activityManager.getActivitiesByProject(projectFilter));
+            this.activityAcordeon.updateActivities(activityManager.getActivitiesByProject(projectFilter));
         } else if (StringUtils.isNotBlank(this.getTagFilter())) {
-            this.reloadActivities(activityManager.getActivitiesByTag(tagFilter));
+            this.activityAcordeon.updateActivities(activityManager.getActivitiesByTag(tagFilter));
         } else {
-            this.reloadActivities(activityManager.getActivitiesWithDateHeader());
+            this.activityAcordeon.updateActivities(activityManager.getActivitiesWithDateHeader());
         }
-    }
-
-    private void reloadActivities(Map<Date, List<Activity>> activities) {
-        ObservableList<TitledPane> panes = this.activityAcordeon.getPanes();
-        panes.clear();
-        panes.addAll(createActivityNodes(activities));
-    }
-
-    public void refreshActivities() {
-        for(TitledPane pane : this.activityAcordeon.getPanes()) {
-            if(pane.getClass().equals(ActivityNode.class)) {
-                ActivityNode castedPane = (ActivityNode) pane;
-                castedPane.refresh();
-            }
-        }
-        DisplayUtils.updateActivePane(this.activityAcordeon);
-    }
-
-    private List<TitledPane> createActivityNodes(Map<Date, List<Activity>> activitiesWithHeader) {
-        List<TitledPane> panes = new ArrayList<>();
-        for (Map.Entry<Date, List<Activity>> activityWithHeader : activitiesWithHeader.entrySet()) {
-
-            List<ActivityNode> activities = activityWithHeader.getValue().stream()
-                    .filter(activity -> !(activity.isCompleted() && this.filterDone))
-                    .map(activity -> new ActivityNode(activity, this)).collect(Collectors.toList());
-            if (!activities.isEmpty()) {
-                panes.add(createSeperatorPane(activityWithHeader.getKey()));
-                panes.addAll(activities);
-            }
-
-        }
-        return panes;
-    }
-
-    private TitledPane createSeperatorPane(Date key) {
-        TitledPane headerPane = new TitledPane();
-        String formattedDate = DisplayUtils.getDateSeperatorText(key);
-
-        headerPane.setText(formattedDate);
-        headerPane.setCollapsible(false);
-        headerPane.setStyle("-fx-start-margin: 15px;");
-        return headerPane;
     }
 
     public ActivityManager getActivityManager() {
@@ -407,5 +363,9 @@ public class TrambuApplication extends Application {
     public boolean isSetFileOptions() {
         return configManager.containsProperty(DisplayConstants.NAME_PROPERTY_TODO_LOCATION) || configManager
                 .containsProperty(DisplayConstants.NAME_PROPERTY_TIME_LOCATION);
+    }
+
+    public boolean isFilterDone() {
+        return filterDone;
     }
 }

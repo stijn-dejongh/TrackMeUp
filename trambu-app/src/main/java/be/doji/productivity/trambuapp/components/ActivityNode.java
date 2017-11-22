@@ -43,6 +43,8 @@ public class ActivityNode extends TitledPane {
     private TextField tagsField;
     private ActivityLog activityLog;
     private boolean parentChanged;
+    private ActivityAcordeon parentContainer;
+    private ActivityAcordeon subactivities;
 
     public ActivityNode(Activity activity, TrambuApplication trambuApplication) {
         super();
@@ -53,6 +55,11 @@ public class ActivityNode extends TitledPane {
         this.setContent(createActivityContent());
         this.setVisible(true);
         this.setOnMouseClicked(event -> this.setActive(!this.isActive));
+    }
+
+    public ActivityNode(Activity activity, ActivityAcordeon activityAcordeon, TrambuApplication application) {
+        this(activity, application);
+        this.parentContainer = activityAcordeon;
     }
 
     private void createHeader(Activity activity) {
@@ -297,16 +304,8 @@ public class ActivityNode extends TitledPane {
     }
 
     private Node createSubActivities() {
-        Accordion activityAcordeon = new Accordion();
-        List<TitledPane> activityNodes = createSubActivityNodes();
-        activityAcordeon.getPanes().addAll(activityNodes);
-        DisplayUtils.updateActivePane(activityAcordeon);
-        return activityAcordeon;
-    }
-
-    private List<TitledPane> createSubActivityNodes() {
-        return activity.getSubActivities().stream().map(sub -> new ActivityNode(sub, application))
-                .collect(Collectors.toList());
+        subactivities = new ActivityAcordeon(application, activity.getSubActivities());
+        return subactivities;
     }
 
     private Button createDoneButton() {
@@ -425,7 +424,7 @@ public class ActivityNode extends TitledPane {
         updateActivityFields();
         application.getActivityManager().save(getActivityToSave());
         if (!this.parentChanged) {
-            application.refreshActivities();
+            parentContainer.refresh();
         } else {
             application.reloadActivities();
         }
