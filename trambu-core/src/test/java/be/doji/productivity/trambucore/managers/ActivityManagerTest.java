@@ -84,6 +84,43 @@ public class ActivityManagerTest extends TrambuTest {
         Files.delete(tempFilePath);
     }
 
+    @Test public void testSaveManagedActivity() throws ParseException, IOException {
+        Path tempFilePath = createTempFile();
+        ActivityManager am = new ActivityManager(tempFilePath.toString());
+        am.addActivity(ActivityTestData.ACTIVITY_DATA_LINE);
+        List<Activity> savedActivities = am.getActivities();
+        Assert.assertNotNull(savedActivities);
+        Assert.assertEquals(1, savedActivities.size());
+        Activity savedActivity = savedActivities.get(0);
+        Assert.assertEquals("A", savedActivity.getPriority());
+        savedActivity.setPriority("Z");
+        am.save(savedActivity);
+
+        savedActivities = am.getActivities();
+        Assert.assertNotNull(savedActivities);
+        Assert.assertEquals(1, savedActivities.size());
+        savedActivity = savedActivities.get(0);
+        Assert.assertEquals("Z", savedActivity.getPriority());
+
+        Files.delete(tempFilePath);
+    }
+
+    @Test public void testSaveNonManagedActivity() throws IOException, ParseException {
+        Path tempFilePath = createTempFile();
+        ActivityManager am = new ActivityManager(tempFilePath.toString());
+        Assert.assertTrue(am.getActivities().isEmpty());
+        Activity testAc = new Activity();
+        testAc.setName("TestActivity");
+        am.save(testAc);
+
+        List<Activity> savedActivities = am.getActivities();
+        Assert.assertFalse(savedActivities.isEmpty());
+        Assert.assertEquals(1, savedActivities.size());
+        Assert.assertEquals("TestActivity", savedActivities.get(0).getName());
+
+        Files.delete(tempFilePath);
+    }
+
     @Test public void testManageSubProjects() throws IOException, ParseException {
         Path tempFilePath = createTempFile();
         ActivityManager am = new ActivityManager(tempFilePath.toString());
