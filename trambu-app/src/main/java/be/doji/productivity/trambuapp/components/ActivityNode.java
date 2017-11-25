@@ -51,7 +51,7 @@ public class ActivityNode extends TitledPane {
         this.activity = activity;
         this.application = trambuApplication;
         this.activityLog = application.getTimeTrackingManager().getLogForActivityId(activity.getId());
-        createHeader(activity);
+        updateHeader(activity);
         this.setContent(createActivityContent());
         this.setVisible(true);
         this.setOnMouseClicked(event -> this.setActive(!this.isActive));
@@ -62,7 +62,7 @@ public class ActivityNode extends TitledPane {
         this.parentContainer = activityAcordeon;
     }
 
-    private void createHeader(Activity activity) {
+    private void updateHeader(Activity activity) {
         this.setText(activity.getName());
         Button titleLabel = new Button();
         FontAwesomeIconView checkedCalendar = new FontAwesomeIconView(FontAwesomeIcon.CALENDAR_CHECK_ALT);
@@ -510,5 +510,6 @@ public class ActivityNode extends TitledPane {
         application.getActivityManager().getSavedActivityById(this.activity.getId().toString())
                 .ifPresent(savedActivity -> this.activity = savedActivity);
         this.setContent(this.createActivityContent());
+        this.updateHeader(activity);
     }
 }
