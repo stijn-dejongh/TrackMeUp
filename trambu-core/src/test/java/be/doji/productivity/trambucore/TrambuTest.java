@@ -7,9 +7,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class TrambuTest {
+public abstract class TrambuTest {
 
-    static final String DATA_TEST_ONE_TASK_TXT = "data/testOneTask.txt";
+    private static final String DATA_TEST_ONE_TASK_TXT = "data/testOneTask.txt";
 
     protected Path createTempFile() throws IOException {
         Path directoryPath = Paths.get(FileUtils.getTestPath(DATA_TEST_ONE_TASK_TXT, this.getClass().getClassLoader()))
