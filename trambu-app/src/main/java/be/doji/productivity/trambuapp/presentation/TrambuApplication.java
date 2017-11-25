@@ -296,12 +296,10 @@ public class TrambuApplication extends Application {
         BorderPane borderPane = new BorderPane();
         MenuBar topMenu = createMenuBar(rootScene.getWidth());
 
-        rootScene.widthProperty().addListener((observableValue, oldSceneWidth, newSceneWidth) -> {
-            defaultPane.setPrefWidth((Double) newSceneWidth);
-        });
-        rootScene.heightProperty().addListener((observableValue, oldSceneHeight, newSceneHeight) -> {
-            defaultPane.setPrefHeight((Double) newSceneHeight - topMenu.getHeight());
-        });
+        rootScene.widthProperty().addListener(
+                (observableValue, oldSceneWidth, newSceneWidth) -> defaultPane.setPrefWidth((Double) newSceneWidth));
+        rootScene.heightProperty().addListener((observableValue, oldSceneHeight, newSceneHeight) -> defaultPane
+                .setPrefHeight((Double) newSceneHeight - topMenu.getHeight()));
 
         borderPane.setTop(topMenu);
         borderPane.setCenter(defaultPane);
@@ -348,17 +346,15 @@ public class TrambuApplication extends Application {
         controls.setHgap(3);
 
         DatePicker startDatePicker = new DatePicker();
-        startDatePicker.setOnAction(event -> {
-            startDate = Date.from(startDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
-        });
+        startDatePicker.setOnAction(event -> startDate = Date
+                .from(startDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
         Label startDateLabel = new Label("Start Date");
         controls.add(startDateLabel, 0, 0);
         controls.add(startDatePicker, 1, 0);
 
         DatePicker endDatePicker = new DatePicker();
-        endDatePicker.setOnAction(event -> {
-            endDate = Date.from(endDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
-        });
+        endDatePicker.setOnAction(event -> endDate = Date
+                .from(endDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
 
         Label endDateLabel = new Label("End Date");
         controls.add(endDateLabel, 0, 1);
@@ -371,7 +367,7 @@ public class TrambuApplication extends Application {
         glyph.setGlyphStyle(DisplayConstants.STYLE_GLYPH_DEFAULT);
         refreshTimeSheet.setGraphic(glyph);
         refreshTimeSheet.setOnAction(event -> this.primaryStage.setScene(createRootScene(createTimesheetPane())));
-        controls.add(refreshTimeSheet, 0, 3,2,1);
+        controls.add(refreshTimeSheet, 0, 3, 2, 1);
         return controls;
     }
 
@@ -388,7 +384,7 @@ public class TrambuApplication extends Application {
         grid.add(entrieTitle, 0, row++);
         grid.add(DisplayUtils.createHorizontalSpacer(), 0, row++, 3, 1);
 
-        LOG.debug("Found " + activityLogsInInterval.size() + " timelog entries");
+        LOG.debug("Found {0} timelog entries", activityLogsInInterval.size());
         for (ActivityLog log : activityLogsInInterval) {
             Label activityLabel = new Label();
             activityLabel.setText(getActivityName(log.getActivityId()));

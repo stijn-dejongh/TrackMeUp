@@ -26,7 +26,7 @@ public final class TrackerUtils {
     }
 
     public static double roundToSignificantNumbers(double value, int significantNumbers) {
-        BigDecimal bd = new BigDecimal(value);
+        BigDecimal bd = BigDecimal.valueOf(value);
         bd = bd.round(new MathContext(significantNumbers));
         return bd.doubleValue();
     }
