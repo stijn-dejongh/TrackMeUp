@@ -1,7 +1,6 @@
 package be.doji.productivity.trambuapp.presentation;
 
 import be.doji.productivity.trambuapp.components.ActivityAcordeon;
-import be.doji.productivity.trambuapp.components.ActivityNode;
 import be.doji.productivity.trambuapp.exception.InitialisationException;
 import be.doji.productivity.trambuapp.userconfiguration.UserConfigurationManager;
 import be.doji.productivity.trambuapp.utils.DisplayConstants;
@@ -13,7 +12,6 @@ import be.doji.productivity.trambucore.model.tasks.Activity;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.application.Application;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.Group;
@@ -29,9 +27,8 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.*;
+import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 /**
  * @author Doji

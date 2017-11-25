@@ -1,11 +1,8 @@
 package be.doji.productivity.trambuapp.utils;
 
-import be.doji.productivity.trambuapp.components.ActivityNode;
 import be.doji.productivity.trambucore.model.tasks.Activity;
 import javafx.geometry.Orientation;
-import javafx.scene.control.Accordion;
 import javafx.scene.control.Separator;
-import javafx.scene.control.TitledPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,11 +10,8 @@ import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Optional;
 
 public final class DisplayUtils {
-
-    private static final Logger LOG = LoggerFactory.getLogger(DisplayUtils.class);
 
     /**
      * Utility classes should now have a public or default constructor

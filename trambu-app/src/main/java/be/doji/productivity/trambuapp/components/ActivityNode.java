@@ -26,7 +26,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ActivityNode extends TitledPane {
@@ -44,7 +47,6 @@ public class ActivityNode extends TitledPane {
     private ActivityLog activityLog;
     private boolean parentChanged;
     private ActivityAcordeon parentContainer;
-    private ActivityAcordeon subactivities;
 
     public ActivityNode(Activity activity, TrambuApplication trambuApplication) {
         super();
@@ -304,8 +306,7 @@ public class ActivityNode extends TitledPane {
     }
 
     private Node createSubActivities() {
-        subactivities = new ActivityAcordeon(application, activity.getSubActivities());
-        return subactivities;
+        return new ActivityAcordeon(application, activity.getSubActivities());
     }
 
     private Button createDoneButton() {
@@ -475,10 +476,6 @@ public class ActivityNode extends TitledPane {
             }
         }
         return activityToSave;
-    }
-
-    public UUID getActivityId() {
-        return this.activity.getId();
     }
 
     void makeEditable() {
