@@ -11,12 +11,16 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.ParseException;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.UUID;
 
 public class TimeTrackingManagerTest extends TrambuTest {
 
     private static final String FILE_TIME_LOGS_TEST = "data/testTimeLog.txt";
+
+    /* Unit tests for basic functionality */
 
     @Test public void testReadLogs() throws IOException, ParseException {
         String testPath = FileUtils.getTestPath(FILE_TIME_LOGS_TEST, this.getClass().getClassLoader());
@@ -76,7 +80,7 @@ public class TimeTrackingManagerTest extends TrambuTest {
         List<ActivityLog> allLogsBeforeStop = tm.getLogs();
         Assert.assertFalse(allLogsBeforeStop.isEmpty());
         Assert.assertEquals(2, allLogsBeforeStop.size());
-        for(ActivityLog log : allLogsBeforeStop) {
+        for (ActivityLog log : allLogsBeforeStop) {
             Assert.assertTrue(log.getActiveLog().isPresent());
         }
 
@@ -84,9 +88,104 @@ public class TimeTrackingManagerTest extends TrambuTest {
         List<ActivityLog> allLogsAfterStop = tm.getLogs();
         Assert.assertFalse(allLogsAfterStop.isEmpty());
         Assert.assertEquals(2, allLogsAfterStop.size());
-        for(ActivityLog log : allLogsAfterStop) {
+        for (ActivityLog log : allLogsAfterStop) {
             Assert.assertFalse(log.getActiveLog().isPresent());
         }
+
+        Files.delete(tempFile);
+    }
+
+    /* Unit tests for overview functionality */
+
+    @Test public void getActivityForIntervalOneFits() throws IOException {
+        Path tempFile = createTempFile();
+        TimeTrackingManager tm = new TimeTrackingManager(tempFile.toString());
+
+        UUID activityOneId = UUID.randomUUID();
+        ActivityLog logActivityOne = new ActivityLog(activityOneId);
+        Calendar logOneStart = new GregorianCalendar(2017, Calendar.DECEMBER, 1, 14, 0, 0);
+        Calendar logOneEnd = new GregorianCalendar(2017, Calendar.DECEMBER, 1, 18, 0, 0);
+        logActivityOne.addLogPoint(createTimeLog(logOneStart.getTime(), logOneEnd.getTime()));
+
+        UUID activityTwoId = UUID.randomUUID();
+        ActivityLog logActivityTwo = new ActivityLog(activityTwoId);
+        Calendar logTwoStart = new GregorianCalendar(2017, Calendar.DECEMBER, 4, 14, 0, 0);
+        Calendar logTwoEnd = new GregorianCalendar(2017, Calendar.DECEMBER, 4, 19, 0, 0);
+        logActivityTwo.addLogPoint(createTimeLog(logTwoStart.getTime(), logTwoEnd.getTime()));
+
+        tm.save(logActivityOne);
+        tm.save(logActivityTwo);
+
+        Calendar overviewStartDate = new GregorianCalendar(2017, Calendar.DECEMBER, 1);
+        Calendar overviewEndDate = new GregorianCalendar(2017, Calendar.DECEMBER, 2);
+        List<ActivityLog> overviewLogs = tm
+                .getActivityLogsInInterval(overviewStartDate.getTime(), overviewEndDate.getTime());
+
+        Assert.assertNotNull(overviewLogs);
+        Assert.assertEquals(1, overviewLogs.size());
+        Assert.assertEquals(activityOneId, overviewLogs.get(0).getActivityId());
+
+        Files.delete(tempFile);
+    }
+
+    @Test public void getActivityForIntervalAllFit() throws IOException {
+        Path tempFile = createTempFile();
+        TimeTrackingManager tm = new TimeTrackingManager(tempFile.toString());
+
+        UUID activityOneId = UUID.randomUUID();
+        ActivityLog logActivityOne = new ActivityLog(activityOneId);
+        Calendar logOneStart = new GregorianCalendar(2017, Calendar.DECEMBER, 1, 14, 0, 0);
+        Calendar logOneEnd = new GregorianCalendar(2017, Calendar.DECEMBER, 1, 18, 0, 0);
+        logActivityOne.addLogPoint(createTimeLog(logOneStart.getTime(), logOneEnd.getTime()));
+
+        UUID activityTwoId = UUID.randomUUID();
+        ActivityLog logActivityTwo = new ActivityLog(activityTwoId);
+        Calendar logTwoStart = new GregorianCalendar(2017, Calendar.DECEMBER, 4, 14, 0, 0);
+        Calendar logTwoEnd = new GregorianCalendar(2017, Calendar.DECEMBER, 4, 19, 0, 0);
+        logActivityTwo.addLogPoint(createTimeLog(logTwoStart.getTime(), logTwoEnd.getTime()));
+
+        tm.save(logActivityOne);
+        tm.save(logActivityTwo);
+
+        Calendar overviewStartDate = new GregorianCalendar(2017, Calendar.DECEMBER, 1);
+        Calendar overviewEndDate = new GregorianCalendar(2017, Calendar.DECEMBER, 7);
+        List<ActivityLog> overviewLogs = tm
+                .getActivityLogsInInterval(overviewStartDate.getTime(), overviewEndDate.getTime());
+
+        Assert.assertNotNull(overviewLogs);
+        Assert.assertEquals(2, overviewLogs.size());
+        Assert.assertEquals(activityOneId, overviewLogs.get(0).getActivityId());
+        Assert.assertEquals(activityTwoId, overviewLogs.get(1).getActivityId());
+
+        Files.delete(tempFile);
+    }
+
+    @Test public void getActivityForIntervalNoneFit() throws IOException {
+        Path tempFile = createTempFile();
+        TimeTrackingManager tm = new TimeTrackingManager(tempFile.toString());
+
+        UUID activityOneId = UUID.randomUUID();
+        ActivityLog logActivityOne = new ActivityLog(activityOneId);
+        Calendar logOneStart = new GregorianCalendar(2017, Calendar.DECEMBER, 1, 14, 0, 0);
+        Calendar logOneEnd = new GregorianCalendar(2017, Calendar.DECEMBER, 1, 18, 0, 0);
+        logActivityOne.addLogPoint(createTimeLog(logOneStart.getTime(), logOneEnd.getTime()));
+
+        UUID activityTwoId = UUID.randomUUID();
+        ActivityLog logActivityTwo = new ActivityLog(activityTwoId);
+        Calendar logTwoStart = new GregorianCalendar(2017, Calendar.DECEMBER, 4, 14, 0, 0);
+        Calendar logTwoEnd = new GregorianCalendar(2017, Calendar.DECEMBER, 4, 19, 0, 0);
+        logActivityTwo.addLogPoint(createTimeLog(logTwoStart.getTime(), logTwoEnd.getTime()));
+
+        tm.save(logActivityOne);
+        tm.save(logActivityTwo);
+
+        Calendar overviewStartDate = new GregorianCalendar(2017, Calendar.DECEMBER, 20);
+        Calendar overviewEndDate = new GregorianCalendar(2017, Calendar.DECEMBER, 30);
+        List<ActivityLog> overviewLogs = tm
+                .getActivityLogsInInterval(overviewStartDate.getTime(), overviewEndDate.getTime());
+
+        Assert.assertNotNull(overviewLogs);
+        Assert.assertTrue(overviewLogs.isEmpty());
 
         Files.delete(tempFile);
     }

@@ -1,12 +1,13 @@
 package be.doji.productivity.trambucore.model.tracker;
 
+import be.doji.productivity.trambucore.TrambuTest;
 import be.doji.productivity.trambucore.model.tasks.Activity;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.*;
 
-public class ActivityLogTest {
+public class ActivityLogTest extends TrambuTest {
 
     @Test public void testStart() {
         Activity activity = new Activity("TestBug");
@@ -94,6 +95,89 @@ public class ActivityLogTest {
         testLog.setLogpoints(logPoints);
         String timeString = testLog.getTimeSpent();
         Assert.assertEquals("4.0 hours", timeString);
+    }
+
+    /* Unit tests for overview functionality */
+
+    @Test public void testGetLogsForIntervalFullyInScope() {
+        UUID activityOneId = UUID.randomUUID();
+        ActivityLog logActivityOne = new ActivityLog(activityOneId);
+        Calendar logOneStart = new GregorianCalendar(2017, Calendar.DECEMBER, 1, 14, 0, 0);
+        Calendar logOneEnd = new GregorianCalendar(2017, Calendar.DECEMBER, 1, 18, 0, 0);
+        logActivityOne.addLogPoint(createTimeLog(logOneStart.getTime(), logOneEnd.getTime()));
+
+        Calendar logTwoStart = new GregorianCalendar(2017, Calendar.DECEMBER, 4, 14, 0, 0);
+        Calendar logTwoEnd = new GregorianCalendar(2017, Calendar.DECEMBER, 4, 19, 0, 0);
+        logActivityOne.addLogPoint(createTimeLog(logTwoStart.getTime(), logTwoEnd.getTime()));
+
+        Calendar overviewStartDate = new GregorianCalendar(2017, Calendar.DECEMBER, 1);
+        Calendar overviewEndDate = new GregorianCalendar(2017, Calendar.DECEMBER, 2);
+
+        List<TimeLog> timeLogsInInterval = logActivityOne
+                .getTimeLogsInInterval(overviewStartDate.getTime(), overviewEndDate.getTime());
+        Assert.assertNotNull(timeLogsInInterval);
+        Assert.assertEquals(1, timeLogsInInterval.size());
+        TimeLog timeLog = timeLogsInInterval.get(0);
+        Assert.assertEquals(timeLog.getStartTime(), logOneStart.getTime());
+        Assert.assertEquals(timeLog.getEndTime(), logOneEnd.getTime());
+    }
+
+    @Test public void testGetLogsForIntervalPartiallyInScopeEndDate() {
+        UUID activityOneId = UUID.randomUUID();
+        ActivityLog logActivityOne = new ActivityLog(activityOneId);
+        Calendar logOneStart = new GregorianCalendar(2017, Calendar.DECEMBER, 1, 14, 0, 0);
+        Calendar logOneEnd = new GregorianCalendar(2017, Calendar.DECEMBER, 1, 18, 0, 0);
+        logActivityOne.addLogPoint(createTimeLog(logOneStart.getTime(), logOneEnd.getTime()));
+
+        Calendar overviewStartDate = new GregorianCalendar(2017, Calendar.DECEMBER, 1);
+        Calendar overviewEndDate = new GregorianCalendar(2017, Calendar.DECEMBER, 1, 17, 30, 00);
+
+        List<TimeLog> timeLogsInInterval = logActivityOne
+                .getTimeLogsInInterval(overviewStartDate.getTime(), overviewEndDate.getTime());
+        Assert.assertNotNull(timeLogsInInterval);
+        Assert.assertEquals(1, timeLogsInInterval.size());
+        TimeLog timeLog = timeLogsInInterval.get(0);
+        Assert.assertEquals(logOneStart.getTime(), timeLog.getStartTime());
+        Assert.assertEquals(overviewEndDate.getTime(), timeLog.getEndTime());
+    }
+
+    @Test public void testGetLogsForIntervalPartiallyInScopeStartDate() {
+        UUID activityOneId = UUID.randomUUID();
+        ActivityLog logActivityOne = new ActivityLog(activityOneId);
+        Calendar logOneStart = new GregorianCalendar(2017, Calendar.DECEMBER, 1, 14, 0, 0);
+        Calendar logOneEnd = new GregorianCalendar(2017, Calendar.DECEMBER, 1, 18, 0, 0);
+        logActivityOne.addLogPoint(createTimeLog(logOneStart.getTime(), logOneEnd.getTime()));
+
+        Calendar overviewStartDate = new GregorianCalendar(2017, Calendar.DECEMBER, 1, 16, 0, 0);
+        Calendar overviewEndDate = new GregorianCalendar(2017, Calendar.DECEMBER, 2, 17, 30, 00);
+
+        List<TimeLog> timeLogsInInterval = logActivityOne
+                .getTimeLogsInInterval(overviewStartDate.getTime(), overviewEndDate.getTime());
+        Assert.assertNotNull(timeLogsInInterval);
+        Assert.assertEquals(1, timeLogsInInterval.size());
+        TimeLog timeLog = timeLogsInInterval.get(0);
+        Assert.assertEquals(overviewStartDate.getTime(), timeLog.getStartTime());
+        Assert.assertEquals(logOneEnd.getTime(), timeLog.getEndTime());
+    }
+
+    @Test public void testGetLogsForIntervalNoneInScope() {
+        UUID activityOneId = UUID.randomUUID();
+        ActivityLog logActivityOne = new ActivityLog(activityOneId);
+        Calendar logOneStart = new GregorianCalendar(2017, Calendar.DECEMBER, 1, 14, 0, 0);
+        Calendar logOneEnd = new GregorianCalendar(2017, Calendar.DECEMBER, 1, 18, 0, 0);
+        logActivityOne.addLogPoint(createTimeLog(logOneStart.getTime(), logOneEnd.getTime()));
+
+        Calendar logTwoStart = new GregorianCalendar(2017, Calendar.DECEMBER, 4, 14, 0, 0);
+        Calendar logTwoEnd = new GregorianCalendar(2017, Calendar.DECEMBER, 4, 19, 0, 0);
+        logActivityOne.addLogPoint(createTimeLog(logTwoStart.getTime(), logTwoEnd.getTime()));
+
+        Calendar overviewStartDate = new GregorianCalendar(2017, Calendar.DECEMBER, 20);
+        Calendar overviewEndDate = new GregorianCalendar(2017, Calendar.DECEMBER, 30);
+
+        List<TimeLog> timeLogsInInterval = logActivityOne
+                .getTimeLogsInInterval(overviewStartDate.getTime(), overviewEndDate.getTime());
+        Assert.assertNotNull(timeLogsInInterval);
+        Assert.assertTrue(timeLogsInInterval.isEmpty());
     }
 
     private Date createDateWithPositiveHourOffset(GregorianCalendar referenceDate, int offset) {

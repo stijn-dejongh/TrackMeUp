@@ -94,4 +94,35 @@ public class ActivityLog {
         double timeSpentInHours = (timeSpentInMilies / (1000 * 60 * 60));
         return String.valueOf(timeSpentInHours) + " hours";
     }
+
+    public List<TimeLog> getTimeLogsInInterval(Date intervalStartTime, Date intervalEndTime) {
+        List<TimeLog> logsInInterval = new ArrayList<>();
+        for (TimeLog log : this.logpoints) {
+            if (isInInterval(log.getStartTime(), intervalStartTime, intervalEndTime) || isInInterval(log.getEndTime(),
+                    intervalStartTime, intervalEndTime)) {
+                TimeLog timeLogInInterval = getLogPartitionInInterval(intervalStartTime, intervalEndTime, log);
+                logsInInterval.add(timeLogInInterval);
+            }
+        }
+        return logsInInterval;
+    }
+
+    private TimeLog getLogPartitionInInterval(Date intervalStartTime, Date intervalEndTime, TimeLog log) {
+        TimeLog timeLogInInterval = new TimeLog();
+        timeLogInInterval.setStartTime(isInInterval(log.getStartTime(), intervalStartTime, intervalEndTime)?
+                log.getStartTime():
+                intervalStartTime);
+        if (log.getEndTime() != null) {
+            timeLogInInterval.setEndTime(isInInterval(log.getEndTime(), intervalStartTime, intervalEndTime)?
+                    log.getEndTime():
+                    intervalEndTime);
+        } else {
+            timeLogInInterval.setEndTime(intervalEndTime);
+        }
+        return timeLogInInterval;
+    }
+
+    private boolean isInInterval(Date startTime, Date intervalStartTime, Date intervalEndTime) {
+        return startTime.compareTo(intervalStartTime) >= 0 && startTime.compareTo(intervalEndTime) <= 0;
+    }
 }

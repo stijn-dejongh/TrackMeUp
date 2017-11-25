@@ -14,10 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class TimeTrackingManager {
 
@@ -118,5 +115,19 @@ public class TimeTrackingManager {
 
     public List<ActivityLog> getLogs() {
         return new ArrayList<>(this.timelogs);
+    }
+
+    public List<ActivityLog> getActivityLogsInInterval(Date startTime, Date endTime) {
+        List<ActivityLog> logsInInterval = new ArrayList<>();
+        for (ActivityLog log : this.timelogs) {
+            List<TimeLog> timeLogsInInterval = log.getTimeLogsInInterval(startTime, endTime);
+            if (!timeLogsInInterval.isEmpty()) {
+                ActivityLog activityLogInterval = new ActivityLog(log.getActivityId());
+                activityLogInterval.setLogpoints(log.getTimeLogsInInterval(startTime, endTime));
+                logsInInterval.add(activityLogInterval);
+            }
+        }
+
+        return logsInInterval;
     }
 }
