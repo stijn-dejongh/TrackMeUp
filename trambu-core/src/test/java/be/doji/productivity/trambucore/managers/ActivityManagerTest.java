@@ -1,6 +1,7 @@
 package be.doji.productivity.trambucore.managers;
 
 import be.doji.productivity.trambucore.TrackMeConstants;
+import be.doji.productivity.trambucore.TrambuTest;
 import be.doji.productivity.trambucore.model.tasks.Activity;
 import be.doji.productivity.trambucore.testutil.ActivityTestData;
 import be.doji.productivity.trambucore.testutil.FileUtils;
@@ -10,7 +11,6 @@ import org.junit.Test;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 /**
  * Created by Doji on 22/10/2017.
  */
-public class ActivityManagerTest {
+public class ActivityManagerTest extends TrambuTest {
 
     public static final String DATA_TEST_ONE_TASK_TXT = "data/testOneTask.txt";
 
@@ -217,9 +217,10 @@ public class ActivityManagerTest {
         Assert.assertNotNull(activities);
         Assert.assertEquals(1, activities.size());
 
-        Map<Date, List<Activity>> activitiesByProject = am.getActivitiesByProject(ActivityTestData.SUB_ACTIVITY_PROJECT_ONE);
-        List<Activity> flatActivities = activitiesByProject.entrySet().stream().flatMap(entry -> entry.getValue().stream())
-                .collect(Collectors.toList());
+        Map<Date, List<Activity>> activitiesByProject = am
+                .getActivitiesByProject(ActivityTestData.SUB_ACTIVITY_PROJECT_ONE);
+        List<Activity> flatActivities = activitiesByProject.entrySet().stream()
+                .flatMap(entry -> entry.getValue().stream()).collect(Collectors.toList());
         Assert.assertNotNull(flatActivities);
         Assert.assertEquals(2, flatActivities.size());
         for (Activity activity : flatActivities) {
@@ -239,19 +240,14 @@ public class ActivityManagerTest {
         Assert.assertNotNull(activities);
         Assert.assertEquals(1, activities.size());
 
-        Map<Date, List<Activity>> activitiesByProjecct = am.getActivitiesByProject(ActivityTestData.SUB_ACTIVITY_PROJECT_TWO);
-        List<Activity> flatActivities = activitiesByProjecct.entrySet().stream().flatMap(entry -> entry.getValue().stream())
-                .collect(Collectors.toList());
+        Map<Date, List<Activity>> activitiesByProjecct = am
+                .getActivitiesByProject(ActivityTestData.SUB_ACTIVITY_PROJECT_TWO);
+        List<Activity> flatActivities = activitiesByProjecct.entrySet().stream()
+                .flatMap(entry -> entry.getValue().stream()).collect(Collectors.toList());
         Assert.assertNotNull(flatActivities);
         Assert.assertEquals(1, flatActivities.size());
         Assert.assertTrue(flatActivities.get(0).getProjects().contains(ActivityTestData.SUB_ACTIVITY_PROJECT_TWO));
 
         Files.delete(tempFilePath);
-    }
-
-    private Path createTempFile() throws IOException {
-        Path directoryPath = Paths.get(FileUtils.getTestPath(DATA_TEST_ONE_TASK_TXT, this.getClass().getClassLoader()))
-                .getParent();
-        return Files.createTempFile(directoryPath, "temp", "txt");
     }
 }

@@ -41,6 +41,7 @@ public class TimeTrackingManager {
         if (filePath.toFile().exists()) {
             this.timelogFile = filePath;
         }
+        this.timelogs = new ArrayList<>();
         this.readLogs();
     }
 
@@ -113,5 +114,9 @@ public class TimeTrackingManager {
         for (ActivityLog log : this.timelogs) {
             log.getActiveLog().ifPresent(TimeLog::stop);
         }
+    }
+
+    public List<ActivityLog> getLogs() {
+        return new ArrayList<>(this.timelogs);
     }
 }
