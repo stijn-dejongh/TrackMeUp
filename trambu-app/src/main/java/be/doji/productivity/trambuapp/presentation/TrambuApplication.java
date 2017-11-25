@@ -9,6 +9,7 @@ import be.doji.productivity.trambucore.TrackMeConstants;
 import be.doji.productivity.trambucore.managers.ActivityManager;
 import be.doji.productivity.trambucore.managers.TimeTrackingManager;
 import be.doji.productivity.trambucore.model.tasks.Activity;
+import be.doji.productivity.trambucore.model.tracker.ActivityLog;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.application.Application;
@@ -17,17 +18,23 @@ import javafx.geometry.Orientation;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Consumer;
 
 /**
@@ -49,6 +56,8 @@ public class TrambuApplication extends Application {
     private String projectFilter;
     private boolean filterDone = false;
     private Label activeFilter;
+    private Date startDate;
+    private Date endDate;
 
     private String configuredTodoLocation;
     private String configuredTimeLocation;
@@ -74,6 +83,8 @@ public class TrambuApplication extends Application {
             initializeActivities(todoLocation.orElse(TrackMeConstants.DEFAULT_TODO_FILE_LOCATION));
             Optional<String> timeLocation = configManager.getProperty(DisplayConstants.NAME_PROPERTY_TIME_LOCATION);
             initializeTimeTracking(timeLocation.orElse(TrackMeConstants.DEFAULT_TIMELOG_FILE_LOCATION));
+            endDate = new Date();
+            startDate = DateUtils.addDays(endDate, -7);
         } catch (IOException | ParseException e) {
             LOG.error(DisplayConstants.ERROR_MESSAGE_INITIALIZATION + ": " + e.getMessage());
             throw new InitialisationException(DisplayConstants.ERROR_MESSAGE_INITIALIZATION, e);
@@ -224,7 +235,7 @@ public class TrambuApplication extends Application {
 
         Label filterLabel = new Label("Active filter: ");
         filterLabel.getStyleClass().clear();
-        filterLabel.getStyleClass().add("separator-label");
+        filterLabel.getStyleClass().add(DisplayConstants.STYLE_LABEL_SPECIAL);
         activeFilter = new Label(getActiveFilter());
         grid.add(filterLabel, 0, 0);
         grid.add(activeFilter, 1, 0);
@@ -277,23 +288,121 @@ public class TrambuApplication extends Application {
         return gridTitlePane;
     }
 
-    private Scene createRootScene(SplitPane splitPane) {
+    private Scene createRootScene(SplitPane defaultPane) {
         Scene rootScene = new Scene(new Group(), DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
         rootScene.getStylesheets().add("style/css/trambu-main.css");
+        Group root = (Group) rootScene.getRoot();
+
+        BorderPane borderPane = new BorderPane();
+        MenuBar topMenu = createMenuBar(rootScene.getWidth());
 
         rootScene.widthProperty().addListener((observableValue, oldSceneWidth, newSceneWidth) -> {
-            LOG.debug("Width: " + newSceneWidth);
-            splitPane.setPrefWidth((Double) newSceneWidth);
+            defaultPane.setPrefWidth((Double) newSceneWidth);
         });
         rootScene.heightProperty().addListener((observableValue, oldSceneHeight, newSceneHeight) -> {
-            LOG.debug("Height: " + newSceneHeight);
-            splitPane.setPrefHeight((Double) newSceneHeight);
+            defaultPane.setPrefHeight((Double) newSceneHeight - topMenu.getHeight());
         });
 
-        Group root = (Group) rootScene.getRoot();
-        root.getChildren().add(splitPane);
+        borderPane.setTop(topMenu);
+        borderPane.setCenter(defaultPane);
+        root.getChildren().add(borderPane);
 
         return rootScene;
+    }
+
+    private MenuBar createMenuBar(double width) {
+        MenuBar topMenu = new MenuBar();
+        topMenu.setPrefWidth(width);
+
+        MenuItem activityView = new Menu("Activities");
+        activityView.setOnAction(event -> this.primaryStage.setScene(createRootScene(createContentSplitPane())));
+
+        MenuItem timeOverview = new Menu("Timesheet");
+        timeOverview.setOnAction(event -> this.primaryStage.setScene(createRootScene(createTimesheetPane())));
+
+        Menu viewMenu = new Menu("View");
+        viewMenu.getItems().add(activityView);
+        viewMenu.getItems().add(timeOverview);
+
+        topMenu.getMenus().add(viewMenu);
+
+        return topMenu;
+    }
+
+    private SplitPane createTimesheetPane() {
+        SplitPane splitPane = new SplitPane();
+        splitPane.setPrefHeight(DEFAULT_WINDOW_HEIGHT);
+        splitPane.setPrefWidth(DEFAULT_WINDOW_WIDTH);
+        splitPane.setOrientation(Orientation.HORIZONTAL);
+        splitPane.setDividerPosition(0, 0.75);
+
+        splitPane.getItems().add(createTimeLogGrid(timeTrackingManager.getActivityLogsInInterval(startDate, endDate)));
+        splitPane.getItems().add(createTimesheetControls());
+        return splitPane;
+    }
+
+    private GridPane createTimesheetControls() {
+
+        GridPane controls = new GridPane();
+        DatePicker startDatePicker = new DatePicker();
+        startDatePicker.setOnAction(event -> {
+            startDate = Date.from(startDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
+        });
+        Label startDateLabel = new Label("Start Date");
+        controls.add(startDateLabel, 0, 0);
+        controls.add(startDatePicker, 1, 0);
+
+        DatePicker endDatePicker = new DatePicker();
+        endDatePicker.setOnAction(event -> {
+            endDate = Date.from(endDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
+        });
+
+        Label endDateLabel = new Label("End Date");
+        controls.add(endDateLabel, 0, 1);
+        controls.add(endDatePicker, 1, 1);
+
+        controls.add(DisplayUtils.createHorizontalSpacer(), 0, 2, 2, 1);
+
+        Button refreshTimeSheet = new Button("Get timesheet");
+        FontAwesomeIconView glyph = new FontAwesomeIconView(FontAwesomeIcon.REFRESH);
+        glyph.setGlyphStyle(DisplayConstants.STYLE_GLYPH_DEFAULT);
+        refreshTimeSheet.setGraphic(glyph);
+        refreshTimeSheet.setOnAction(event -> this.primaryStage.setScene(createRootScene(createTimesheetPane())));
+        controls.add(refreshTimeSheet, 0, 3);
+        return controls;
+    }
+
+    private GridPane createTimeLogGrid(List<ActivityLog> activityLogsInInterval) {
+        GridPane grid = new GridPane();
+        grid.setHgap(5);
+        grid.setVgap(5);
+
+        int row = 0;
+        Label entrieTitle = new Label(
+                "Timesheet for " + TrackMeConstants.getDateFormat().format(startDate) + " to " + TrackMeConstants
+                        .getDateFormat().format(endDate));
+        entrieTitle.getStyleClass().add(DisplayConstants.STYLE_LABEL_SPECIAL);
+        grid.add(entrieTitle, 0, row++);
+        grid.add(DisplayUtils.createHorizontalSpacer(), 0, row++, 3, 1);
+
+        LOG.debug("Found " + activityLogsInInterval.size() + " timelog entries");
+        for (ActivityLog log : activityLogsInInterval) {
+            Label activityLabel = new Label();
+            activityLabel.setText(getActivityName(log.getActivityId()));
+            grid.add(activityLabel, 0, row);
+
+            Label seperatorLabel = new Label(":");
+            grid.add(seperatorLabel, 1, row);
+
+            Label timeLabel = new Label(log.getTimeSpent());
+            grid.add(timeLabel, 2, row++);
+        }
+        return grid;
+    }
+
+    private String getActivityName(UUID activityId) {
+        Optional<Activity> savedActivityById = activityManager.getSavedActivityById(activityId.toString());
+        return savedActivityById.isPresent()?savedActivityById.get().getName():DisplayConstants.TEXT_ACTIVITY_UNKNOWN;
     }
 
     public void reloadActivities() {

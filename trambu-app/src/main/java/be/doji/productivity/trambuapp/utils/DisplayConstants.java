@@ -2,8 +2,6 @@ package be.doji.productivity.trambuapp.utils;
 
 public final class DisplayConstants {
 
-
-
     /**
      * Utility classes should not have a public or default constructor
      */
@@ -14,6 +12,7 @@ public final class DisplayConstants {
     public static final String STYLE_CLASS_ACTIVITY_DONE = "done";
     public static final String STYLE_CLASS_ACTIVITY_TODO = "todo";
     public static final String STYLE_CLASS_ACTIVITY_ALERT = "alert";
+    public static final String STYLE_LABEL_SPECIAL = "separator-label";
 
     public static final String BUTTON_TEXT_IS_NOT_DONE = "Not Done";
     public static final String BUTTON_TEXT_IS_DONE = "Done!";
@@ -26,6 +25,8 @@ public final class DisplayConstants {
     public static final String LABEL_TEXT_FILTER_COMPLETED = "Filter completed activities";
     public static final String LABEL_TEXT_FILTER_NONE = "No active filter";
 
+    public static final String TEXT_ACTIVITY_UNKNOWN = "Unknown activity";
+
     public static final String NAME_CONFIGURATION_FILE = "trambu.conf";
     public static final String NAME_PROPERTY_TODO_LOCATION = "todoFile";
     public static final String NAME_PROPERTY_TIME_LOCATION = "timeFile";
@@ -34,4 +35,5 @@ public final class DisplayConstants {
     public static final String ERROR_MESSAGE_INITIALIZATION = "Error while initializing application";
 
     public static final String ERROR_MESSAGE_WRITE_PROPERTIES = "Error while saving preferences";
+
 }
