@@ -5,8 +5,6 @@ package be.doji.productivity.trambucore.testutil;
  */
 public final class ActivityTestData {
 
-
-
     /**
      * Utility methods should not have a public or default constructor
      */
@@ -24,4 +22,14 @@ public final class ActivityTestData {
     public static final String SUPER_ACTIVITY = "X (B) Implement new project uuid:283b6271-b513-4e89-b757-10e98c9078ea";
     public static final String SUB_ACTIVITY_ONE = "X (B) Set up IDE super:283b6271-b513-4e89-b757-10e98c9078ea";
     public static final String SUB_ACTIVITY_TWO = "X (B) Read analisis super:283b6271-b513-4e89-b757-10e98c9078ea";
+
+    public static final String SUB_ACTIVITY_WIITH_TAGS_ONE = "X (B) Set up IDE @development super:283b6271-b513-4e89-b757-10e98c9078ea";
+    public static final String SUB_ACTIVITY_WIITH_TAGS_TWO = "X (B) Read analisis @development @testing super:283b6271-b513-4e89-b757-10e98c9078ea";
+    public static final String SUB_ACTIVITY_TAG_ONE = "development";
+    public static final String SUB_ACTIVITY_TAG_TWO = "testing";
+
+    public static final String SUB_ACTIVITY_WIITH_PROJECTS_ONE = "X (B) Set up IDE +development super:283b6271-b513-4e89-b757-10e98c9078ea";
+    public static final String SUB_ACTIVITY_WIITH_PROJECTS_TWO = "X (B) Read analisis +development +testing super:283b6271-b513-4e89-b757-10e98c9078ea";
+    public static final String SUB_ACTIVITY_PROJECT_ONE = "development";
+    public static final String SUB_ACTIVITY_PROJECT_TWO = "testing";
 }

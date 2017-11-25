@@ -59,9 +59,28 @@ public class ActivityManager {
         }
     }
 
-    public List<Activity> getActivities() {
+    List<Activity> getActivities() {
         ArrayList<Activity> savedActivities = new ArrayList<>(this.activities);
-        savedActivities.sort((o1, o2) -> {
+        return sortActivities(savedActivities);
+    }
+
+    private List<Activity> getAllActivities() {
+        return getAllActivities(this.activities);
+    }
+
+    private List<Activity> getAllActivities(List<Activity> parentActivities) {
+        List<Activity> savedActivities = new ArrayList<>();
+        for (Activity activity : parentActivities) {
+            savedActivities.add(activity);
+            savedActivities.addAll(getAllActivities(activity.getSubActivities()));
+        }
+        savedActivities = sortActivities(savedActivities);
+        return savedActivities;
+    }
+
+    private List<Activity> sortActivities(List<Activity> savedActivities) {
+        List<Activity> sortedActivities = new ArrayList<>(savedActivities);
+        sortedActivities.sort((o1, o2) -> {
             int priorityCompare = o1.getPriority().compareTo(o2.getPriority());
             if (o1.getDeadline() != null && o2.getDeadline() != null) {
                 return o1.getDeadline().compareTo(o2.getDeadline());
@@ -71,19 +90,18 @@ public class ActivityManager {
                 return o2.getDeadline() == null?1:priorityCompare;
             }
         });
-
-        return savedActivities;
+        return sortedActivities;
     }
 
     public Map<Date, List<Activity>> getActivitiesByTag(String tag) {
-        List<Activity> activitiesByTag = this.getActivities().stream()
+        List<Activity> activitiesByTag = this.getAllActivities().stream()
                 .filter(activity -> activity.getTags().contains(tag)).collect(Collectors.toList());
         return groupByDate(activitiesByTag);
     }
 
     public Map<Date, List<Activity>> getActivitiesByProject(String project) {
 
-        List<Activity> activitiesByProject = this.getActivities().stream()
+        List<Activity> activitiesByProject = this.getAllActivities().stream()
                 .filter(activity -> !activity.getProjects().stream()
                         .filter(project1 -> StringUtils.equalsIgnoreCase(project1, project))
                         .collect(Collectors.toList()).isEmpty()).collect(Collectors.toList());

@@ -15,6 +15,7 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * Created by Doji on 22/10/2017.
@@ -24,7 +25,8 @@ public class ActivityManagerTest {
     public static final String DATA_TEST_ONE_TASK_TXT = "data/testOneTask.txt";
 
     @Test public void testReadAcitvities() throws IOException, ParseException {
-        ActivityManager am = new ActivityManager(FileUtils.getTestPath(DATA_TEST_ONE_TASK_TXT, this.getClass().getClassLoader()));
+        ActivityManager am = new ActivityManager(
+                FileUtils.getTestPath(DATA_TEST_ONE_TASK_TXT, this.getClass().getClassLoader()));
         am.readActivitiesFromFile();
         List<Activity> readActivities = am.getActivities();
         Assert.assertFalse(readActivities.isEmpty());
@@ -160,8 +162,96 @@ public class ActivityManagerTest {
         Files.delete(tempFilePath);
     }
 
+    @Test public void testGetActivitiesAndSubActivitiesWithTagSharedTag() throws IOException, ParseException {
+        Path tempFilePath = createTempFile();
+        ActivityManager am = new ActivityManager(tempFilePath.toString());
+        am.addActivity(ActivityTestData.SUPER_ACTIVITY);
+        am.addActivity(ActivityTestData.SUB_ACTIVITY_WIITH_TAGS_ONE);
+        am.addActivity(ActivityTestData.SUB_ACTIVITY_WIITH_TAGS_TWO);
+
+        List<Activity> activities = am.getActivities();
+        Assert.assertNotNull(activities);
+        Assert.assertEquals(1, activities.size());
+
+        Map<Date, List<Activity>> activitiesByTag = am.getActivitiesByTag(ActivityTestData.SUB_ACTIVITY_TAG_ONE);
+        List<Activity> flatActivities = activitiesByTag.entrySet().stream().flatMap(entry -> entry.getValue().stream())
+                .collect(Collectors.toList());
+        Assert.assertNotNull(flatActivities);
+        Assert.assertEquals(2, flatActivities.size());
+        for (Activity activity : flatActivities) {
+            Assert.assertTrue(activity.getTags().contains(ActivityTestData.SUB_ACTIVITY_TAG_ONE));
+        }
+
+        Files.delete(tempFilePath);
+    }
+
+    @Test public void testGetActivitiesAndSubActivitiesWithTagUniqueTag() throws IOException, ParseException {
+        Path tempFilePath = createTempFile();
+        ActivityManager am = new ActivityManager(tempFilePath.toString());
+        am.addActivity(ActivityTestData.SUPER_ACTIVITY);
+        am.addActivity(ActivityTestData.SUB_ACTIVITY_WIITH_TAGS_ONE);
+        am.addActivity(ActivityTestData.SUB_ACTIVITY_WIITH_TAGS_TWO);
+
+        List<Activity> activities = am.getActivities();
+        Assert.assertNotNull(activities);
+        Assert.assertEquals(1, activities.size());
+
+        Map<Date, List<Activity>> activitiesByTag = am.getActivitiesByTag(ActivityTestData.SUB_ACTIVITY_TAG_TWO);
+        List<Activity> flatActivities = activitiesByTag.entrySet().stream().flatMap(entry -> entry.getValue().stream())
+                .collect(Collectors.toList());
+        Assert.assertNotNull(flatActivities);
+        Assert.assertEquals(1, flatActivities.size());
+        Assert.assertTrue(flatActivities.get(0).getTags().contains(ActivityTestData.SUB_ACTIVITY_TAG_TWO));
+
+        Files.delete(tempFilePath);
+    }
+
+    @Test public void testGetActivitiesAndSubActivitiesWithProjectSharedProject() throws IOException, ParseException {
+        Path tempFilePath = createTempFile();
+        ActivityManager am = new ActivityManager(tempFilePath.toString());
+        am.addActivity(ActivityTestData.SUPER_ACTIVITY);
+        am.addActivity(ActivityTestData.SUB_ACTIVITY_WIITH_PROJECTS_ONE);
+        am.addActivity(ActivityTestData.SUB_ACTIVITY_WIITH_PROJECTS_TWO);
+
+        List<Activity> activities = am.getActivities();
+        Assert.assertNotNull(activities);
+        Assert.assertEquals(1, activities.size());
+
+        Map<Date, List<Activity>> activitiesByProject = am.getActivitiesByProject(ActivityTestData.SUB_ACTIVITY_PROJECT_ONE);
+        List<Activity> flatActivities = activitiesByProject.entrySet().stream().flatMap(entry -> entry.getValue().stream())
+                .collect(Collectors.toList());
+        Assert.assertNotNull(flatActivities);
+        Assert.assertEquals(2, flatActivities.size());
+        for (Activity activity : flatActivities) {
+            Assert.assertTrue(activity.getProjects().contains(ActivityTestData.SUB_ACTIVITY_PROJECT_ONE));
+        }
+        Files.delete(tempFilePath);
+    }
+
+    @Test public void testGetActivitiesAndSubActivitiesWithProjectsUniqueProject() throws IOException, ParseException {
+        Path tempFilePath = createTempFile();
+        ActivityManager am = new ActivityManager(tempFilePath.toString());
+        am.addActivity(ActivityTestData.SUPER_ACTIVITY);
+        am.addActivity(ActivityTestData.SUB_ACTIVITY_WIITH_PROJECTS_ONE);
+        am.addActivity(ActivityTestData.SUB_ACTIVITY_WIITH_PROJECTS_TWO);
+
+        List<Activity> activities = am.getActivities();
+        Assert.assertNotNull(activities);
+        Assert.assertEquals(1, activities.size());
+
+        Map<Date, List<Activity>> activitiesByProjecct = am.getActivitiesByProject(ActivityTestData.SUB_ACTIVITY_PROJECT_TWO);
+        List<Activity> flatActivities = activitiesByProjecct.entrySet().stream().flatMap(entry -> entry.getValue().stream())
+                .collect(Collectors.toList());
+        Assert.assertNotNull(flatActivities);
+        Assert.assertEquals(1, flatActivities.size());
+        Assert.assertTrue(flatActivities.get(0).getProjects().contains(ActivityTestData.SUB_ACTIVITY_PROJECT_TWO));
+
+        Files.delete(tempFilePath);
+    }
+
     private Path createTempFile() throws IOException {
-        Path directoryPath = Paths.get(FileUtils.getTestPath(DATA_TEST_ONE_TASK_TXT, this.getClass().getClassLoader())).getParent();
+        Path directoryPath = Paths.get(FileUtils.getTestPath(DATA_TEST_ONE_TASK_TXT, this.getClass().getClassLoader()))
+                .getParent();
         return Files.createTempFile(directoryPath, "temp", "txt");
     }
 }

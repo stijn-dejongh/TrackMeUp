@@ -3,8 +3,6 @@ package be.doji.productivity.trambuapp.utils;
 import be.doji.productivity.trambucore.model.tasks.Activity;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Separator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.text.DateFormat;
 import java.util.Calendar;
