@@ -1,5 +1,7 @@
 package be.doji.productivity.trambucore.utils;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -21,5 +23,11 @@ public final class TrackerUtils {
         }
 
         return allMatches;
+    }
+
+    public static double roundToSignificantNumbers(double value, int significantNumbers) {
+        BigDecimal bd = new BigDecimal(value);
+        bd = bd.round(new MathContext(significantNumbers));
+        return bd.doubleValue();
     }
 }

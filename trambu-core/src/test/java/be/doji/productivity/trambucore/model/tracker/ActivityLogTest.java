@@ -2,6 +2,7 @@ package be.doji.productivity.trambucore.model.tracker;
 
 import be.doji.productivity.trambucore.TrambuTest;
 import be.doji.productivity.trambucore.model.tasks.Activity;
+import org.apache.commons.lang3.time.DateUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -95,6 +96,23 @@ public class ActivityLogTest extends TrambuTest {
         testLog.setLogpoints(logPoints);
         String timeString = testLog.getTimeSpent();
         Assert.assertEquals("4.0 hours", timeString);
+    }
+
+    @Test public void testGetTimeSpentVerySmallTimeFrame() {
+        GregorianCalendar referenceDate = new GregorianCalendar();
+        List<TimeLog> logPoints = new ArrayList<>();
+        TimeLog logPointOne = new TimeLog();
+        logPointOne.setStartTime(referenceDate.getTime());
+        GregorianCalendar endDate = new GregorianCalendar();
+        endDate.setTime(DateUtils.addMinutes(referenceDate.getTime(), 1));
+        logPointOne.setEndTime(endDate.getTime());
+        logPointOne.setActive(false);
+        logPoints.add(logPointOne);
+
+        ActivityLog testLog = new ActivityLog(new Activity("TestBug"));
+        testLog.setLogpoints(logPoints);
+        String timeString = testLog.getTimeSpent();
+        Assert.assertEquals("0.017 hours", timeString);
     }
 
     /* Unit tests for overview functionality */

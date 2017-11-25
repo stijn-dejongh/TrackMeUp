@@ -334,7 +334,7 @@ public class TrambuApplication extends Application {
         splitPane.setPrefHeight(DEFAULT_WINDOW_HEIGHT);
         splitPane.setPrefWidth(DEFAULT_WINDOW_WIDTH);
         splitPane.setOrientation(Orientation.HORIZONTAL);
-        splitPane.setDividerPosition(0, 0.75);
+        splitPane.setDividerPosition(0, 0.65);
 
         splitPane.getItems().add(createTimeLogGrid(timeTrackingManager.getActivityLogsInInterval(startDate, endDate)));
         splitPane.getItems().add(createTimesheetControls());
@@ -344,6 +344,9 @@ public class TrambuApplication extends Application {
     private GridPane createTimesheetControls() {
 
         GridPane controls = new GridPane();
+        controls.setVgap(5);
+        controls.setHgap(3);
+
         DatePicker startDatePicker = new DatePicker();
         startDatePicker.setOnAction(event -> {
             startDate = Date.from(startDatePicker.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
@@ -368,7 +371,7 @@ public class TrambuApplication extends Application {
         glyph.setGlyphStyle(DisplayConstants.STYLE_GLYPH_DEFAULT);
         refreshTimeSheet.setGraphic(glyph);
         refreshTimeSheet.setOnAction(event -> this.primaryStage.setScene(createRootScene(createTimesheetPane())));
-        controls.add(refreshTimeSheet, 0, 3);
+        controls.add(refreshTimeSheet, 0, 3,2,1);
         return controls;
     }
 

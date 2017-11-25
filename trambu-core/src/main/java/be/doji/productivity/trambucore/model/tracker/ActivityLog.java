@@ -2,6 +2,7 @@ package be.doji.productivity.trambucore.model.tracker;
 
 import be.doji.productivity.trambucore.TrackMeConstants;
 import be.doji.productivity.trambucore.model.tasks.Activity;
+import be.doji.productivity.trambucore.utils.TrackerUtils;
 
 import java.util.*;
 
@@ -92,7 +93,8 @@ public class ActivityLog {
             }
         }
         double timeSpentInHours = (timeSpentInMilies / (1000 * 60 * 60));
-        return String.valueOf(timeSpentInHours) + " hours";
+
+        return String.valueOf(TrackerUtils.roundToSignificantNumbers(timeSpentInHours, 2)) + " hours";
     }
 
     public List<TimeLog> getTimeLogsInInterval(Date intervalStartTime, Date intervalEndTime) {
