@@ -1,17 +1,21 @@
 package be.doji.productivity.trambuapp.styles
 
+import javafx.scene.layout.BackgroundPosition
+import javafx.scene.layout.BackgroundRepeat
+import javafx.scene.layout.BackgroundSize
 import javafx.scene.text.FontPosture
-import javafx.scene.text.FontWeight
-import tornadofx.*
+import tornadofx.Stylesheet
+import tornadofx.c
+import tornadofx.cssclass
 
 class DefaultTrambuStyle : Stylesheet() {
     companion object {
         val todo by cssclass()
         val done by cssclass()
         val alert by cssclass()
-        val itemtitle by cssclass()
         val separatorLabel by cssclass()
         val warningLabel by cssclass()
+        val default by cssclass()
 
         val mainColor = c("#505050")
         val defaultTextColor = c("#ffffff")
@@ -20,52 +24,37 @@ class DefaultTrambuStyle : Stylesheet() {
     init {
         root {
             baseColor = mainColor
-            backgroundColor += mainColor
+            backgroundColor += c("transparent")
             textFill = defaultTextColor
+            backgroundImage += this.javaClass.classLoader.getResource("images/repeating-pattern-rocks-opace.png").toURI()
+            backgroundPosition += BackgroundPosition.CENTER
         }
 
         todo {
             skin = com.sun.javafx.scene.control.skin.TitledPaneSkin::class
             textFill = defaultTextColor
+            backgroundColor += c("#3598c1")
+            baseColor = c("#3598c1")
 
-            and(itemtitle) {
-                backgroundInsets += box(0.px, 1.px, 2.px, 2.px)
-                backgroundRadius += box(5.px, 5.px, 0.px, 0.px)
-                padding = box(0.166667.em, 0.833333.em, 0.25.em, 0.833333.em)
-                backgroundColor += c("#3598c1")
-                baseColor = c("#3598c1")
-                textFill = defaultTextColor
-                fontWeight = FontWeight.BOLD
+            separatorLabel {
+                textFill = c("#820d98")
             }
         }
+
 
         done {
             skin = com.sun.javafx.scene.control.skin.TitledPaneSkin::class
             textFill = defaultTextColor
-
-            and(itemtitle) {
-                backgroundInsets += box(0.px, 1.px, 2.px, 2.px)
-                backgroundRadius += box(5.px, 5.px, 0.px, 0.px)
-                padding = box(0.166667.em, 0.833333.em, 0.25.em, 0.833333.em)
-                backgroundColor += c("#383f38")
-                baseColor = c("#383f38")
-                textFill = c("#969696")
-                fontStyle = FontPosture.ITALIC
-            }
+            backgroundColor += c("#383f38")
+            baseColor = c("#383f38")
+            title { fontStyle = FontPosture.ITALIC }
         }
 
         alert {
             skin = com.sun.javafx.scene.control.skin.TitledPaneSkin::class
             textFill = defaultTextColor
-
-            and(itemtitle) {
-                backgroundInsets += box(0.px, 1.px, 2.px, 2.px)
-                backgroundRadius += box(5.px, 5.px, 0.px, 0.px)
-                padding = box(0.166667.em, 0.833333.em, 0.25.em, 0.833333.em)
-                backgroundColor += c("#a8431a")
-                baseColor = c("#a8431a")
-                textFill = defaultTextColor
-            }
+            backgroundColor += c("#a8431a")
+            baseColor = c("#a8431a")
         }
 
         separatorLabel {
@@ -74,6 +63,35 @@ class DefaultTrambuStyle : Stylesheet() {
 
         warningLabel {
             textFill = c("#a8431a")
+        }
+
+        default {
+            baseColor = mainColor
+            backgroundColor += c(mainColor.toString(), 0.65)
+        }
+
+        splitPane {
+            backgroundColor += c(mainColor.toString(), 0.65)
+        }
+
+        scrollPane {
+            backgroundColor += c("transparent")
+            baseColor = c("transparent")
+            content {
+                backgroundColor += c("transparent")
+            }
+
+        }
+
+        accordion {
+            backgroundColor += c("transparent")
+
+            titledPane {
+                content {
+                    backgroundColor += c("transparent")
+                }
+
+            }
         }
     }
 }

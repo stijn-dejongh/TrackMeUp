@@ -12,6 +12,13 @@ public final class DisplayConstants {
     public static final String STYLE_CLASS_ACTIVITY_DONE = "done";
     public static final String STYLE_CLASS_ACTIVITY_TODO = "todo";
     public static final String STYLE_CLASS_ACTIVITY_ALERT = "alert";
+
+    public static final String STYLE_CLASS_TITLE_ACTIVITY_DONE = "titledone";
+    public static final String STYLE_CLASS_TITLE_ACTIVITY_TODO = "titletodo";
+    public static final String STYLE_CLASS_TITLE_ACTIVITY_ALERT = "titlealert";
+
+    public static final String STYLE_CLASS_DEFAULT = "default";
+
     public static final String STYLE_LABEL_SPECIAL = "separatorLabel";
 
     public static final String BUTTON_TEXT_IS_NOT_DONE = "Not Done";
@@ -38,5 +45,6 @@ public final class DisplayConstants {
 
     public static final double UI_DEFAULT_WINDOW_WIDTH = 750.0;
     public static final double UI_DEFAULT_WINDOW_HEIGHT = 850.0;
+
 
 }

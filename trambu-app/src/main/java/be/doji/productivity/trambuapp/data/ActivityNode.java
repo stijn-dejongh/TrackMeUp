@@ -70,9 +70,10 @@ public class ActivityNode extends TitledPane {
         titleLabel.getStyleClass().clear();
         titleLabel.getStyleClass().add("icon-button");
         this.setGraphic(titleLabel);
-        this.getStyleClass().clear();
+        this.getStyleClass()
+                .removeAll(DisplayConstants.STYLE_CLASS_ACTIVITY_DONE, DisplayConstants.STYLE_CLASS_ACTIVITY_TODO,
+                        DisplayConstants.STYLE_CLASS_ACTIVITY_ALERT);
         this.getStyleClass().add(getActivityStyle());
-        this.getStyleClass().add("itemtitle");
     }
 
     String getActivityStyle() {
@@ -82,6 +83,16 @@ public class ActivityNode extends TitledPane {
             return this.activity.isAlertActive()?
                     DisplayConstants.STYLE_CLASS_ACTIVITY_ALERT:
                     DisplayConstants.STYLE_CLASS_ACTIVITY_TODO;
+        }
+    }
+
+    String getActivityTitleStyle() {
+        if (this.activity.isCompleted()) {
+            return DisplayConstants.STYLE_CLASS_TITLE_ACTIVITY_DONE;
+        } else {
+            return this.activity.isAlertActive()?
+                    DisplayConstants.STYLE_CLASS_TITLE_ACTIVITY_ALERT:
+                    DisplayConstants.STYLE_CLASS_TITLE_ACTIVITY_TODO;
         }
     }
 

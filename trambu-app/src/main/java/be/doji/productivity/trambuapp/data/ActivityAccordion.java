@@ -1,5 +1,6 @@
 package be.doji.productivity.trambuapp.data;
 
+import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
 import be.doji.productivity.trambuapp.views.ActivityOverview;
 import be.doji.productivity.trambucore.model.tasks.Activity;

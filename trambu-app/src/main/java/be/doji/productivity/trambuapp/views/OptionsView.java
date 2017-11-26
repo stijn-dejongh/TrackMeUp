@@ -45,6 +45,7 @@ public class OptionsView extends View {
 
     @NotNull private GridPane createControlGrid() {
         GridPane grid = new GridPane();
+        grid.getStyleClass().add(DisplayConstants.STYLE_CLASS_DEFAULT);
         grid.setVgap(4);
         grid.setPadding(new Insets(5, 5, 5, 5));
         grid.add(new Label("Todo file: "), 0, 0);
