@@ -19,6 +19,7 @@ import javafx.scene.layout.HBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tornadofx.View;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -46,7 +47,6 @@ public class ActivityNode extends TitledPane {
     private TextField tagsField;
     private ActivityLog activityLog;
     private boolean parentChanged;
-    private ActivityAccordion parentContainer;
 
     public ActivityNode(Activity activity, ActivityOverview trambuApplication) {
         super();
@@ -57,11 +57,6 @@ public class ActivityNode extends TitledPane {
         this.setContent(createActivityContent());
         this.setVisible(true);
         this.setOnMouseClicked(event -> this.setActive(!this.isActive));
-    }
-
-    public ActivityNode(Activity activity, ActivityAccordion activityAccordion, ActivityOverview application) {
-        this(activity, application);
-        this.parentContainer = activityAccordion;
     }
 
     private void updateHeader(Activity activity) {
@@ -77,6 +72,7 @@ public class ActivityNode extends TitledPane {
         this.setGraphic(titleLabel);
         this.getStyleClass().clear();
         this.getStyleClass().add(getActivityStyle());
+        this.getStyleClass().add("itemtitle");
     }
 
     String getActivityStyle() {
@@ -425,7 +421,7 @@ public class ActivityNode extends TitledPane {
         updateActivityFields();
         application.getActivityManager().save(getActivityToSave());
         if (!this.parentChanged) {
-            parentContainer.refresh();
+            this.refresh();
         } else {
             application.reloadActivities();
         }

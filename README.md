@@ -15,18 +15,6 @@ open and portable.
 Refactored the project structure to diferentiate between core-components, and
 the frontend(s).
 
-
-## Design vission
-
-Some ideas I'd like to visit are:
-
-* Webservice based application design
-    * This allows for easy portability accross multiple devices without the need for 'synching' or installations
-* Plain text data storage
-    * Follow Todo.txt guidelines and design (https://github.com/todotxt/todo.txt)
-* Learning paths and skill trees
-* Task/occupation suggestions based on amount of free time
-
 ## Technical requirements
 
 If you want to get hacking at my code, or contribute to the effort, 
@@ -67,7 +55,7 @@ https://sonarcloud.io/dashboard?id=be.doji.productivity%3Atrambu
 
 ## Acknowledgements 
 
-Big shoutout to the awesome people that created the libraries I used to create this application:
+Big shoutout to the awesome people that created the libraries I used to create this Application:
 
 * https://bitbucket.org/Jerady/fontawesomefx
 * https://github.com/TestFX/TestFX

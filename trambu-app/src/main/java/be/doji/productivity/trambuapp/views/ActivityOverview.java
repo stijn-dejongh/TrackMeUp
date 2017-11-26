@@ -169,4 +169,8 @@ public class ActivityOverview extends View {
     public void setFilterDone(boolean filterDone) {
         this.filterDone = filterDone;
     }
+
+    @Override public void onDelete() {
+        this.getTimeTrackingManager().stopAll();
+    }
 }

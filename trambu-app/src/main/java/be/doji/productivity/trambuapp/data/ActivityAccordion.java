@@ -15,15 +15,15 @@ public class ActivityAccordion extends Accordion {
 
     private static final Logger LOG = LoggerFactory.getLogger(ActivityAccordion.class);
 
-    private final ActivityOverview application;
+    private final ActivityOverview view;
 
-    public ActivityAccordion(ActivityOverview application, Map<Date, List<Activity>> activitiesWithDateHeader) {
-        this.application = application;
+    public ActivityAccordion(ActivityOverview view, Map<Date, List<Activity>> activitiesWithDateHeader) {
+        this.view = view;
         this.getPanes().addAll(createActivityNodes(activitiesWithDateHeader));
     }
 
-    public ActivityAccordion(ActivityOverview application, List<Activity> activities) {
-        this.application = application;
+    public ActivityAccordion(ActivityOverview view, List<Activity> activities) {
+        this.view = view;
         this.getPanes().addAll(createActivityNodes(activities));
     }
 
@@ -40,8 +40,8 @@ public class ActivityAccordion extends Accordion {
     }
 
     private List<ActivityNode> createActivityNodes(List<Activity> activityNodes) {
-        return activityNodes.stream().filter(activity -> !(activity.isCompleted() && application.isFilterDone()))
-                .map(activity -> new ActivityNode(activity, this, application)).collect(Collectors.toList());
+        return activityNodes.stream().filter(activity -> !(activity.isCompleted() && view.isFilterDone()))
+                .map(activity -> new ActivityNode(activity, view)).collect(Collectors.toList());
     }
 
     private TitledPane createSeperatorPane(Date key) {
