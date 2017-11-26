@@ -12,7 +12,7 @@ public final class DisplayConstants {
     public static final String STYLE_CLASS_ACTIVITY_DONE = "done";
     public static final String STYLE_CLASS_ACTIVITY_TODO = "todo";
     public static final String STYLE_CLASS_ACTIVITY_ALERT = "alert";
-    public static final String STYLE_LABEL_SPECIAL = "separator-label";
+    public static final String STYLE_LABEL_SPECIAL = "separatorLabel";
 
     public static final String BUTTON_TEXT_IS_NOT_DONE = "Not Done";
     public static final String BUTTON_TEXT_IS_DONE = "Done!";

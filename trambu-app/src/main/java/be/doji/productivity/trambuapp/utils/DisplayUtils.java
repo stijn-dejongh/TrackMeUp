@@ -27,7 +27,7 @@ public final class DisplayUtils {
                 "No deadline in sight";
     }
 
-    public static boolean isWithinYearRange(GregorianCalendar calendarOfHeader, GregorianCalendar calendarOfToday) {
+    private static boolean isWithinYearRange(GregorianCalendar calendarOfHeader, GregorianCalendar calendarOfToday) {
         return calendarOfHeader.get(Calendar.YEAR) - calendarOfToday.get(Calendar.YEAR) < 25;
     }
 

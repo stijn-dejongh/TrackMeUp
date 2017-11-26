@@ -90,9 +90,13 @@ public class TimesheetView extends View {
         FontAwesomeIconView glyph = new FontAwesomeIconView(FontAwesomeIcon.REFRESH);
         glyph.setGlyphStyle(DisplayConstants.STYLE_GLYPH_DEFAULT);
         refreshTimeSheet.setGraphic(glyph);
-        refreshTimeSheet.setOnAction(event -> root.setCenter(createTimesheetPane()));
+        refreshTimeSheet.setOnAction(event -> refresh());
         controls.add(refreshTimeSheet, 0, 3, 2, 1);
         return controls;
+    }
+
+    private void refresh() {
+        root.setCenter(createTimesheetPane());
     }
 
     private GridPane createTimeLogGrid(List<ActivityLog> activityLogsInInterval) {
@@ -131,5 +135,9 @@ public class TimesheetView extends View {
 
     @NotNull @Override public Parent getRoot() {
         return root;
+    }
+
+    @Override public void onDock() {
+        this.refresh();
     }
 }

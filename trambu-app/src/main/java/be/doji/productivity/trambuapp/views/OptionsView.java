@@ -1,43 +1,49 @@
-package be.doji.productivity.trambuapp.controls;
+package be.doji.productivity.trambuapp.views;
 
+import be.doji.productivity.trambuapp.controllers.ActivityController;
+import be.doji.productivity.trambuapp.controls.MainMenuBar;
 import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
-import be.doji.productivity.trambuapp.views.ActivityOverview;
 import javafx.geometry.Insets;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TitledPane;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tornadofx.View;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.function.Consumer;
 
-public class FileControls extends TitledPane {
+public class OptionsView extends View {
 
-    private static final Logger LOG = LoggerFactory.getLogger(FileControls.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OptionsView.class);
+
+    private final ActivityController activityController;
+    private BorderPane root;
 
     private String configuredTodoLocation;
     private String configuredTimeLocation;
 
-    private ActivityOverview view;
-
-    public FileControls(ActivityOverview view) {
+    public OptionsView() {
         super();
-        this.view = view;
-        this.setText("File Options");
-        this.setContent(createControlGrid(view));
-        this.setVisible(true);
+        this.root = new BorderPane();
+        this.activityController = find(ActivityController.class);
+        root.setPrefHeight(DisplayConstants.UI_DEFAULT_WINDOW_HEIGHT);
+        root.setPrefWidth(DisplayConstants.UI_DEFAULT_WINDOW_WIDTH);
 
+        root.setCenter(createControlGrid());
+        root.setBottom(new MainMenuBar(this).getRoot());
     }
 
-    @NotNull private GridPane createControlGrid(ActivityOverview view) {
+    @NotNull private GridPane createControlGrid() {
         GridPane grid = new GridPane();
         grid.setVgap(4);
         grid.setPadding(new Insets(5, 5, 5, 5));
@@ -50,8 +56,7 @@ public class FileControls extends TitledPane {
             try {
                 String filePath = file.getAbsolutePath();
                 this.configuredTodoLocation = filePath;
-                this.view.getActivityController().getActivityManager().updateFileLocation(filePath);
-                this.view.reloadActivities();
+                this.getActivityController().getActivityManager().updateFileLocation(filePath);
             } catch (IOException | ParseException e) {
                 LOG.error("Error opening todo file", e);
             }
@@ -66,7 +71,7 @@ public class FileControls extends TitledPane {
             try {
                 String filePath = file.getAbsolutePath();
                 this.configuredTimeLocation = filePath;
-                this.view.getActivityController().getTimeTrackingManager().updateFileLocation(filePath);
+                this.getActivityController().getTimeTrackingManager().updateFileLocation(filePath);
             } catch (IOException | ParseException e) {
                 LOG.error("Error opening time tracking file", e);
             }
@@ -82,15 +87,15 @@ public class FileControls extends TitledPane {
         Button savePreferences = new Button("Remember choices");
         savePreferences.setOnAction(event -> {
             if (StringUtils.isNotBlank(configuredTodoLocation)) {
-                this.view.getActivityController().getConfigManager()
+                this.getActivityController().getConfigManager()
                         .addProperty(DisplayConstants.NAME_PROPERTY_TODO_LOCATION, configuredTodoLocation);
             }
             if (StringUtils.isNotBlank(configuredTimeLocation)) {
-                this.view.getActivityController().getConfigManager()
+                this.getActivityController().getConfigManager()
                         .addProperty(DisplayConstants.NAME_PROPERTY_TIME_LOCATION, configuredTimeLocation);
             }
             try {
-                this.view.getActivityController().getConfigManager().writeToFile();
+                this.getActivityController().getConfigManager().writeToFile();
             } catch (IOException e) {
                 LOG.error(DisplayConstants.ERROR_MESSAGE_WRITE_PROPERTIES, e);
             }
@@ -105,9 +110,16 @@ public class FileControls extends TitledPane {
             File file = fileChooser.showOpenDialog(null);
             if (file != null) {
                 fileLambda.accept(file);
-                view.reloadActivities();
             }
         });
         return button;
+    }
+
+    private ActivityController getActivityController() {
+        return activityController;
+    }
+
+    @NotNull @Override public Parent getRoot() {
+        return root;
     }
 }

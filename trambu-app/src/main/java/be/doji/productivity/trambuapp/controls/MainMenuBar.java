@@ -1,7 +1,11 @@
 package be.doji.productivity.trambuapp.controls;
 
+import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import be.doji.productivity.trambuapp.views.ActivityOverview;
+import be.doji.productivity.trambuapp.views.OptionsView;
 import be.doji.productivity.trambuapp.views.TimesheetView;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
@@ -22,7 +26,17 @@ public class MainMenuBar extends UIComponent {
         this.superView = parentView;
         root = new HBox();
         root.setSpacing(5.0);
+        root.getChildren().add(createActivityButton());
+        root.getChildren().add(createTimesheetButton());
+        root.getChildren().add(createOptionButton());
+
+    }
+
+    @NotNull private Button createActivityButton() {
         Button activityPage = new Button("Activity overview");
+        FontAwesomeIconView activityIcon = new FontAwesomeIconView(FontAwesomeIcon.CALENDAR_ALT);
+        activityIcon.setGlyphStyle(DisplayConstants.STYLE_GLYPH_DEFAULT);
+        activityPage.setGraphic(activityIcon);
         activityPage.setOnAction(event -> {
             if (!superView.getClass().equals(ActivityOverview.class)) {
                 superView.replaceWith(JvmClassMappingKt.getKotlinClass(ActivityOverview.class),
@@ -30,16 +44,35 @@ public class MainMenuBar extends UIComponent {
             }
 
         });
-        root.getChildren().add(activityPage);
+        return activityPage;
+    }
 
+    @NotNull private Button createTimesheetButton() {
         Button timesheetPage = new Button("Timesheet");
+        FontAwesomeIconView timesheetIcon = new FontAwesomeIconView(FontAwesomeIcon.CLOCK_ALT);
+        timesheetIcon.setGlyphStyle(DisplayConstants.STYLE_GLYPH_DEFAULT);
+        timesheetPage.setGraphic(timesheetIcon);
         timesheetPage.setOnAction(event -> {
             if (!superView.getClass().equals(TimesheetView.class)) {
                 superView.replaceWith(JvmClassMappingKt.getKotlinClass(TimesheetView.class),
                         new ViewTransition.Slide(Duration.seconds(0.3), ViewTransition.Direction.RIGHT), true, true);
             }
         });
-        root.getChildren().add(timesheetPage);
+        return timesheetPage;
+    }
+
+    @NotNull private Button createOptionButton() {
+        Button options = new Button("Options");
+        FontAwesomeIconView optionIcon = new FontAwesomeIconView(FontAwesomeIcon.GEARS);
+        optionIcon.setGlyphStyle(DisplayConstants.STYLE_GLYPH_DEFAULT);
+        options.setGraphic(optionIcon);
+        options.setOnAction(event -> {
+            if (!superView.getClass().equals(OptionsView.class)) {
+                superView.replaceWith(JvmClassMappingKt.getKotlinClass(OptionsView.class),
+                        new ViewTransition.Slide(Duration.seconds(0.3), ViewTransition.Direction.DOWN), true, true);
+            }
+        });
+        return options;
     }
 
     @NotNull @Override public Parent getRoot() {

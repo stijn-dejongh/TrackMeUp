@@ -6,18 +6,18 @@ import tornadofx.*
 
 class DefaultTrambuStyle : Stylesheet() {
     companion object {
-        val heading by cssclass()
         val todo by cssclass()
         val done by cssclass()
         val alert by cssclass()
         val itemtitle by cssclass()
+        val separatorLabel by cssclass()
+        val warningLabel by cssclass()
 
         val mainColor = c("#505050")
         val defaultTextColor = c("#ffffff")
     }
 
     init {
-
         root {
             baseColor = mainColor
             backgroundColor += mainColor
@@ -68,5 +68,12 @@ class DefaultTrambuStyle : Stylesheet() {
             }
         }
 
+        separatorLabel {
+            textFill = c("orange")
+        }
+
+        warningLabel {
+            textFill = c("#a8431a")
+        }
     }
 }

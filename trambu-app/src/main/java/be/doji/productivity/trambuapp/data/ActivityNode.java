@@ -366,8 +366,6 @@ public class ActivityNode extends TitledPane {
                 LOG.error(DisplayConstants.ERROR_MESSAGE_ACTIVITY_SAVING + ": " + e.getMessage());
             }
         });
-        delete.getStyleClass().clear();
-        delete.getStyleClass().add("error-button");
         return delete;
     }
 

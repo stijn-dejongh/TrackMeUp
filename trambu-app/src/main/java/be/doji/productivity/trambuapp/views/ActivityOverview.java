@@ -7,7 +7,6 @@ import be.doji.productivity.trambuapp.data.ActivityAccordion;
 import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import javafx.geometry.Orientation;
 import javafx.scene.Parent;
-import javafx.scene.control.MenuBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
@@ -68,12 +67,14 @@ public class ActivityOverview extends View {
 
     public void reloadActivities() {
         if (StringUtils.isNotBlank(getProjectFilter())) {
-            this.activityAccordion
-                    .updateActivities(this.activityController.getActivityManager().getActivitiesByProject(projectFilter));
+            this.activityAccordion.updateActivities(
+                    this.activityController.getActivityManager().getActivitiesByProject(projectFilter));
         } else if (StringUtils.isNotBlank(this.getTagFilter())) {
-            this.activityAccordion.updateActivities(this.activityController.getActivityManager().getActivitiesByTag(tagFilter));
+            this.activityAccordion
+                    .updateActivities(this.activityController.getActivityManager().getActivitiesByTag(tagFilter));
         } else {
-            this.activityAccordion.updateActivities(this.activityController.getActivityManager().getActivitiesWithDateHeader());
+            this.activityAccordion
+                    .updateActivities(this.activityController.getActivityManager().getActivitiesWithDateHeader());
         }
     }
 
@@ -126,6 +127,10 @@ public class ActivityOverview extends View {
 
     @Override public void onDelete() {
         this.activityController.getTimeTrackingManager().stopAll();
+    }
+
+    @Override public void onDock() {
+        this.reloadActivities();
     }
 
     public ActivityController getActivityController() {
