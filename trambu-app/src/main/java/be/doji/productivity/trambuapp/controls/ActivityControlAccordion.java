@@ -5,7 +5,7 @@ import javafx.scene.control.Accordion;
 import javafx.scene.control.TitledPane;
 
 public class ActivityControlAccordion extends Accordion {
-    
+
     private final ActivityControls generalControls;
 
     private ActivityOverview parent;
@@ -17,7 +17,7 @@ public class ActivityControlAccordion extends Accordion {
         this.getPanes().add(fileOptionsControls);
         this.generalControls = new ActivityControls(parent);
         this.getPanes().add(generalControls);
-        if (!parent.isSetFileOptions()) {
+        if (!parent.getActivityController().isSetFileOptions()) {
             this.setExpandedPane(fileOptionsControls);
         } else {
             this.setExpandedPane(generalControls);

@@ -19,7 +19,6 @@ import javafx.scene.layout.HBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tornadofx.View;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -52,7 +51,8 @@ public class ActivityNode extends TitledPane {
         super();
         this.activity = activity;
         this.application = trambuApplication;
-        this.activityLog = application.getTimeTrackingManager().getLogForActivityId(activity.getId());
+        this.activityLog = application.getActivityController().getTimeTrackingManager()
+                .getLogForActivityId(activity.getId());
         updateHeader(activity);
         this.setContent(createActivityContent());
         this.setVisible(true);
@@ -289,12 +289,13 @@ public class ActivityNode extends TitledPane {
 
     private Node createParentSelector() {
         ObservableList<String> options = FXCollections
-                .observableArrayList(application.getActivityManager().getAllActivityNames());
+                .observableArrayList(application.getActivityController().getActivityManager().getAllActivityNames());
         final ComboBox<String> parent = new ComboBox<>(options);
         parent.valueProperty().addListener((ov, t, t1) -> {
-            Optional<Activity> savedParent = application.getActivityManager().getSavedActivityByName(t1);
+            Optional<Activity> savedParent = application.getActivityController().getActivityManager()
+                    .getSavedActivityByName(t1);
             if (savedParent.isPresent()) {
-                application.getActivityManager().addActivityAsSub(activity, savedParent.get());
+                application.getActivityController().getActivityManager().addActivityAsSub(activity, savedParent.get());
             }
             this.parentChanged = true;
         });
@@ -359,7 +360,7 @@ public class ActivityNode extends TitledPane {
         delete.setOnAction(event -> {
             try {
                 this.activity.setCompleted(!activity.isCompleted());
-                application.getActivityManager().delete(this.activity);
+                application.getActivityController().getActivityManager().delete(this.activity);
                 application.reloadActivities();
             } catch (IOException | ParseException e) {
                 LOG.error(DisplayConstants.ERROR_MESSAGE_ACTIVITY_SAVING + ": " + e.getMessage());
@@ -371,7 +372,8 @@ public class ActivityNode extends TitledPane {
     }
 
     HBox createTimingControls() {
-        activityLog = application.getTimeTrackingManager().getLogForActivityId(this.activity.getId());
+        activityLog = application.getActivityController().getTimeTrackingManager()
+                .getLogForActivityId(this.activity.getId());
         HBox timingControls = new HBox();
 
         Button startStopButton = new Button(getTimingButtonText());
@@ -384,7 +386,7 @@ public class ActivityNode extends TitledPane {
             }
             startStopButton.setText(getEditButonText());
             startStopButton.setGraphic(getTimingButtonIcon());
-            application.getTimeTrackingManager().save(activityLog);
+            application.getActivityController().getTimeTrackingManager().save(activityLog);
             this.setContent(createActivityContent());
         });
 
@@ -408,7 +410,8 @@ public class ActivityNode extends TitledPane {
     }
 
     private String getTimingButtonText() {
-        activityLog = application.getTimeTrackingManager().getLogForActivityId(this.activity.getId());
+        activityLog = application.getActivityController().getTimeTrackingManager()
+                .getLogForActivityId(this.activity.getId());
         Optional<TimeLog> activeLog = activityLog.getActiveLog();
         if (activeLog.isPresent()) {
             return DisplayConstants.BUTTON_TEXT_TIMER_STOP;
@@ -419,7 +422,7 @@ public class ActivityNode extends TitledPane {
 
     private void save() throws IOException, ParseException {
         updateActivityFields();
-        application.getActivityManager().save(getActivityToSave());
+        application.getActivityController().getActivityManager().save(getActivityToSave());
         if (!this.parentChanged) {
             this.refresh();
         } else {
@@ -465,7 +468,7 @@ public class ActivityNode extends TitledPane {
     private Activity getActivityToSave() {
         Activity activityToSave = this.getActivity();
         while (StringUtils.isNotBlank(activityToSave.getParentActivity())) {
-            Optional<Activity> savedParent = application.getActivityManager()
+            Optional<Activity> savedParent = application.getActivityController().getActivityManager()
                     .getSavedActivityById(activityToSave.getParentActivity());
             if (savedParent.isPresent()) {
                 activityToSave = savedParent.get();
@@ -500,7 +503,7 @@ public class ActivityNode extends TitledPane {
     }
 
     public void refresh() {
-        application.getActivityManager().getSavedActivityById(this.activity.getId().toString())
+        application.getActivityController().getActivityManager().getSavedActivityById(this.activity.getId().toString())
                 .ifPresent(savedActivity -> this.activity = savedActivity);
         this.setContent(this.createActivityContent());
         this.updateHeader(activity);

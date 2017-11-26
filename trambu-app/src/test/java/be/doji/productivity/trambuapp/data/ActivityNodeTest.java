@@ -1,6 +1,6 @@
 package be.doji.productivity.trambuapp.data;
 
-import be.doji.productivity.trambuapp.TrambuApplication;
+import be.doji.productivity.trambuapp.controllers.ActivityController;
 import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import be.doji.productivity.trambuapp.views.ActivityOverview;
 import be.doji.productivity.trambucore.TrackMeConstants;
@@ -42,6 +42,8 @@ public class ActivityNodeTest extends ApplicationTest {
     private static final Logger LOG = LoggerFactory.getLogger(ActivityNodeTest.class);
 
     @Mock private ActivityOverview mockApplication;
+    @Mock private ActivityController mockActController;
+
     private ActivityManager activityManager;
 
     private TimeTrackingManager timeTrackingManager;
@@ -55,8 +57,9 @@ public class ActivityNodeTest extends ApplicationTest {
         this.activityManager = new ActivityManager(activityTestFile.toString());
         this.timeTrackingManager = new TimeTrackingManager(timeTrackingTestFile.toString());
         MockitoAnnotations.initMocks(this);
-        Mockito.when(mockApplication.getActivityManager()).thenReturn(activityManager);
-        Mockito.when(mockApplication.getTimeTrackingManager()).thenReturn(timeTrackingManager);
+        Mockito.when(mockApplication.getActivityController()).thenReturn(mockActController);
+        Mockito.when(mockActController.getActivityManager()).thenReturn(activityManager);
+        Mockito.when(mockActController.getTimeTrackingManager()).thenReturn(timeTrackingManager);
     }
 
     @Test public void testGetActivityStyleTodo() {
@@ -157,8 +160,7 @@ public class ActivityNodeTest extends ApplicationTest {
         ActivityLog activityLog = new ActivityLog(testActivity);
         Mockito.when(mockTimeManager.getLogForActivityId(Mockito.any(UUID.class))).thenReturn(activityLog);
 
-
-        Mockito.when(mockApplication.getTimeTrackingManager()).thenReturn(mockTimeManager);
+        Mockito.when(mockActController.getTimeTrackingManager()).thenReturn(mockTimeManager);
 
         ActivityNode testNode = new ActivityNode(testActivity, mockApplication);
         HBox timingControls = testNode.createTimingControls();
@@ -177,8 +179,7 @@ public class ActivityNodeTest extends ApplicationTest {
         activityLog.startLog();
         Mockito.when(mockTimeManager.getLogForActivityId(Mockito.any(UUID.class))).thenReturn(activityLog);
 
-
-        Mockito.when(mockApplication.getTimeTrackingManager()).thenReturn(mockTimeManager);
+        Mockito.when(mockActController.getTimeTrackingManager()).thenReturn(mockTimeManager);
 
         ActivityNode testNode = new ActivityNode(testActivity, mockApplication);
         HBox timingControls = testNode.createTimingControls();

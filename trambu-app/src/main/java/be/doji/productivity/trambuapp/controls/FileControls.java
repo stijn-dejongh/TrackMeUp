@@ -50,7 +50,7 @@ public class FileControls extends TitledPane {
             try {
                 String filePath = file.getAbsolutePath();
                 this.configuredTodoLocation = filePath;
-                this.view.getActivityManager().updateFileLocation(filePath);
+                this.view.getActivityController().getActivityManager().updateFileLocation(filePath);
                 this.view.reloadActivities();
             } catch (IOException | ParseException e) {
                 LOG.error("Error opening todo file", e);
@@ -66,7 +66,7 @@ public class FileControls extends TitledPane {
             try {
                 String filePath = file.getAbsolutePath();
                 this.configuredTimeLocation = filePath;
-                this.view.getTimeTrackingManager().updateFileLocation(filePath);
+                this.view.getActivityController().getTimeTrackingManager().updateFileLocation(filePath);
             } catch (IOException | ParseException e) {
                 LOG.error("Error opening time tracking file", e);
             }
@@ -82,15 +82,15 @@ public class FileControls extends TitledPane {
         Button savePreferences = new Button("Remember choices");
         savePreferences.setOnAction(event -> {
             if (StringUtils.isNotBlank(configuredTodoLocation)) {
-                this.view.getConfigManager()
+                this.view.getActivityController().getConfigManager()
                         .addProperty(DisplayConstants.NAME_PROPERTY_TODO_LOCATION, configuredTodoLocation);
             }
             if (StringUtils.isNotBlank(configuredTimeLocation)) {
-                this.view.getConfigManager()
+                this.view.getActivityController().getConfigManager()
                         .addProperty(DisplayConstants.NAME_PROPERTY_TIME_LOCATION, configuredTimeLocation);
             }
             try {
-                this.view.getConfigManager().writeToFile();
+                this.view.getActivityController().getConfigManager().writeToFile();
             } catch (IOException e) {
                 LOG.error(DisplayConstants.ERROR_MESSAGE_WRITE_PROPERTIES, e);
             }

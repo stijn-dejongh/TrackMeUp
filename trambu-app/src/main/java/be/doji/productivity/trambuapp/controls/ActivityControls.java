@@ -71,7 +71,7 @@ public class ActivityControls extends TitledPane {
         addActivity.setOnAction(event -> {
             try {
                 Activity newActivity = new Activity("EDIT ME I AM A NEW ACTIVITY");
-                this.view.getActivityManager().save(newActivity);
+                this.view.getActivityController().getActivityManager().save(newActivity);
                 this.view.reloadActivities();
             } catch (IOException | ParseException exception) {
                 LOG.error("Error creation new activity", exception);
