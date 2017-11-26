@@ -36,4 +36,7 @@ public final class DisplayConstants {
 
     public static final String ERROR_MESSAGE_WRITE_PROPERTIES = "Error while saving preferences";
 
+    public static final double UI_DEFAULT_WINDOW_WIDTH = 750.0;
+    public static final double UI_DEFAULT_WINDOW_HEIGHT = 850.0;
+
 }

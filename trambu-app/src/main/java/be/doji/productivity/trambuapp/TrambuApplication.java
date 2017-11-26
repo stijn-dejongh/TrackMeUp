@@ -1,10 +1,12 @@
-package be.doji.productivity.trambuapp.presentation;
+package be.doji.productivity.trambuapp;
 
-import be.doji.productivity.trambuapp.components.ActivityAcordeon;
+import be.doji.productivity.trambuapp.data.ActivityAccordion;
 import be.doji.productivity.trambuapp.exception.InitialisationException;
+import be.doji.productivity.trambuapp.styles.DefaultTrambuStyle;
 import be.doji.productivity.trambuapp.userconfiguration.UserConfigurationManager;
 import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
+import be.doji.productivity.trambuapp.views.ActivityOverview;
 import be.doji.productivity.trambucore.TrackMeConstants;
 import be.doji.productivity.trambucore.managers.ActivityManager;
 import be.doji.productivity.trambucore.managers.TimeTrackingManager;
@@ -12,7 +14,6 @@ import be.doji.productivity.trambucore.model.tasks.Activity;
 import be.doji.productivity.trambucore.model.tracker.ActivityLog;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
-import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.Group;
@@ -22,10 +23,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import kotlin.jvm.JvmClassMappingKt;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tornadofx.App;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,7 +43,7 @@ import java.util.function.Consumer;
 /**
  * @author Doji
  */
-public class TrambuApplication extends Application {
+public class TrambuApplication extends App {
 
     private static final Logger LOG = LoggerFactory.getLogger(TrambuApplication.class);
 
@@ -51,7 +54,7 @@ public class TrambuApplication extends Application {
     private ActivityManager activityManager;
     private TimeTrackingManager timeTrackingManager;
     private Stage primaryStage;
-    private ActivityAcordeon activityAcordeon;
+    private ActivityAccordion activityAccordion;
     private String tagFilter;
     private String projectFilter;
     private boolean filterDone = false;
@@ -62,16 +65,15 @@ public class TrambuApplication extends Application {
     private String configuredTodoLocation;
     private String configuredTimeLocation;
 
+    public TrambuApplication() {
+        super(JvmClassMappingKt.getKotlinClass(ActivityOverview.class),
+                JvmClassMappingKt.getKotlinClass(DefaultTrambuStyle.class));
+    }
+
     public static void main(String[] args) {
-        Application.launch(TrambuApplication.class);
+        App.launch(TrambuApplication.class);
     }
-
-    @Override public void start(Stage primaryStage) throws Exception {
-        initialize();
-        this.primaryStage = createPrimaryStage();
-        this.primaryStage.show();
-    }
-
+/*
     @Override public void stop() {
         getTimeTrackingManager().stopAll();
     }
@@ -114,6 +116,26 @@ public class TrambuApplication extends Application {
         return rootStage;
     }
 
+    private Scene createRootScene(SplitPane defaultPane) {
+        Scene rootScene = new Scene(new Group(), DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
+        rootScene.getStylesheets().add("style/css/trambu-main.css");
+        Group root = (Group) rootScene.getRoot();
+
+        BorderPane borderPane = new BorderPane();
+        MenuBar topMenu = createMenuBar(rootScene.getWidth());
+
+        rootScene.widthProperty().addListener(
+                (observableValue, oldSceneWidth, newSceneWidth) -> defaultPane.setPrefWidth((Double) newSceneWidth));
+        rootScene.heightProperty().addListener((observableValue, oldSceneHeight, newSceneHeight) -> defaultPane
+                .setPrefHeight((Double) newSceneHeight - topMenu.getHeight()));
+
+        borderPane.setTop(topMenu);
+        borderPane.setCenter(defaultPane);
+        root.getChildren().add(borderPane);
+
+        return rootScene;
+    }
+
     private SplitPane createContentSplitPane() {
         ScrollPane activitySplitPane = new ScrollPane();
         Accordion activities = createActivityAccordeon();
@@ -133,8 +155,8 @@ public class TrambuApplication extends Application {
     }
 
     private Accordion createActivityAccordeon() {
-        activityAcordeon = new ActivityAcordeon(this, activityManager.getActivitiesWithDateHeader());
-        return activityAcordeon;
+        activityAccordion = new ActivityAccordion(this, activityManager.getActivitiesWithDateHeader());
+        return activityAccordion;
     }
 
     private Accordion createControlsAccordeon() {
@@ -288,26 +310,6 @@ public class TrambuApplication extends Application {
         return gridTitlePane;
     }
 
-    private Scene createRootScene(SplitPane defaultPane) {
-        Scene rootScene = new Scene(new Group(), DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT);
-        rootScene.getStylesheets().add("style/css/trambu-main.css");
-        Group root = (Group) rootScene.getRoot();
-
-        BorderPane borderPane = new BorderPane();
-        MenuBar topMenu = createMenuBar(rootScene.getWidth());
-
-        rootScene.widthProperty().addListener(
-                (observableValue, oldSceneWidth, newSceneWidth) -> defaultPane.setPrefWidth((Double) newSceneWidth));
-        rootScene.heightProperty().addListener((observableValue, oldSceneHeight, newSceneHeight) -> defaultPane
-                .setPrefHeight((Double) newSceneHeight - topMenu.getHeight()));
-
-        borderPane.setTop(topMenu);
-        borderPane.setCenter(defaultPane);
-        root.getChildren().add(borderPane);
-
-        return rootScene;
-    }
-
     private MenuBar createMenuBar(double width) {
         MenuBar topMenu = new MenuBar();
         topMenu.setPrefWidth(width);
@@ -406,11 +408,11 @@ public class TrambuApplication extends Application {
 
     public void reloadActivities() {
         if (StringUtils.isNotBlank(getProjectFilter())) {
-            this.activityAcordeon.updateActivities(activityManager.getActivitiesByProject(projectFilter));
+            this.activityAccordion.updateActivities(activityManager.getActivitiesByProject(projectFilter));
         } else if (StringUtils.isNotBlank(this.getTagFilter())) {
-            this.activityAcordeon.updateActivities(activityManager.getActivitiesByTag(tagFilter));
+            this.activityAccordion.updateActivities(activityManager.getActivitiesByTag(tagFilter));
         } else {
-            this.activityAcordeon.updateActivities(activityManager.getActivitiesWithDateHeader());
+            this.activityAccordion.updateActivities(activityManager.getActivitiesWithDateHeader());
         }
     }
 
@@ -472,5 +474,5 @@ public class TrambuApplication extends Application {
 
     public boolean isFilterDone() {
         return filterDone;
-    }
+    }*/
 }

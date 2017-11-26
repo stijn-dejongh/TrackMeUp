@@ -1,7 +1,7 @@
-package be.doji.productivity.trambuapp.components;
+package be.doji.productivity.trambuapp.data;
 
-import be.doji.productivity.trambuapp.presentation.TrambuApplication;
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
+import be.doji.productivity.trambuapp.views.ActivityOverview;
 import be.doji.productivity.trambucore.model.tasks.Activity;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.TitledPane;
@@ -11,18 +11,18 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ActivityAcordeon extends Accordion {
+public class ActivityAccordion extends Accordion {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ActivityAcordeon.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ActivityAccordion.class);
 
-    private final TrambuApplication application;
+    private final ActivityOverview application;
 
-    public ActivityAcordeon(TrambuApplication application, Map<Date, List<Activity>> activitiesWithDateHeader) {
+    public ActivityAccordion(ActivityOverview application, Map<Date, List<Activity>> activitiesWithDateHeader) {
         this.application = application;
         this.getPanes().addAll(createActivityNodes(activitiesWithDateHeader));
     }
 
-    public ActivityAcordeon(TrambuApplication application, List<Activity> activities) {
+    public ActivityAccordion(ActivityOverview application, List<Activity> activities) {
         this.application = application;
         this.getPanes().addAll(createActivityNodes(activities));
     }

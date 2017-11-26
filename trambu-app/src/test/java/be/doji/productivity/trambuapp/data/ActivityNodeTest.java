@@ -1,7 +1,8 @@
-package be.doji.productivity.trambuapp.components;
+package be.doji.productivity.trambuapp.data;
 
-import be.doji.productivity.trambuapp.presentation.TrambuApplication;
+import be.doji.productivity.trambuapp.TrambuApplication;
 import be.doji.productivity.trambuapp.utils.DisplayConstants;
+import be.doji.productivity.trambuapp.views.ActivityOverview;
 import be.doji.productivity.trambucore.TrackMeConstants;
 import be.doji.productivity.trambucore.managers.ActivityManager;
 import be.doji.productivity.trambucore.managers.TimeTrackingManager;
@@ -40,7 +41,7 @@ import java.util.UUID;
 public class ActivityNodeTest extends ApplicationTest {
     private static final Logger LOG = LoggerFactory.getLogger(ActivityNodeTest.class);
 
-    @Mock private TrambuApplication mockApplication;
+    @Mock private ActivityOverview mockApplication;
     private ActivityManager activityManager;
 
     private TimeTrackingManager timeTrackingManager;

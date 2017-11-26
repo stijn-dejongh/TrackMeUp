@@ -1,8 +1,8 @@
-package be.doji.productivity.trambuapp.components;
+package be.doji.productivity.trambuapp.data;
 
-import be.doji.productivity.trambuapp.presentation.TrambuApplication;
 import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
+import be.doji.productivity.trambuapp.views.ActivityOverview;
 import be.doji.productivity.trambucore.TrackMeConstants;
 import be.doji.productivity.trambucore.model.tasks.Activity;
 import be.doji.productivity.trambucore.model.tracker.ActivityLog;
@@ -38,7 +38,7 @@ public class ActivityNode extends TitledPane {
 
     private static final String FIELD_SEPERATOR = ",";
     private boolean isActive;
-    private TrambuApplication application;
+    private ActivityOverview application;
     private boolean isEditable = false;
     private Activity activity;
     private TextField nameField;
@@ -46,9 +46,9 @@ public class ActivityNode extends TitledPane {
     private TextField tagsField;
     private ActivityLog activityLog;
     private boolean parentChanged;
-    private ActivityAcordeon parentContainer;
+    private ActivityAccordion parentContainer;
 
-    public ActivityNode(Activity activity, TrambuApplication trambuApplication) {
+    public ActivityNode(Activity activity, ActivityOverview trambuApplication) {
         super();
         this.activity = activity;
         this.application = trambuApplication;
@@ -59,9 +59,9 @@ public class ActivityNode extends TitledPane {
         this.setOnMouseClicked(event -> this.setActive(!this.isActive));
     }
 
-    public ActivityNode(Activity activity, ActivityAcordeon activityAcordeon, TrambuApplication application) {
+    public ActivityNode(Activity activity, ActivityAccordion activityAccordion, ActivityOverview application) {
         this(activity, application);
-        this.parentContainer = activityAcordeon;
+        this.parentContainer = activityAccordion;
     }
 
     private void updateHeader(Activity activity) {
@@ -306,7 +306,7 @@ public class ActivityNode extends TitledPane {
     }
 
     private Node createSubActivities() {
-        return new ActivityAcordeon(application, activity.getSubActivities());
+        return new ActivityAccordion(application, activity.getSubActivities());
     }
 
     private Button createDoneButton() {
