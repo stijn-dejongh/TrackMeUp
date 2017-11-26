@@ -2,10 +2,12 @@ package be.doji.productivity.trambuapp.views;
 
 import be.doji.productivity.trambuapp.controllers.ActivityController;
 import be.doji.productivity.trambuapp.controls.ActivityControlAccordion;
+import be.doji.productivity.trambuapp.controls.MainMenuBar;
 import be.doji.productivity.trambuapp.data.ActivityAccordion;
 import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import javafx.geometry.Orientation;
 import javafx.scene.Parent;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
@@ -36,6 +38,7 @@ public class ActivityOverview extends View {
 
         root = new BorderPane();
         root.setCenter(createContentSplitPane());
+        root.setBottom(new MainMenuBar(this).getRoot());
 
     }
 
