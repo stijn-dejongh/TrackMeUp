@@ -35,7 +35,6 @@ class DefaultTrambuStyle : Stylesheet() {
                 backgroundColor += c("#3598c1")
                 baseColor = c("#3598c1")
                 textFill = defaultTextColor
-                fontStyle = FontPosture.REGULAR
                 fontWeight = FontWeight.BOLD
             }
         }
