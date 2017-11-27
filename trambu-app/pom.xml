@@ -22,7 +22,7 @@
         <angularjs.version>1.4.9</angularjs.version>
         <bootstrap.version>3.3.7-1</bootstrap.version>
         <jquery.version>2.2.4</jquery.version>
-        <kotlin.version>1.1.2</kotlin.version>
+        <kotlin.version>1.1.4</kotlin.version>
     </properties>
 
     <dependencies>

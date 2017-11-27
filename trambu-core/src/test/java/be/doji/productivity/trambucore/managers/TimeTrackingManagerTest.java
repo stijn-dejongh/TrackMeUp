@@ -11,10 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.ParseException;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class TimeTrackingManagerTest extends TrambuTest {
 
@@ -186,6 +183,60 @@ public class TimeTrackingManagerTest extends TrambuTest {
 
         Assert.assertNotNull(overviewLogs);
         Assert.assertTrue(overviewLogs.isEmpty());
+
+        Files.delete(tempFile);
+    }
+
+    @Test public void getActivityForIntervalActiveItemIssueCurrentDate() throws IOException {
+        Path tempFile = createTempFile();
+        TimeTrackingManager tm = new TimeTrackingManager(tempFile.toString());
+
+        Calendar today = new GregorianCalendar();
+
+
+        UUID activityOneId = UUID.randomUUID();
+        ActivityLog logActivityOne = new ActivityLog(activityOneId);
+        Calendar logOneStart = new GregorianCalendar(1999, Calendar.DECEMBER, 1, 14, 0, 0);
+        Calendar logOneEnd = new GregorianCalendar(1999, Calendar.DECEMBER, 1, 18, 0, 0);
+        logActivityOne.addLogPoint(createTimeLog(logOneStart.getTime(), logOneEnd.getTime()));
+
+        UUID activityTwoId = UUID.randomUUID();
+        ActivityLog logActivityTwo = new ActivityLog(activityTwoId);
+        Calendar logTwoStart = new GregorianCalendar(1999, Calendar.DECEMBER, 4, 14, 0, 0);
+        TimeLog timelogTwo = new TimeLog();
+        timelogTwo.setActive(true);
+        timelogTwo.setStartTime(logTwoStart.getTime());
+        logActivityTwo.addLogPoint(timelogTwo);
+
+        tm.save(logActivityOne);
+        tm.save(logActivityTwo);
+
+        Calendar overviewStart = new GregorianCalendar(1900, Calendar.OCTOBER, 1);
+        Calendar overViewEnd = new GregorianCalendar();
+        overViewEnd.setTime(today.getTime());
+        overViewEnd.add(Calendar.HOUR, 100);
+
+        List<ActivityLog> activityLogsInInterval = tm
+                .getActivityLogsInInterval(overviewStart.getTime(), overViewEnd.getTime());
+        Assert.assertNotNull(activityLogsInInterval);
+        Assert.assertEquals(2, activityLogsInInterval.size());
+        ActivityLog savedActivityLogTwo = activityLogsInInterval.get(1);
+        Assert.assertFalse(savedActivityLogTwo.getActiveLog().isPresent());
+        List<TimeLog> savedLogPoints = savedActivityLogTwo.getLogpoints();
+        Assert.assertNotNull(savedLogPoints);
+        Assert.assertEquals(1, savedLogPoints.size());
+        TimeLog savedLogPoint = savedLogPoints.get(0);
+        Assert.assertNotNull(savedLogPoint);
+        Date retrievedEndTime = savedLogPoint.getEndTime();
+        Assert.assertNotNull(retrievedEndTime);
+        Calendar compareObject = new GregorianCalendar();
+        compareObject.setTime(retrievedEndTime);
+
+        Assert.assertEquals(today.get(Calendar.YEAR),compareObject.get(Calendar.YEAR));
+        Assert.assertEquals(today.get(Calendar.MONTH),compareObject.get(Calendar.MONTH));
+        Assert.assertEquals(today.get(Calendar.DAY_OF_MONTH),compareObject.get(Calendar.DAY_OF_MONTH));
+        Assert.assertEquals(today.get(Calendar.HOUR),compareObject.get(Calendar.HOUR));
+
 
         Files.delete(tempFile);
     }

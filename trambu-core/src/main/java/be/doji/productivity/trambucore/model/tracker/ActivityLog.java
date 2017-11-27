@@ -100,8 +100,8 @@ public class ActivityLog {
     public List<TimeLog> getTimeLogsInInterval(Date intervalStartTime, Date intervalEndTime) {
         List<TimeLog> logsInInterval = new ArrayList<>();
         for (TimeLog log : this.logpoints) {
-            if (isInInterval(log.getStartTime(), intervalStartTime, intervalEndTime) || isInInterval(log.getEndTime(),
-                    intervalStartTime, intervalEndTime)) {
+            if (isInInterval(log.getStartTime(), intervalStartTime, intervalEndTime) || (log.getEndTime() != null
+                    && isInInterval(log.getEndTime(), intervalStartTime, intervalEndTime))) {
                 TimeLog timeLogInInterval = getLogPartitionInInterval(intervalStartTime, intervalEndTime, log);
                 logsInInterval.add(timeLogInInterval);
             }
@@ -115,16 +115,23 @@ public class ActivityLog {
                 log.getStartTime():
                 intervalStartTime);
         if (log.getEndTime() != null) {
-            timeLogInInterval.setEndTime(isInInterval(log.getEndTime(), intervalStartTime, intervalEndTime)?
-                    log.getEndTime():
-                    intervalEndTime);
+            if (isInInterval(log.getEndTime(), intervalStartTime, intervalEndTime)) {
+                timeLogInInterval.setEndTime(log.getEndTime());
+            } else {
+                timeLogInInterval.setEndTime(getLogEndtimeReplacement(intervalEndTime));
+            }
         } else {
-            timeLogInInterval.setEndTime(intervalEndTime);
+            timeLogInInterval.setEndTime(getLogEndtimeReplacement(intervalEndTime));
         }
         return timeLogInInterval;
     }
 
-    private boolean isInInterval(Date startTime, Date intervalStartTime, Date intervalEndTime) {
-        return startTime.compareTo(intervalStartTime) >= 0 && startTime.compareTo(intervalEndTime) <= 0;
+    private Date getLogEndtimeReplacement(Date intervalEndTime) {
+        Date today = new Date();
+        return today.before(intervalEndTime)?today:intervalEndTime;
+    }
+
+    private boolean isInInterval(Date dateToCheck, Date intervalStartTime, Date intervalEndTime) {
+        return dateToCheck.compareTo(intervalStartTime) >= 0 && dateToCheck.compareTo(intervalEndTime) <= 0;
     }
 }
