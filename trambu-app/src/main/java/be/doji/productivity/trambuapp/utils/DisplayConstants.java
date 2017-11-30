@@ -46,5 +46,7 @@ public final class DisplayConstants {
     public static final double UI_DEFAULT_WINDOW_WIDTH = 750.0;
     public static final double UI_DEFAULT_WINDOW_HEIGHT = 850.0;
 
+    public static final String REGEX_WARNING_PERIOD = "[0-9]*";
+
 
 }

@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -46,6 +47,7 @@ public class ActivityNode extends TitledPane {
     private TextField tagsField;
     private ActivityLog activityLog;
     private boolean parentChanged;
+    private TextField warningPeriodInHours;
 
     public ActivityNode(Activity activity, ActivityOverview trambuApplication) {
         super();
@@ -119,6 +121,20 @@ public class ActivityNode extends TitledPane {
         if (activity.isSetDeadline() || isEditable) {
             content.add(new Label("Deadline: "), 0, rowIndex);
             content.add(createDeadline(), 1, rowIndex++);
+        }
+
+        Label warningPeriodLabel = new Label("Warning period: ");
+        content.add(warningPeriodLabel, 0, rowIndex);
+        if (isEditable) {
+
+            warningPeriodInHours = new TextField();
+            Label warningPeriodUnit = new Label("hours");
+            content.add(warningPeriodInHours, 1, rowIndex);
+            content.add(warningPeriodUnit, 2, rowIndex++);
+        } else {
+            Label warningPeriod = new Label(activity.getWarningTimeFrame().toString());
+            content.add(warningPeriod, 1, rowIndex++);
+
         }
 
         content.add(new Label("Tags: "), 0, rowIndex);
@@ -446,7 +462,16 @@ public class ActivityNode extends TitledPane {
         }
         updateActivityProjects();
         updateActivityTags();
+        updateActivityWarningPeriod();
+    }
 
+    private void updateActivityWarningPeriod() {
+        if (warningPeriodInHours != null && StringUtils.isNotBlank(warningPeriodInHours.getText())
+                && warningPeriodInHours.getText().matches(DisplayConstants.REGEX_WARNING_PERIOD)) {
+            String warningTimeframe = warningPeriodInHours.getText();
+            Duration timeFrame = Duration.ofHours(Long.parseLong(warningTimeframe));
+            activity.setWarningTimeFrame(timeFrame);
+        }
     }
 
     private void updateActivityProjects() {
