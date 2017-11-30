@@ -143,12 +143,12 @@ public class ActivityLogTest extends TrambuTest {
     @Test public void testGetLogsForIntervalPartiallyInScopeEndDate() {
         UUID activityOneId = UUID.randomUUID();
         ActivityLog logActivityOne = new ActivityLog(activityOneId);
-        Calendar logOneStart = new GregorianCalendar(2017, Calendar.DECEMBER, 1, 14, 0, 0);
-        Calendar logOneEnd = new GregorianCalendar(2017, Calendar.DECEMBER, 1, 18, 0, 0);
+        Calendar logOneStart = new GregorianCalendar(1987, Calendar.DECEMBER, 1, 14, 0, 0);
+        Calendar logOneEnd = new GregorianCalendar(1987, Calendar.DECEMBER, 1, 18, 0, 0);
         logActivityOne.addLogPoint(createTimeLog(logOneStart.getTime(), logOneEnd.getTime()));
 
-        Calendar overviewStartDate = new GregorianCalendar(2017, Calendar.DECEMBER, 1);
-        Calendar overviewEndDate = new GregorianCalendar(2017, Calendar.DECEMBER, 1, 17, 30, 00);
+        Calendar overviewStartDate = new GregorianCalendar(1987, Calendar.DECEMBER, 1);
+        Calendar overviewEndDate = new GregorianCalendar(1987, Calendar.DECEMBER, 1, 17, 30, 00);
 
         List<TimeLog> timeLogsInInterval = logActivityOne
                 .getTimeLogsInInterval(overviewStartDate.getTime(), overviewEndDate.getTime());
