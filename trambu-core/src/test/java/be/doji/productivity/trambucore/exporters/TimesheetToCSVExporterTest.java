@@ -54,7 +54,7 @@ public class TimesheetToCSVExporterTest extends TrambuTest {
         Assert.assertFalse(fileLines.isEmpty());
         Assert.assertEquals(3, fileLines.size());
         String csvOfFirstLog = fileLines.get(1);
-        Assert.assertEquals("TestAct,4.0,240.0,14000.0,TestAct", csvOfFirstLog);
+        Assert.assertEquals("TestAct,\"4.0\",\"240.0\",\"14000.0\",TestAct", csvOfFirstLog);
 
     }
 }
