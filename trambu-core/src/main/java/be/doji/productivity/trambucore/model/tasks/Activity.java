@@ -28,6 +28,7 @@ import java.util.UUID;
     private Date deadline;
     private Duration warningTimeFrame = TrackMeConstants.DEFAULT_WARNING_PERIOD;
     private String parentActivity;
+    private String location;
 
     public Activity() {
         this("New Activity");
@@ -115,6 +116,14 @@ import java.util.UUID;
         this.projects.add(project);
     }
 
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         if (this.isCompleted()) {
@@ -145,6 +154,11 @@ import java.util.UUID;
         if (this.warningTimeFrame != null) {
             sb.append(TrackMeConstants.INDICATOR_WARNING_PERIOD);
             sb.append(warningTimeFrame.toString());
+            sb.append(" ");
+        }
+        if (StringUtils.isNotBlank(location)) {
+            sb.append(TrackMeConstants.INDICATOR_LOCATION);
+            sb.append(this.location);
             sb.append(" ");
         }
 

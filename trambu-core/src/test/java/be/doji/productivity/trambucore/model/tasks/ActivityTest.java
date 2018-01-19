@@ -1,6 +1,7 @@
 package be.doji.productivity.trambucore.model.tasks;
 
 import be.doji.productivity.trambucore.TrackMeConstants;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -82,6 +83,16 @@ public class ActivityTest {
         testActivity.setWarningTimeFrame(Duration.ofDays(3));
         Assert.assertTrue(testActivity.isAlertActive());
 
+    }
+
+    @Test public void testLocationToString() {
+        Activity testActivity = new Activity(ACT_DEFAULT_NAME);
+        testActivity.setLocation("Blanden");
+        String toString = testActivity.toString();
+        Assert.assertTrue(StringUtils.isNotBlank(toString));
+        Assert.assertTrue(toString.contains(TrackMeConstants.INDICATOR_LOCATION));
+        Assert.assertTrue(toString.contains("Blanden"));
+        Assert.assertTrue(toString.contains(TrackMeConstants.INDICATOR_LOCATION + "Blanden"));
     }
 
     @Test public void testIsSetAlertInactive() {

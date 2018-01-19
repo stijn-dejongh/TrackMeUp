@@ -1,8 +1,6 @@
 package be.doji.productivity.trambucore.parser;
 
-
 import be.doji.productivity.trambucore.model.tasks.Activity;
-
 import be.doji.productivity.trambucore.testutil.ActivityTestData;
 import org.junit.Assert;
 import org.junit.Test;
@@ -100,6 +98,24 @@ public class ActivityParserTest {
         Assert.assertNotNull(activity);
         Assert.assertEquals("283b6271-b513-4e89-b757-10e98c9078ea", activity.getId().toString());
         Assert.assertEquals("TaskTitle", activity.getName());
+    }
+
+    @Test public void testParseLocation() throws ParseException {
+        Activity activity = ActivityParser.mapStringToActivity(ActivityTestData.ACTIVITY_NO_PREFIX_LOCATION_LINE);
+        Assert.assertNotNull(activity);
+        Assert.assertEquals("283b6298-b513-4e89-b757-10e98c9078ea", activity.getId().toString());
+        Assert.assertFalse(activity.getTags().isEmpty());
+        Assert.assertFalse(activity.getProjects().isEmpty());
+        Assert.assertEquals("TestLocation", activity.getLocation());
+    }
+
+    @Test public void testParseLocationWithSpace() throws ParseException {
+        Activity activity = ActivityParser.mapStringToActivity(ActivityTestData.ACTIVITY_NO_PREFIX_LOCATION_SPACE_LINE);
+        Assert.assertNotNull(activity);
+        Assert.assertEquals("283b6298-b513-4e89-b757-10e98c9078ea", activity.getId().toString());
+        Assert.assertFalse(activity.getTags().isEmpty());
+        Assert.assertFalse(activity.getProjects().isEmpty());
+        Assert.assertEquals("Test Location", activity.getLocation());
     }
 
 }

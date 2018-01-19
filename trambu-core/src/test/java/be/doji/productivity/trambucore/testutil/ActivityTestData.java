@@ -32,4 +32,7 @@ public final class ActivityTestData {
     public static final String SUB_ACTIVITY_WIITH_PROJECTS_TWO = "X (B) Read analisis +development +testing super:283b6271-b513-4e89-b757-10e98c9078ea";
     public static final String SUB_ACTIVITY_PROJECT_ONE = "development";
     public static final String SUB_ACTIVITY_PROJECT_TWO = "testing";
+
+    public static final String ACTIVITY_NO_PREFIX_LOCATION_LINE = "Write my own todo.txt webapp +imnu +java +programming @development loc:TestLocation uuid:283b6298-b513-4e89-b757-10e98c9078ea";
+    public static final String ACTIVITY_NO_PREFIX_LOCATION_SPACE_LINE = "Write my own todo.txt webapp +imnu +java +programming @development loc:Test Location uuid:283b6298-b513-4e89-b757-10e98c9078ea";
 }

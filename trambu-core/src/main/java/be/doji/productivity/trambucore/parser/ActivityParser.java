@@ -32,6 +32,9 @@ public final class ActivityParser {
 
     private static final String WARNING_PERIOD_REGEX =
             TrackMeConstants.INDICATOR_WARNING_PERIOD + DURATION_REGEX + REGEX_TERMINATOR;
+    private static final String LOCATION_REGEX =
+            TrackMeConstants.INDICATOR_LOCATION + "([a-zA-Z0-9\\s]*)" + REGEX_TERMINATOR;
+
     private static final String SUPER_ACTIVITY_REGEX =
             TrackMeConstants.INDICATOR_PARENT_ACTIVITY + REGEX_UUID + "(\\s\\+|$|\\s\\@|\\s"
                     + TrackMeConstants.INDICATOR_WARNING_PERIOD + "|\\s" + TrackMeConstants.INDICATOR_DEADLINE + "|\\s"
@@ -87,6 +90,12 @@ public final class ActivityParser {
         for (String warningMatch : warningPeriodMatches) {
             String warningMatchString = warningMatch.replace(TrackMeConstants.INDICATOR_WARNING_PERIOD, "").trim();
             activity.setWarningTimeFrame(Duration.parse(warningMatchString));
+        }
+
+        List<String> locationMatches = TrackerUtils.findAllMatches(LOCATION_REGEX, line);
+        for (String locationMatch : locationMatches) {
+            String locationMatchString = locationMatch.replace(TrackMeConstants.INDICATOR_LOCATION, "").trim();
+            activity.setLocation(locationMatchString);
         }
 
         List<String> superActivityMatches = TrackerUtils.findAllMatches(SUPER_ACTIVITY_REGEX, line);
