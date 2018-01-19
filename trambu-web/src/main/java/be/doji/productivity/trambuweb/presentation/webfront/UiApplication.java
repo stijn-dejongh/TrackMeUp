@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Doji on 23/10/2017.
+ * @deprecated Package is no longer maintained
  */
 @Deprecated @SpringBootApplication @RestController @JsonIgnoreProperties(ignoreUnknown = true) public class UiApplication {
 
