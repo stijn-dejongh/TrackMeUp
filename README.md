@@ -10,6 +10,17 @@ Much of the functionality is based on what the 'org-mode' of eMacs already offer
 The added value of this project is to provide a user interface, and to keep the data formats used
 open and portable.
 
+The project currently consists of three modules:
+
+* Trambu-core: The core library containing data models and logic
+* Trambu-web: Display package for Angular web-based interface
+* Trambu-app: Display package for stand-alone desktop application
+
+Note: The *Trambu-web* package is currently no longer under active development. It remains in the project in case someone 
+wants to use it a a basis for their own web-based version of TraMBU. Bug fixes and enhancements will only be developed and
+tested on the trambu-app module.
+
+
 ### Version 0.2.0
 
 Refactored the project structure to diferentiate between core-components, and

@@ -21,7 +21,7 @@ import java.util.Map;
 /**
  * Created by Doji on 23/10/2017.
  */
-@SpringBootApplication @RestController @JsonIgnoreProperties(ignoreUnknown = true) public class UiApplication {
+@Deprecated @SpringBootApplication @RestController @JsonIgnoreProperties(ignoreUnknown = true) public class UiApplication {
 
     private static final Logger LOG = LoggerFactory.getLogger(UiApplication.class);
 
@@ -143,7 +143,8 @@ import java.util.Map;
     }
 
     @RequestMapping(value = { "/getTimeLogForActivity" }, method = {
-            RequestMethod.POST }) public @ResponseBody ActivityLog getTimeLogForActivity(@RequestBody String activityId) {
+            RequestMethod.POST }) public @ResponseBody ActivityLog getTimeLogForActivity(
+            @RequestBody String activityId) {
         LOG.debug("Loading timelog for activity");
         if (tm != null) {
             return tm.getLogForActivityId(activityId);
