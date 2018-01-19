@@ -74,12 +74,17 @@ public class ActivityNode extends TitledPane {
             this.toggleCompleted();
             titleLabel.setGraphic(activity.isCompleted()?checkedCalendar:uncheckedCalendar);
         });
-        titleLabel.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_DONE));
+        titleLabel.setTooltip(getDoneTooltipText(activity));
         this.setGraphic(titleLabel);
         this.getStyleClass()
                 .removeAll(DisplayConstants.STYLE_CLASS_ACTIVITY_DONE, DisplayConstants.STYLE_CLASS_ACTIVITY_TODO,
                         DisplayConstants.STYLE_CLASS_ACTIVITY_ALERT);
         this.getStyleClass().add(getActivityStyle());
+    }
+
+    private Tooltip getDoneTooltipText(Activity activity) {
+        return DisplayUtils.createTooltip(
+                activity.isCompleted()?TooltipConstants.TOOLTIP_TEXT_ACTIVITY_NOT_DONE:TooltipConstants.TOOLTIP_TEXT_ACTIVITY_DONE);
     }
 
     String getActivityStyle() {
@@ -331,11 +336,12 @@ public class ActivityNode extends TitledPane {
         Button done = new Button(DisplayUtils.getDoneButtonText(activity));
         FontAwesomeIconView doneIcon = DisplayUtils.createStyledIcon(FontAwesomeIcon.REFRESH);
         done.setGraphic(doneIcon);
-        done.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_DONE));
+        done.setTooltip(getDoneTooltipText(activity));
         done.setOnAction(event -> {
             try {
                 toggleCompleted();
                 done.setText(DisplayUtils.getDoneButtonText(activity));
+                done.setTooltip(getDoneTooltipText(activity));
                 save();
             } catch (IOException | ParseException e) {
                 LOG.error(DisplayConstants.ERROR_MESSAGE_ACTIVITY_SAVING + ": " + e.getMessage());
@@ -347,13 +353,14 @@ public class ActivityNode extends TitledPane {
 
     private void toggleCompleted() {
         this.activity.setCompleted(!activity.isCompleted());
+        this.updateHeader(this.activity);
     }
 
     private Button createEditButton() {
         Button edit = new Button(getEditButonText());
         FontAwesomeIconView editIcon = DisplayUtils.createStyledIcon(FontAwesomeIcon.EDIT);
         edit.setGraphic(editIcon);
-        edit.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_EDIT));
+        edit.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_ACTIVITY_EDIT));
         edit.setOnAction(event -> {
             try {
                 if (isEditable) {
@@ -390,7 +397,7 @@ public class ActivityNode extends TitledPane {
                 LOG.error(DisplayConstants.ERROR_MESSAGE_ACTIVITY_SAVING + ": " + e.getMessage());
             }
         });
-        delete.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_DELETE));
+        delete.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_ACTIVITY_DELETE));
         return delete;
     }
 
@@ -444,8 +451,8 @@ public class ActivityNode extends TitledPane {
 
     public Tooltip getTimingButtonTooltipText() {
         return DisplayUtils.createTooltip(getActiveLog().isPresent()?
-                TooltipConstants.TOOLTIP_TEXT_TIMING_CONTROL_STOP:
-                TooltipConstants.TOOLTIP_TEXT_TIMING_CONTROL_START);
+                TooltipConstants.TOOLTIP_TEXT_ACTIVITY_TIMING_CONTROL_STOP:
+                TooltipConstants.TOOLTIP_TEXT_ACTIVITY_TIMING_CONTROL_START);
     }
 
     private void save() throws IOException, ParseException {

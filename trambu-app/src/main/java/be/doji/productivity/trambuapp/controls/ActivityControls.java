@@ -2,6 +2,7 @@ package be.doji.productivity.trambuapp.controls;
 
 import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
+import be.doji.productivity.trambuapp.utils.TooltipConstants;
 import be.doji.productivity.trambuapp.views.ActivityOverview;
 import be.doji.productivity.trambucore.model.tasks.Activity;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
@@ -46,23 +47,26 @@ public class ActivityControls extends TitledPane {
         grid.add(filterLabel, 0, 0);
         grid.add(activeFilter, 1, 0);
 
-        Button filterButton = new Button("Filter completed");
-        filterButton.setOnAction(e -> {
-            this.view.setFilterDone(true);
-            updateFilterLabel();
-            this.view.reloadActivities();
-        });
-        grid.add(filterButton, 0, 1);
-
-        Button resetFilter = new Button("Reset filter");
-        resetFilter.setOnAction(e -> {
-            this.view.resetFilter();
-            this.view.reloadActivities();
-        });
-        grid.add(resetFilter, 1, 1);
-
+        grid.add(createFilterCompletedButton(), 0, 1);
+        grid.add(createResetFilterButton(), 1, 1);
         grid.add(DisplayUtils.createHorizontalSpacer(), 0, 2, 2, 1);
+        grid.add(createAddActivityButton(), 0, 3);
+        grid.add(DisplayUtils.createHorizontalSpacer(), 0, 4, 2, 1);
 
+        grid.add(createRefreshButton(), 0, 5);
+        return grid;
+    }
+
+    @NotNull private Button createRefreshButton() {
+        Button refresh = new Button("");
+        refresh.setOnAction(event -> this.view.reloadActivities());
+        FontAwesomeIconView glyph = DisplayUtils.createStyledIcon(FontAwesomeIcon.REFRESH);
+        refresh.setGraphic(glyph);
+        refresh.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_CONTROL_REFRESH));
+        return refresh;
+    }
+
+    @NotNull private Button createAddActivityButton() {
         Button addActivity = new Button("Add activity");
         FontAwesomeIconView addIcon = DisplayUtils.createStyledIcon(FontAwesomeIcon.PLUS_CIRCLE);
         addActivity.setGraphic(addIcon);
@@ -76,17 +80,30 @@ public class ActivityControls extends TitledPane {
                 LOG.error("Error creation new activity", exception);
             }
         });
-        grid.add(addActivity, 0, 3);
 
-        grid.add(DisplayUtils.createHorizontalSpacer(), 0, 4, 2, 1);
+        addActivity.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_CONTROL_CREATE));
+        return addActivity;
+    }
 
-        Button refresh = new Button("");
-        refresh.setOnAction(event -> this.view.reloadActivities());
-        FontAwesomeIconView glyph = DisplayUtils.createStyledIcon(FontAwesomeIcon.REFRESH);
-        refresh.setGraphic(glyph);
+    @NotNull private Button createResetFilterButton() {
+        Button resetFilter = new Button("Reset filter");
+        resetFilter.setOnAction(e -> {
+            this.view.resetFilter();
+            this.view.reloadActivities();
+        });
+        resetFilter.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_CONTROL_FILTER_RESET));
+        return resetFilter;
+    }
 
-        grid.add(refresh, 0, 5);
-        return grid;
+    @NotNull private Button createFilterCompletedButton() {
+        Button filterButton = new Button("Filter completed");
+        filterButton.setOnAction(e -> {
+            this.view.setFilterDone(true);
+            updateFilterLabel();
+            this.view.reloadActivities();
+        });
+        filterButton.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_CONTROL_FILTER_DONE));
+        return filterButton;
     }
 
     public void updateFilterLabel() {
