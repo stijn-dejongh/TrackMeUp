@@ -1,8 +1,11 @@
 package be.doji.productivity.trambuapp.utils;
 
 import be.doji.productivity.trambucore.model.tasks.Activity;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Separator;
+import javafx.scene.control.Tooltip;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -39,5 +42,18 @@ public final class DisplayUtils {
         Separator sep = new Separator();
         sep.setOrientation(Orientation.HORIZONTAL);
         return sep;
+    }
+
+    public static Tooltip createTooltip(String tooltipText, FontAwesomeIcon tooltipIconDone) {
+        Tooltip tooltip = new Tooltip();
+        tooltip.setText(tooltipText);
+        tooltip.setGraphic(getStyledIcon(tooltipIconDone));
+        return tooltip;
+    }
+
+    public static FontAwesomeIconView getStyledIcon(FontAwesomeIcon icon) {
+        FontAwesomeIconView tooltipIcon = new FontAwesomeIconView(icon);
+        tooltipIcon.setGlyphStyle(DisplayConstants.STYLE_GLYPH_DEFAULT);
+        return tooltipIcon;
     }
 }

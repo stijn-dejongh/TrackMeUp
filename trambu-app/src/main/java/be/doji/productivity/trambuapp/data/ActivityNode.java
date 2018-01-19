@@ -2,6 +2,7 @@ package be.doji.productivity.trambuapp.data;
 
 import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
+import be.doji.productivity.trambuapp.utils.TooltipConstants;
 import be.doji.productivity.trambuapp.views.ActivityOverview;
 import be.doji.productivity.trambucore.TrackMeConstants;
 import be.doji.productivity.trambucore.model.tasks.Activity;
@@ -342,6 +343,8 @@ public class ActivityNode extends TitledPane {
         FontAwesomeIconView doneIcon = new FontAwesomeIconView(FontAwesomeIcon.REFRESH);
         doneIcon.setGlyphStyle(DisplayConstants.STYLE_GLYPH_DEFAULT);
         done.setGraphic(doneIcon);
+        done.setTooltip(
+                DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_DONE, TooltipConstants.TOOLTIP_ICON_DONE));
         done.setOnAction(event -> {
             try {
                 toggleCompleted();
