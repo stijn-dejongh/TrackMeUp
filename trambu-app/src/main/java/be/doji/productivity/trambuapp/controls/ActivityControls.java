@@ -64,8 +64,7 @@ public class ActivityControls extends TitledPane {
         grid.add(DisplayUtils.createHorizontalSpacer(), 0, 2, 2, 1);
 
         Button addActivity = new Button("Add activity");
-        FontAwesomeIconView addIcon = new FontAwesomeIconView(FontAwesomeIcon.PLUS_CIRCLE);
-        addIcon.setGlyphStyle(DisplayConstants.STYLE_GLYPH_DEFAULT);
+        FontAwesomeIconView addIcon = DisplayUtils.createStyledIcon(FontAwesomeIcon.PLUS_CIRCLE);
         addActivity.setGraphic(addIcon);
 
         addActivity.setOnAction(event -> {
@@ -83,8 +82,7 @@ public class ActivityControls extends TitledPane {
 
         Button refresh = new Button("");
         refresh.setOnAction(event -> this.view.reloadActivities());
-        FontAwesomeIconView glyph = new FontAwesomeIconView(FontAwesomeIcon.REFRESH);
-        glyph.setGlyphStyle(DisplayConstants.STYLE_GLYPH_DEFAULT);
+        FontAwesomeIconView glyph = DisplayUtils.createStyledIcon(FontAwesomeIcon.REFRESH);
         refresh.setGraphic(glyph);
 
         grid.add(refresh, 0, 5);

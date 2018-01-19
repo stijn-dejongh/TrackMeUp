@@ -47,11 +47,11 @@ public final class DisplayUtils {
     public static Tooltip createTooltip(String tooltipText, FontAwesomeIcon tooltipIconDone) {
         Tooltip tooltip = new Tooltip();
         tooltip.setText(tooltipText);
-        tooltip.setGraphic(getStyledIcon(tooltipIconDone));
+        tooltip.setGraphic(createStyledIcon(tooltipIconDone));
         return tooltip;
     }
 
-    public static FontAwesomeIconView getStyledIcon(FontAwesomeIcon icon) {
+    public static FontAwesomeIconView createStyledIcon(FontAwesomeIcon icon) {
         FontAwesomeIconView tooltipIcon = new FontAwesomeIconView(icon);
         tooltipIcon.setGlyphStyle(DisplayConstants.STYLE_GLYPH_DEFAULT);
         return tooltipIcon;

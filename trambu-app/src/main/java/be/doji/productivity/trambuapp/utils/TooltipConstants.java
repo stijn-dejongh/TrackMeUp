@@ -10,8 +10,8 @@ public final class TooltipConstants {
     private TooltipConstants() {
     }
 
+    public static final FontAwesomeIcon TOOLTIP_DEFAULT_ICON = FontAwesomeIcon.INFO_CIRCLE;
     public static final String TOOLTIP_TEXT_DONE = "Click when you have completed the activity";
-    public static final FontAwesomeIcon TOOLTIP_ICON_DONE = FontAwesomeIcon.INFO_CIRCLE;
-
+    public static final String TOOLTIP_TEXT_EDIT = "Make changes to the activity";
 
 }

@@ -8,7 +8,6 @@ import be.doji.productivity.trambucore.TrackMeConstants;
 import be.doji.productivity.trambucore.model.tasks.Activity;
 import be.doji.productivity.trambucore.model.tracker.ActivityLog;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.geometry.Orientation;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -87,9 +86,7 @@ public class TimesheetView extends View {
         controls.add(DisplayUtils.createHorizontalSpacer(), 0, 2, 2, 1);
 
         Button refreshTimeSheet = new Button("Get timesheet");
-        FontAwesomeIconView glyph = new FontAwesomeIconView(FontAwesomeIcon.REFRESH);
-        glyph.setGlyphStyle(DisplayConstants.STYLE_GLYPH_DEFAULT);
-        refreshTimeSheet.setGraphic(glyph);
+        refreshTimeSheet.setGraphic(DisplayUtils.createStyledIcon(FontAwesomeIcon.REFRESH));
         refreshTimeSheet.setOnAction(event -> refresh());
         controls.add(refreshTimeSheet, 0, 3, 2, 1);
         return controls;

@@ -65,10 +65,8 @@ public class ActivityNode extends TitledPane {
     private void updateHeader(Activity activity) {
         this.setText(activity.getName());
         Button titleLabel = new Button();
-        FontAwesomeIconView checkedCalendar = new FontAwesomeIconView(FontAwesomeIcon.CHECK_CIRCLE);
-        checkedCalendar.setGlyphStyle(DisplayConstants.STYLE_GLYPH_DEFAULT);
-        FontAwesomeIconView uncheckedCalendar = new FontAwesomeIconView(FontAwesomeIcon.CIRCLE_ALT);
-        uncheckedCalendar.setGlyphStyle(DisplayConstants.STYLE_GLYPH_DEFAULT);
+        FontAwesomeIconView checkedCalendar = DisplayUtils.createStyledIcon(FontAwesomeIcon.CHECK_CIRCLE);
+        FontAwesomeIconView uncheckedCalendar = DisplayUtils.createStyledIcon(FontAwesomeIcon.CIRCLE_ALT);
         titleLabel.setGraphic(activity.isCompleted()?checkedCalendar:uncheckedCalendar);
         titleLabel.getStyleClass().clear();
         titleLabel.getStyleClass().add("icon-button");
@@ -90,16 +88,6 @@ public class ActivityNode extends TitledPane {
             return this.activity.isAlertActive()?
                     DisplayConstants.STYLE_CLASS_ACTIVITY_ALERT:
                     DisplayConstants.STYLE_CLASS_ACTIVITY_TODO;
-        }
-    }
-
-    String getActivityTitleStyle() {
-        if (this.activity.isCompleted()) {
-            return DisplayConstants.STYLE_CLASS_TITLE_ACTIVITY_DONE;
-        } else {
-            return this.activity.isAlertActive()?
-                    DisplayConstants.STYLE_CLASS_TITLE_ACTIVITY_ALERT:
-                    DisplayConstants.STYLE_CLASS_TITLE_ACTIVITY_TODO;
         }
     }
 
@@ -176,7 +164,7 @@ public class ActivityNode extends TitledPane {
         return nameField;
     }
 
-    protected GridPane createActvityControls() {
+    GridPane createActvityControls() {
         GridPane content = new GridPane();
         content.setVgap(4);
         content.setHgap(4);
@@ -203,7 +191,7 @@ public class ActivityNode extends TitledPane {
         return comboBox;
     }
 
-    Node createUneditablePriority() {
+    private Node createUneditablePriority() {
         return new Label(activity.getPriority());
     }
 
@@ -217,7 +205,7 @@ public class ActivityNode extends TitledPane {
 
     private LocalDate datePickerDate;
 
-    Node createEditableDeadline() {
+    private Node createEditableDeadline() {
         HBox deadlinePicker = new HBox();
         deadlinePicker.getChildren().add(createDatePicker());
         return deadlinePicker;
@@ -232,7 +220,7 @@ public class ActivityNode extends TitledPane {
         return datePicker;
     }
 
-    Node createUneditableDeadline() {
+    private Node createUneditableDeadline() {
         Label deadlineLabel = new Label(DateFormat.getDateInstance(DateFormat.DEFAULT).format(activity.getDeadline()));
         if (activity.isAlertActive()) {
             deadlineLabel.getStyleClass().add("warningLabel");
@@ -340,11 +328,10 @@ public class ActivityNode extends TitledPane {
 
     private Button createDoneButton() {
         Button done = new Button(DisplayUtils.getDoneButtonText(activity));
-        FontAwesomeIconView doneIcon = new FontAwesomeIconView(FontAwesomeIcon.REFRESH);
-        doneIcon.setGlyphStyle(DisplayConstants.STYLE_GLYPH_DEFAULT);
+        FontAwesomeIconView doneIcon = DisplayUtils.createStyledIcon(FontAwesomeIcon.REFRESH);
         done.setGraphic(doneIcon);
         done.setTooltip(
-                DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_DONE, TooltipConstants.TOOLTIP_ICON_DONE));
+                DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_DONE, TooltipConstants.TOOLTIP_DEFAULT_ICON));
         done.setOnAction(event -> {
             try {
                 toggleCompleted();
@@ -364,9 +351,10 @@ public class ActivityNode extends TitledPane {
 
     private Button createEditButton() {
         Button edit = new Button(getEditButonText());
-        FontAwesomeIconView editIcon = new FontAwesomeIconView(FontAwesomeIcon.EDIT);
-        editIcon.setGlyphStyle(DisplayConstants.STYLE_GLYPH_DEFAULT);
+        FontAwesomeIconView editIcon = DisplayUtils.createStyledIcon(FontAwesomeIcon.EDIT);
         edit.setGraphic(editIcon);
+        edit.setTooltip(
+                DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_EDIT, TooltipConstants.TOOLTIP_DEFAULT_ICON));
         edit.setOnAction(event -> {
             try {
                 if (isEditable) {
@@ -392,8 +380,7 @@ public class ActivityNode extends TitledPane {
 
     private Node createDeleteButton() {
         Button delete = new Button(DisplayConstants.BUTTON_TEXT_DELETE);
-        FontAwesomeIconView removeIcon = new FontAwesomeIconView(FontAwesomeIcon.REMOVE);
-        removeIcon.setGlyphStyle(DisplayConstants.STYLE_GLYPH_DEFAULT);
+        FontAwesomeIconView removeIcon = DisplayUtils.createStyledIcon(FontAwesomeIcon.REMOVE);
         delete.setGraphic(removeIcon);
         delete.setOnAction(event -> {
             try {
@@ -435,14 +422,8 @@ public class ActivityNode extends TitledPane {
     }
 
     private FontAwesomeIconView getTimingButtonIcon() {
-        FontAwesomeIcon icon = FontAwesomeIcon.HOURGLASS_START;
-        if (activityLog.getActiveLog().isPresent()) {
-            icon = FontAwesomeIcon.HOURGLASS_END;
-        }
-
-        FontAwesomeIconView iconView = new FontAwesomeIconView(icon);
-        iconView.setGlyphStyle(DisplayConstants.STYLE_GLYPH_DEFAULT);
-        return iconView;
+        return DisplayUtils.createStyledIcon(
+                activityLog.getActiveLog().isPresent()?FontAwesomeIcon.HOURGLASS_END:FontAwesomeIcon.HOURGLASS_START);
     }
 
     private String getTimingButtonText() {

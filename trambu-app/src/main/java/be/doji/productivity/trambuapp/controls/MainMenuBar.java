@@ -1,6 +1,6 @@
 package be.doji.productivity.trambuapp.controls;
 
-import be.doji.productivity.trambuapp.utils.DisplayConstants;
+import be.doji.productivity.trambuapp.utils.DisplayUtils;
 import be.doji.productivity.trambuapp.views.ActivityOverview;
 import be.doji.productivity.trambuapp.views.OptionsView;
 import be.doji.productivity.trambuapp.views.TimesheetView;
@@ -34,8 +34,7 @@ public class MainMenuBar extends UIComponent {
 
     @NotNull private Button createActivityButton() {
         Button activityPage = new Button("Activity overview");
-        FontAwesomeIconView activityIcon = new FontAwesomeIconView(FontAwesomeIcon.CALENDAR_ALT);
-        activityIcon.setGlyphStyle(DisplayConstants.STYLE_GLYPH_DEFAULT);
+        FontAwesomeIconView activityIcon = DisplayUtils.createStyledIcon(FontAwesomeIcon.CALENDAR_ALT);
         activityPage.setGraphic(activityIcon);
         activityPage.setOnAction(event -> {
             if (!superView.getClass().equals(ActivityOverview.class)) {
@@ -49,8 +48,7 @@ public class MainMenuBar extends UIComponent {
 
     @NotNull private Button createTimesheetButton() {
         Button timesheetPage = new Button("Timesheet");
-        FontAwesomeIconView timesheetIcon = new FontAwesomeIconView(FontAwesomeIcon.CLOCK_ALT);
-        timesheetIcon.setGlyphStyle(DisplayConstants.STYLE_GLYPH_DEFAULT);
+        FontAwesomeIconView timesheetIcon = DisplayUtils.createStyledIcon(FontAwesomeIcon.CLOCK_ALT);
         timesheetPage.setGraphic(timesheetIcon);
         timesheetPage.setOnAction(event -> {
             if (!superView.getClass().equals(TimesheetView.class)) {
@@ -63,8 +61,7 @@ public class MainMenuBar extends UIComponent {
 
     @NotNull private Button createOptionButton() {
         Button options = new Button("Options");
-        FontAwesomeIconView optionIcon = new FontAwesomeIconView(FontAwesomeIcon.GEARS);
-        optionIcon.setGlyphStyle(DisplayConstants.STYLE_GLYPH_DEFAULT);
+        FontAwesomeIconView optionIcon = DisplayUtils.createStyledIcon(FontAwesomeIcon.GEARS);
         options.setGraphic(optionIcon);
         options.setOnAction(event -> {
             if (!superView.getClass().equals(OptionsView.class)) {
