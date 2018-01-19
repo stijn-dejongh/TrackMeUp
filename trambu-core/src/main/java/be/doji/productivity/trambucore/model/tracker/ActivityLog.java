@@ -83,7 +83,40 @@ public class ActivityLog {
         }
     }
 
-    public String getTimeSpent() {
+    public String getTimeSpentInHoursString() {
+        double hours = getTimeSpentInHours();
+        return String.valueOf(hours) + " hours";
+    }
+
+    public double getTimeSpentInHours() {
+        double timeSpentInMilies = getTimeSpentInMilies();
+        double timeSpentInHours = (timeSpentInMilies / (1000 * 60 * 60));
+        return TrackerUtils.roundToSignificantNumbers(timeSpentInHours, 2);
+    }
+
+    public String getTimeSpentInMinutesString() {
+        double minutes = getTimeSpentInMinutes();
+        return String.valueOf(minutes) + " minutes";
+    }
+
+    public double getTimeSpentInMinutes() {
+        double timeSpentInMilies = getTimeSpentInMilies();
+        double timeSpentInMinutes = (timeSpentInMilies / (1000 * 60));
+        return TrackerUtils.roundToSignificantNumbers(timeSpentInMinutes, 2);
+    }
+
+    public String getTimeSpentInSecondsString() {
+        double seconds = getTimeSpentInSeconds();
+        return String.valueOf(seconds) + " seconds";
+    }
+
+    public double getTimeSpentInSeconds() {
+        double timeSpentInMilies = getTimeSpentInMilies();
+        double timeSpentInSeconds = (timeSpentInMilies / (1000));
+        return TrackerUtils.roundToSignificantNumbers(timeSpentInSeconds, 2);
+    }
+
+    private double getTimeSpentInMilies() {
         double timeSpentInMilies = 0;
         for (TimeLog log : this.logpoints) {
             if (log.isActive()) {
@@ -92,9 +125,7 @@ public class ActivityLog {
                 timeSpentInMilies += log.getEndTime().getTime() - log.getStartTime().getTime();
             }
         }
-        double timeSpentInHours = (timeSpentInMilies / (1000 * 60 * 60));
-
-        return String.valueOf(TrackerUtils.roundToSignificantNumbers(timeSpentInHours, 2)) + " hours";
+        return timeSpentInMilies;
     }
 
     public List<TimeLog> getTimeLogsInInterval(Date intervalStartTime, Date intervalEndTime) {

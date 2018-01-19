@@ -94,7 +94,7 @@ public class ActivityLogTest extends TrambuTest {
 
         ActivityLog testLog = new ActivityLog(new Activity("TestBug"));
         testLog.setLogpoints(logPoints);
-        String timeString = testLog.getTimeSpent();
+        String timeString = testLog.getTimeSpentInHoursString();
         Assert.assertEquals("4.0 hours", timeString);
     }
 
@@ -111,7 +111,7 @@ public class ActivityLogTest extends TrambuTest {
 
         ActivityLog testLog = new ActivityLog(new Activity("TestBug"));
         testLog.setLogpoints(logPoints);
-        String timeString = testLog.getTimeSpent();
+        String timeString = testLog.getTimeSpentInHoursString();
         Assert.assertEquals("0.017 hours", timeString);
     }
 

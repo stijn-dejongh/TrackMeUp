@@ -123,7 +123,7 @@ public class TimesheetView extends View {
             Label seperatorLabel = new Label(":");
             grid.add(seperatorLabel, 1, row);
 
-            Label timeLabel = new Label(log.getTimeSpent());
+            Label timeLabel = new Label(log.getTimeSpentInHoursString());
             grid.add(timeLabel, 2, row++);
         }
         return grid;

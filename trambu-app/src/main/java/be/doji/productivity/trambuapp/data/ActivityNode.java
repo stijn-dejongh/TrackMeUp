@@ -309,7 +309,7 @@ public class ActivityNode extends TitledPane {
         }
 
         logpointGrid.add(new Label("Time spent on activity: "), 0, logRowIndex);
-        logpointGrid.add(new Label(activityLog.getTimeSpent()), 1, logRowIndex);
+        logpointGrid.add(new Label(activityLog.getTimeSpentInHoursString()), 1, logRowIndex);
         return logpointGrid;
     }
 
