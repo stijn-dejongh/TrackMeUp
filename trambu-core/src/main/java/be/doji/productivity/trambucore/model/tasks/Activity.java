@@ -96,6 +96,14 @@ import java.util.UUID;
         return completed;
     }
 
+    public boolean isAllSubActivitiesCompleted() {
+        boolean allCompeted = true;
+        for (Activity sub : this.subActivities) {
+            allCompeted = allCompeted && sub.isCompleted();
+        }
+        return allCompeted;
+    }
+
     public List<String> getTags() {
         return new ArrayList<>(tags);
     }

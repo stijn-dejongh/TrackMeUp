@@ -57,23 +57,22 @@ public class ActivityNode extends TitledPane {
         this.application = trambuApplication;
         this.activityLog = application.getActivityController().getTimeTrackingManager()
                 .getLogForActivityId(activity.getId());
-        updateHeader(activity);
+        updateHeader();
         this.setContent(createActivityContent());
         this.setVisible(true);
         this.setOnMouseClicked(event -> this.setActive(!this.isActive));
     }
 
-    private void updateHeader(Activity activity) {
+    private void updateHeader() {
         this.setText(activity.getName());
         Button titleLabel = new Button();
-        FontAwesomeIconView checkedCalendar = DisplayUtils.createStyledIcon(FontAwesomeIcon.CHECK_CIRCLE);
-        FontAwesomeIconView uncheckedCalendar = DisplayUtils.createStyledIcon(FontAwesomeIcon.CIRCLE_ALT);
-        titleLabel.setGraphic(activity.isCompleted()?checkedCalendar:uncheckedCalendar);
+
+        titleLabel.setGraphic(getHeaderIcon());
         titleLabel.getStyleClass().clear();
         titleLabel.getStyleClass().add("icon-button");
         titleLabel.setOnAction(event -> {
             this.toggleCompleted();
-            titleLabel.setGraphic(activity.isCompleted()?checkedCalendar:uncheckedCalendar);
+            titleLabel.setGraphic(getHeaderIcon());
         });
         titleLabel.setTooltip(getDoneTooltipText(activity));
         this.setGraphic(titleLabel);
@@ -83,6 +82,17 @@ public class ActivityNode extends TitledPane {
         this.getStyleClass().add(getActivityStyle());
     }
 
+    private FontAwesomeIconView getHeaderIcon() {
+        FontAwesomeIconView checkedCalendar = DisplayUtils.createStyledIcon(FontAwesomeIcon.CHECK_CIRCLE);
+        FontAwesomeIconView uncheckedCalendar = DisplayUtils.createStyledIcon(FontAwesomeIcon.CIRCLE_ALT);
+        FontAwesomeIconView editing = DisplayUtils.createStyledIcon(FontAwesomeIcon.EDIT);
+        if (isEditable) {
+            return editing;
+        } else {
+            return activity.isCompleted()?checkedCalendar:uncheckedCalendar;
+        }
+    }
+
     private Tooltip getDoneTooltipText(Activity activity) {
         return DisplayUtils.createTooltip(activity.isCompleted()?
                 TooltipConstants.TOOLTIP_TEXT_ACTIVITY_NOT_DONE:
@@ -90,7 +100,7 @@ public class ActivityNode extends TitledPane {
     }
 
     String getActivityStyle() {
-        if (this.activity.isCompleted()) {
+        if (this.activity.isCompleted() && this.activity.isAllSubActivitiesCompleted()) {
             return DisplayConstants.STYLE_CLASS_ACTIVITY_DONE;
         } else {
             return this.activity.isAlertActive()?
@@ -379,8 +389,12 @@ public class ActivityNode extends TitledPane {
     }
 
     private void toggleCompleted() {
+        if (!activity.isCompleted() && !activity.isAllSubActivitiesCompleted()) {
+            LOG.warn("Completing activity with incomplete subactivities");
+        }
+
         this.activity.setCompleted(!activity.isCompleted());
-        this.updateHeader(this.activity);
+        this.updateHeader();
     }
 
     private Button createEditButton() {
@@ -399,6 +413,7 @@ public class ActivityNode extends TitledPane {
                     makeEditable();
                     setContent(createActivityContent());
                 }
+                updateHeader();
                 edit.setText(getEditButonText());
             } catch (IOException | ParseException e) {
                 LOG.error(DisplayConstants.ERROR_MESSAGE_ACTIVITY_SAVING + ": " + e.getMessage());
@@ -580,7 +595,7 @@ public class ActivityNode extends TitledPane {
         application.getActivityController().getActivityManager().getSavedActivityById(this.activity.getId().toString())
                 .ifPresent(savedActivity -> this.activity = savedActivity);
         this.setContent(this.createActivityContent());
-        this.updateHeader(activity);
+        this.updateHeader();
     }
 
 }
