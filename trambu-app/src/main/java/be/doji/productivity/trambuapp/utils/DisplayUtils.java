@@ -44,6 +44,10 @@ public final class DisplayUtils {
         return sep;
     }
 
+    public static Tooltip createTooltip(String toolTipText) {
+        return createTooltip(toolTipText, TooltipConstants.TOOLTIP_DEFAULT_ICON);
+    }
+
     public static Tooltip createTooltip(String tooltipText, FontAwesomeIcon tooltipIconDone) {
         Tooltip tooltip = new Tooltip();
         tooltip.setText(tooltipText);
@@ -56,4 +60,5 @@ public final class DisplayUtils {
         tooltipIcon.setGlyphStyle(DisplayConstants.STYLE_GLYPH_DEFAULT);
         return tooltipIcon;
     }
+
 }

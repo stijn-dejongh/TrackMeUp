@@ -74,6 +74,7 @@ public class ActivityNode extends TitledPane {
             this.toggleCompleted();
             titleLabel.setGraphic(activity.isCompleted()?checkedCalendar:uncheckedCalendar);
         });
+        titleLabel.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_DONE));
         this.setGraphic(titleLabel);
         this.getStyleClass()
                 .removeAll(DisplayConstants.STYLE_CLASS_ACTIVITY_DONE, DisplayConstants.STYLE_CLASS_ACTIVITY_TODO,
@@ -330,8 +331,7 @@ public class ActivityNode extends TitledPane {
         Button done = new Button(DisplayUtils.getDoneButtonText(activity));
         FontAwesomeIconView doneIcon = DisplayUtils.createStyledIcon(FontAwesomeIcon.REFRESH);
         done.setGraphic(doneIcon);
-        done.setTooltip(
-                DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_DONE, TooltipConstants.TOOLTIP_DEFAULT_ICON));
+        done.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_DONE));
         done.setOnAction(event -> {
             try {
                 toggleCompleted();
@@ -353,8 +353,7 @@ public class ActivityNode extends TitledPane {
         Button edit = new Button(getEditButonText());
         FontAwesomeIconView editIcon = DisplayUtils.createStyledIcon(FontAwesomeIcon.EDIT);
         edit.setGraphic(editIcon);
-        edit.setTooltip(
-                DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_EDIT, TooltipConstants.TOOLTIP_DEFAULT_ICON));
+        edit.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_EDIT));
         edit.setOnAction(event -> {
             try {
                 if (isEditable) {
@@ -391,6 +390,7 @@ public class ActivityNode extends TitledPane {
                 LOG.error(DisplayConstants.ERROR_MESSAGE_ACTIVITY_SAVING + ": " + e.getMessage());
             }
         });
+        delete.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_DELETE));
         return delete;
     }
 
@@ -400,14 +400,14 @@ public class ActivityNode extends TitledPane {
         HBox timingControls = new HBox();
 
         Button startStopButton = new Button(getTimingButtonText());
+        Optional<TimeLog> activeLog = activityLog.getActiveLog();
         startStopButton.setOnAction(event -> {
-            Optional<TimeLog> activeLog = activityLog.getActiveLog();
             if (activeLog.isPresent()) {
                 activityLog.stopActiveLog();
             } else {
                 activityLog.startLog();
             }
-            startStopButton.setText(getEditButonText());
+            startStopButton.setText(getTimingButtonText());
             startStopButton.setGraphic(getTimingButtonIcon());
             application.getActivityController().getTimeTrackingManager().save(activityLog);
             this.setContent(createActivityContent());
@@ -415,6 +415,7 @@ public class ActivityNode extends TitledPane {
 
         FontAwesomeIconView iconView = getTimingButtonIcon();
         startStopButton.setGraphic(iconView);
+        startStopButton.setTooltip(getTimingButtonTooltipText());
 
         timingControls.getChildren().add(startStopButton);
 
@@ -427,14 +428,24 @@ public class ActivityNode extends TitledPane {
     }
 
     private String getTimingButtonText() {
-        activityLog = application.getActivityController().getTimeTrackingManager()
-                .getLogForActivityId(this.activity.getId());
-        Optional<TimeLog> activeLog = activityLog.getActiveLog();
+        Optional<TimeLog> activeLog = getActiveLog();
         if (activeLog.isPresent()) {
             return DisplayConstants.BUTTON_TEXT_TIMER_STOP;
         } else {
             return DisplayConstants.BUTTON_TEXT_TIMER_START;
         }
+    }
+
+    private Optional<TimeLog> getActiveLog() {
+        activityLog = application.getActivityController().getTimeTrackingManager()
+                .getLogForActivityId(this.activity.getId());
+        return activityLog.getActiveLog();
+    }
+
+    public Tooltip getTimingButtonTooltipText() {
+        return DisplayUtils.createTooltip(getActiveLog().isPresent()?
+                TooltipConstants.TOOLTIP_TEXT_TIMING_CONTROL_STOP:
+                TooltipConstants.TOOLTIP_TEXT_TIMING_CONTROL_START);
     }
 
     private void save() throws IOException, ParseException {
@@ -534,4 +545,5 @@ public class ActivityNode extends TitledPane {
         this.setContent(this.createActivityContent());
         this.updateHeader(activity);
     }
+
 }
