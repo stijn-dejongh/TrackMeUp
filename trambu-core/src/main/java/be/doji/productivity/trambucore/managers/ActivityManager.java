@@ -136,6 +136,10 @@ public class ActivityManager {
 
     private Optional<Activity> findActivityInList(String name, List<Activity> activities,
             BiFunction<Activity, String, Boolean> comparator) {
+        if (StringUtils.isBlank(name)) {
+            return Optional.empty();
+        }
+        
         for (Activity savedActivity : activities) {
             Optional<Activity> foundSub = findActivityInList(name, savedActivity.getSubActivities(), comparator);
             if (foundSub.isPresent()) {

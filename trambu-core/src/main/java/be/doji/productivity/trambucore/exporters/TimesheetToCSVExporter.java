@@ -5,10 +5,7 @@ import be.doji.productivity.trambucore.managers.ActivityManager;
 import be.doji.productivity.trambucore.model.tasks.Activity;
 import be.doji.productivity.trambucore.model.tracker.ActivityLog;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -16,7 +13,7 @@ import java.util.Optional;
 /**
  * @author Stijn Dejongh
  */
-public class TimesheetToCSVExporter implements Exporter<List<ActivityLog>, File> {
+public class TimesheetToCSVExporter implements Exporter<List<ActivityLog>, List<String>> {
 
     private final ActivityManager activityManager;
 
@@ -24,11 +21,8 @@ public class TimesheetToCSVExporter implements Exporter<List<ActivityLog>, File>
         this.activityManager = activityManager;
     }
 
-    @Override public File convert(List<ActivityLog> input) throws IOException {
-        Path tempfile = Files.createTempFile("Export", "Timelog");
-        List<String> exportedLines = createFileLines(input);
-        Files.write(tempfile, exportedLines);
-        return tempfile.toFile();
+    @Override public List<String> convert(List<ActivityLog> input) throws IOException {
+        return createFileLines(input);
     }
 
     List<String> createFileLines(List<ActivityLog> input) {
@@ -78,8 +72,7 @@ public class TimesheetToCSVExporter implements Exporter<List<ActivityLog>, File>
         headerLine.append("TIMESPENT_SECONDS");
         headerLine.append(ExportConstants.CSV_ITEM_SEPERATOR);
         headerLine.append("PARENT");
-        headerLine.append(ExportConstants.CSV_ITEM_SEPERATOR);
 
-        return null;
+        return headerLine.toString();
     }
 }

@@ -32,5 +32,6 @@ public final class TooltipConstants {
     public static final String TOOLTIP_TEXT_OPTIONS_REMEMBER = "Click to make the application remember your choices when you close the program";
 
     public static final String TOOLTIP_TEXT_TIMESHEET_REFRESH = "Get timesheet for the selected interval";
+    public static final String TOOLTIP_TEXT_TIMESHEET_EXPORT = "Export the timesheet to a CSV file";
 
 }

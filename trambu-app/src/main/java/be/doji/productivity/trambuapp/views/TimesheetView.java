@@ -6,6 +6,7 @@ import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
 import be.doji.productivity.trambuapp.utils.TooltipConstants;
 import be.doji.productivity.trambucore.TrackMeConstants;
+import be.doji.productivity.trambucore.exporters.TimesheetToCSVExporter;
 import be.doji.productivity.trambucore.model.tasks.Activity;
 import be.doji.productivity.trambucore.model.tracker.ActivityLog;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
@@ -17,12 +18,17 @@ import javafx.scene.control.Label;
 import javafx.scene.control.SplitPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.stage.FileChooser;
 import org.apache.commons.lang3.time.DateUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tornadofx.View;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
@@ -34,6 +40,7 @@ public class TimesheetView extends View {
     private static final Logger LOG = LoggerFactory.getLogger(TimesheetView.class);
 
     private final ActivityController activityController;
+    private List<ActivityLog> logs;
     private BorderPane root;
     private Date startDate;
     private Date endDate;
@@ -59,9 +66,8 @@ public class TimesheetView extends View {
         splitPane.setPrefWidth(DisplayConstants.UI_DEFAULT_WINDOW_WIDTH);
         splitPane.setOrientation(Orientation.HORIZONTAL);
         splitPane.setDividerPosition(0, 0.65);
-
-        splitPane.getItems().add(createTimeLogGrid(
-                activityController.getTimeTrackingManager().getActivityLogsInInterval(startDate, endDate)));
+        logs = activityController.getTimeTrackingManager().getActivityLogsInInterval(startDate, endDate);
+        splitPane.getItems().add(createTimeLogGrid(logs));
         splitPane.getItems().add(createTimesheetControls());
         return splitPane;
     }
@@ -89,12 +95,51 @@ public class TimesheetView extends View {
 
         controls.add(DisplayUtils.createHorizontalSpacer(), 0, 2, 2, 1);
 
+        Button refreshTimeSheet = createRefreshButton();
+        controls.add(refreshTimeSheet, 0, 3, 2, 1);
+
+        Button exportTimeSheer = createExportButton();
+        controls.add(exportTimeSheer, 0, 4, 2, 1);
+
+        return controls;
+    }
+
+    @NotNull private Button createRefreshButton() {
         Button refreshTimeSheet = new Button("Get timesheet");
         refreshTimeSheet.setGraphic(DisplayUtils.createStyledIcon(FontAwesomeIcon.REFRESH));
         refreshTimeSheet.setOnAction(event -> refresh());
-        controls.add(refreshTimeSheet, 0, 3, 2, 1);
         refreshTimeSheet.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_TIMESHEET_REFRESH));
-        return controls;
+        return refreshTimeSheet;
+    }
+
+    @NotNull private Button createExportButton() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Select export file");
+        fileChooser.setInitialFileName("Timesheet_export" + ".csv");
+
+        Button exportTimesheet = new Button("Export");
+        exportTimesheet.setGraphic(DisplayUtils.createStyledIcon(FontAwesomeIcon.ARROW_DOWN));
+        exportTimesheet.setOnAction(event -> {
+            File file = fileChooser.showSaveDialog(null);
+            if (file != null) {
+
+                try {
+                    TimesheetToCSVExporter exporter = new TimesheetToCSVExporter(
+                            activityController.getActivityManager());
+                    List<String> convert = exporter.convert(logs);
+                    Files.write(Paths.get(file.getAbsolutePath()), convert);
+                    LOG.info("Export completed");
+                } catch (IOException e) {
+                    LOG.error("Error while exporting timesheet");
+                }
+            }
+        });
+        exportTimesheet.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_TIMESHEET_EXPORT));
+        return exportTimesheet;
+    }
+
+    private void exportTimelogs() {
+
     }
 
     private void refresh() {
