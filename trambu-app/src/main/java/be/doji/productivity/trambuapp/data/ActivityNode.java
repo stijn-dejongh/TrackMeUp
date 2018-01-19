@@ -49,6 +49,7 @@ public class ActivityNode extends TitledPane {
     private ActivityLog activityLog;
     private boolean parentChanged;
     private TextField warningPeriodInHours;
+    private TextField locationField;
 
     public ActivityNode(Activity activity, ActivityOverview trambuApplication) {
         super();
@@ -83,8 +84,9 @@ public class ActivityNode extends TitledPane {
     }
 
     private Tooltip getDoneTooltipText(Activity activity) {
-        return DisplayUtils.createTooltip(
-                activity.isCompleted()?TooltipConstants.TOOLTIP_TEXT_ACTIVITY_NOT_DONE:TooltipConstants.TOOLTIP_TEXT_ACTIVITY_DONE);
+        return DisplayUtils.createTooltip(activity.isCompleted()?
+                TooltipConstants.TOOLTIP_TEXT_ACTIVITY_NOT_DONE:
+                TooltipConstants.TOOLTIP_TEXT_ACTIVITY_DONE);
     }
 
     String getActivityStyle() {
@@ -120,6 +122,11 @@ public class ActivityNode extends TitledPane {
         if (activity.isSetDeadline() || isEditable) {
             content.add(new Label("Deadline: "), 0, rowIndex);
             content.add(createDeadline(), 1, rowIndex++);
+        }
+
+        if (activity.isSetLocation() || isEditable) {
+            content.add(new Label("Location :"), 0, rowIndex);
+            content.add(createLocation(), 1, rowIndex++);
         }
 
         Label warningPeriodLabel = new Label("Warning period: ");
@@ -207,6 +214,26 @@ public class ActivityNode extends TitledPane {
         } else {
             return createUneditableDeadline();
         }
+    }
+
+    Node createLocation() {
+        if (isEditable) {
+            return createEditableLocation();
+        } else {
+            return createUneditableLocation();
+        }
+    }
+
+    private Node createEditableLocation() {
+        locationField = new TextField();
+        if (activity.isSetLocation()) {
+            locationField.setText(activity.getLocation());
+        }
+        return locationField;
+    }
+
+    private Node createUneditableLocation() {
+        return new Label(activity.getLocation());
     }
 
     private LocalDate datePickerDate;
@@ -469,6 +496,9 @@ public class ActivityNode extends TitledPane {
     private void updateActivityFields() {
         if (nameField != null) {
             activity.setName(nameField.getText());
+        }
+        if (locationField != null) {
+            activity.setLocation(locationField.getText());
         }
         updateActivityProjects();
         updateActivityTags();

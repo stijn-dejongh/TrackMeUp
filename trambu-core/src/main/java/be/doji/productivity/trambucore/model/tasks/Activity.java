@@ -124,6 +124,10 @@ import java.util.UUID;
         this.location = location;
     }
 
+    public boolean isSetLocation() {
+        return StringUtils.isNotBlank(this.location);
+    }
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
         if (this.isCompleted()) {
@@ -156,7 +160,7 @@ import java.util.UUID;
             sb.append(warningTimeFrame.toString());
             sb.append(" ");
         }
-        if (StringUtils.isNotBlank(location)) {
+        if (isSetLocation()) {
             sb.append(TrackMeConstants.INDICATOR_LOCATION);
             sb.append(this.location);
             sb.append(" ");
@@ -223,4 +227,5 @@ import java.util.UUID;
     public void setTags(List<String> tags) {
         this.tags = tags;
     }
+
 }
