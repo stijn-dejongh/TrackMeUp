@@ -42,7 +42,6 @@ public class MainMenuBar extends UIComponent {
                 superView.replaceWith(JvmClassMappingKt.getKotlinClass(ActivityOverview.class),
                         new ViewTransition.Slide(Duration.seconds(0.3), ViewTransition.Direction.LEFT), true, true);
             }
-
         });
         activityPage.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_MENU_ACTIVITIES));
         return activityPage;

@@ -35,7 +35,7 @@ public class OptionsView extends View {
 
     public OptionsView() {
         super();
-        this.setTitle(DisplayConstants.TITLE_APPLICATION);
+        this.setTitle(DisplayConstants.TITLE_APPLICATION + " - " + DisplayConstants.TITLE_OPTIONS);
 
         this.root = new BorderPane();
         this.activityController = find(ActivityController.class);

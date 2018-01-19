@@ -1,9 +1,8 @@
 package be.doji.productivity.trambuapp.styles
 
 import javafx.scene.layout.BackgroundPosition
-import javafx.scene.layout.BackgroundRepeat
-import javafx.scene.layout.BackgroundSize
 import javafx.scene.text.FontPosture
+import javafx.scene.text.FontWeight
 import tornadofx.Stylesheet
 import tornadofx.c
 import tornadofx.cssclass
@@ -16,6 +15,7 @@ class DefaultTrambuStyle : Stylesheet() {
         val separatorLabel by cssclass()
         val warningLabel by cssclass()
         val default by cssclass()
+        val buttonBold by cssclass()
 
         val mainColor = c("#505050")
         val defaultTextColor = c("#ffffff")

@@ -40,7 +40,7 @@ public class TimesheetView extends View {
 
     public TimesheetView() {
         super();
-        this.setTitle(DisplayConstants.TITLE_APPLICATION);
+        this.setTitle(DisplayConstants.TITLE_APPLICATION + " - " + DisplayConstants.TITLE_TIMESHEET);
         this.activityController = find(ActivityController.class);
 
         endDate = new Date();

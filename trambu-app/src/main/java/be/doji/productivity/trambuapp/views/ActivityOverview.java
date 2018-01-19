@@ -33,7 +33,7 @@ public class ActivityOverview extends View {
 
     public ActivityOverview() {
         super();
-        this.setTitle(DisplayConstants.TITLE_APPLICATION);
+        this.setTitle(DisplayConstants.TITLE_APPLICATION + " - " + DisplayConstants.TITLE_ACTIVITY);
         this.activityController = find(ActivityController.class);
 
         root = new BorderPane();

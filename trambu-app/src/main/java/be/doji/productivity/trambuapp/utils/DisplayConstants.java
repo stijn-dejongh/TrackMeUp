@@ -2,6 +2,8 @@ package be.doji.productivity.trambuapp.utils;
 
 public final class DisplayConstants {
 
+
+
     /**
      * Utility classes should not have a public or default constructor
      */
@@ -9,6 +11,9 @@ public final class DisplayConstants {
     }
 
     public static final String TITLE_APPLICATION = "TraMBU - visual activity and time tracking";
+    public static String TITLE_ACTIVITY = "[Activities]";
+    public static String TITLE_TIMESHEET = "[Timesheet]";
+    public static String TITLE_OPTIONS = "[Options]";
 
     public static final String STYLE_GLYPH_DEFAULT = "-fx-fill: linear-gradient(#ffffff, #d2d2d2); -fx-effect: dropshadow( one-pass-box , rgba(0,0,0,0.8) , 4 , 0.0 , 1 , 1 );";
     public static final String STYLE_CLASS_ACTIVITY_DONE = "done";
