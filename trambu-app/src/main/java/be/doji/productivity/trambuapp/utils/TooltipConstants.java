@@ -31,4 +31,6 @@ public final class TooltipConstants {
     public static final String TOOLTIP_TEXT_OPTIONS_TIME_FILE_SELECT = "Select a file to save your timetracking data to";
     public static final String TOOLTIP_TEXT_OPTIONS_REMEMBER = "Click to make the application remember your choices when you close the program";
 
+    public static final String TOOLTIP_TEXT_TIMESHEET_REFRESH = "Get timesheet for the selected interval";
+
 }

@@ -4,6 +4,7 @@ import be.doji.productivity.trambuapp.controllers.ActivityController;
 import be.doji.productivity.trambuapp.controls.MainMenuBar;
 import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
+import be.doji.productivity.trambuapp.utils.TooltipConstants;
 import be.doji.productivity.trambucore.TrackMeConstants;
 import be.doji.productivity.trambucore.model.tasks.Activity;
 import be.doji.productivity.trambucore.model.tracker.ActivityLog;
@@ -89,6 +90,7 @@ public class TimesheetView extends View {
         refreshTimeSheet.setGraphic(DisplayUtils.createStyledIcon(FontAwesomeIcon.REFRESH));
         refreshTimeSheet.setOnAction(event -> refresh());
         controls.add(refreshTimeSheet, 0, 3, 2, 1);
+        refreshTimeSheet.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_TIMESHEET_REFRESH));
         return controls;
     }
 
