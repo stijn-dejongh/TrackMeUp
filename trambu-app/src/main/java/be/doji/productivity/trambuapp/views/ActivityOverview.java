@@ -33,9 +33,12 @@ public class ActivityOverview extends View {
 
     public ActivityOverview() {
         super();
+        this.setTitle(DisplayConstants.TITLE_APPLICATION);
         this.activityController = find(ActivityController.class);
 
         root = new BorderPane();
+        root.setPrefHeight(DisplayConstants.UI_DEFAULT_WINDOW_HEIGHT);
+        root.setPrefWidth(DisplayConstants.UI_DEFAULT_WINDOW_WIDTH);
         root.setCenter(createContentSplitPane());
         root.setBottom(new MainMenuBar(this).getRoot());
 

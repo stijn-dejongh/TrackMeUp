@@ -35,6 +35,8 @@ public class OptionsView extends View {
 
     public OptionsView() {
         super();
+        this.setTitle(DisplayConstants.TITLE_APPLICATION);
+
         this.root = new BorderPane();
         this.activityController = find(ActivityController.class);
         root.setPrefHeight(DisplayConstants.UI_DEFAULT_WINDOW_HEIGHT);

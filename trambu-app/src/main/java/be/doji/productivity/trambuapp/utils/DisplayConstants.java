@@ -1,8 +1,5 @@
 package be.doji.productivity.trambuapp.utils;
 
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
-import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
-
 public final class DisplayConstants {
 
     /**
@@ -11,15 +8,12 @@ public final class DisplayConstants {
     private DisplayConstants() {
     }
 
+    public static final String TITLE_APPLICATION = "TraMBU - visual activity and time tracking";
+
     public static final String STYLE_GLYPH_DEFAULT = "-fx-fill: linear-gradient(#ffffff, #d2d2d2); -fx-effect: dropshadow( one-pass-box , rgba(0,0,0,0.8) , 4 , 0.0 , 1 , 1 );";
     public static final String STYLE_CLASS_ACTIVITY_DONE = "done";
     public static final String STYLE_CLASS_ACTIVITY_TODO = "todo";
     public static final String STYLE_CLASS_ACTIVITY_ALERT = "alert";
-
-    public static final String STYLE_CLASS_TITLE_ACTIVITY_DONE = "titledone";
-    public static final String STYLE_CLASS_TITLE_ACTIVITY_TODO = "titletodo";
-    public static final String STYLE_CLASS_TITLE_ACTIVITY_ALERT = "titlealert";
-
     public static final String STYLE_CLASS_DEFAULT = "default";
 
     public static final String STYLE_LABEL_SPECIAL = "separatorLabel";
@@ -50,5 +44,4 @@ public final class DisplayConstants {
     public static final double UI_DEFAULT_WINDOW_HEIGHT = 850.0;
 
     public static final String REGEX_WARNING_PERIOD = "[0-9]*";
-
 }

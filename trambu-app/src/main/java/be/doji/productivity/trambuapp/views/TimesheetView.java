@@ -40,12 +40,15 @@ public class TimesheetView extends View {
 
     public TimesheetView() {
         super();
+        this.setTitle(DisplayConstants.TITLE_APPLICATION);
         this.activityController = find(ActivityController.class);
 
         endDate = new Date();
         startDate = DateUtils.addDays(endDate, -7);
 
         root = new BorderPane();
+        root.setPrefHeight(DisplayConstants.UI_DEFAULT_WINDOW_HEIGHT);
+        root.setPrefWidth(DisplayConstants.UI_DEFAULT_WINDOW_WIDTH);
         root.setCenter(createTimesheetPane());
         root.setBottom(new MainMenuBar(this).getRoot());
     }
