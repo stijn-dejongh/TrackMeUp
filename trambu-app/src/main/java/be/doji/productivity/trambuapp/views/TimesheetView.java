@@ -138,10 +138,6 @@ public class TimesheetView extends View {
         return exportTimesheet;
     }
 
-    private void exportTimelogs() {
-
-    }
-
     private void refresh() {
         root.setCenter(createTimesheetPane());
     }
