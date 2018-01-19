@@ -5,7 +5,7 @@
 
     <groupId>be.doji.productivity</groupId>
     <artifactId>trambu</artifactId>
-    <version>0.6.0-SNAPSHOT</version>
+    <version>0.7.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>TrackMeUp</name>
