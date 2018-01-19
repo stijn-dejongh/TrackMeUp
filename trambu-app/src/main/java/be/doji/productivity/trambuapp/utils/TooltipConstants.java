@@ -27,4 +27,8 @@ public final class TooltipConstants {
     public static final String TOOLTIP_TEXT_MENU_TIMESHEET = "Navigate to the activity timesheet";
     public static final String TOOLTIP_TEXT_MENU_OPTIONS = "Navigate to the application options";
 
+    public static final String TOOLTIP_TEXT_OPTIONS_TODO_FILE_SELECT = "Select a file to save your activity data to";
+    public static final String TOOLTIP_TEXT_OPTIONS_TIME_FILE_SELECT = "Select a file to save your timetracking data to";
+    public static final String TOOLTIP_TEXT_OPTIONS_REMEMBER = "Click to make the application remember your choices when you close the program";
+
 }

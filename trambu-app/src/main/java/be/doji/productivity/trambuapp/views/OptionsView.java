@@ -4,6 +4,7 @@ import be.doji.productivity.trambuapp.controllers.ActivityController;
 import be.doji.productivity.trambuapp.controls.MainMenuBar;
 import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
+import be.doji.productivity.trambuapp.utils.TooltipConstants;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -49,7 +50,17 @@ public class OptionsView extends View {
         grid.setVgap(4);
         grid.setPadding(new Insets(5, 5, 5, 5));
         grid.add(new Label("Todo file: "), 0, 0);
+        grid.add(createTodoFileSelectButton(), 1, 0);
 
+        grid.add(new Label("Timetracking file: "), 0, 1);
+        grid.add(createTimeFileSelectButton(), 1, 1);
+        grid.add(DisplayUtils.createHorizontalSpacer(), 0, 2, 2, 1);
+
+        grid.add(createSavePreferencesButton(), 0, 3);
+        return grid;
+    }
+
+    @NotNull private Button createTodoFileSelectButton() {
         FileChooser todoFileChooser = new FileChooser();
         todoFileChooser.setTitle("Open TODO list File");
 
@@ -62,9 +73,11 @@ public class OptionsView extends View {
                 LOG.error("Error opening todo file", e);
             }
         });
-        grid.add(openTodoButton, 1, 0);
+        openTodoButton.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_OPTIONS_TODO_FILE_SELECT));
+        return openTodoButton;
+    }
 
-        grid.add(new Label("Timetracking file: "), 0, 1);
+    @NotNull private Button createTimeFileSelectButton() {
         FileChooser timeFileChooser = new FileChooser();
         timeFileChooser.setTitle("Open time tracking File");
 
@@ -77,15 +90,12 @@ public class OptionsView extends View {
                 LOG.error("Error opening time tracking file", e);
             }
         });
-        grid.add(openTimeButton, 1, 1);
-        grid.add(DisplayUtils.createHorizontalSpacer(), 0, 2, 2, 1);
-
-        grid.add(createSavePreferencesButton(), 0, 3);
-        return grid;
+        openTimeButton.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_OPTIONS_TIME_FILE_SELECT));
+        return openTimeButton;
     }
 
     @NotNull private Button createSavePreferencesButton() {
-        Button savePreferences = new Button("Remember choices");
+        Button savePreferences = new Button("Save preferences");
         savePreferences.setOnAction(event -> {
             if (StringUtils.isNotBlank(configuredTodoLocation)) {
                 this.getActivityController().getConfigManager()
@@ -101,6 +111,7 @@ public class OptionsView extends View {
                 LOG.error(DisplayConstants.ERROR_MESSAGE_WRITE_PROPERTIES, e);
             }
         });
+        savePreferences.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_OPTIONS_REMEMBER));
         return savePreferences;
     }
 
@@ -113,6 +124,7 @@ public class OptionsView extends View {
                 fileLambda.accept(file);
             }
         });
+
         return button;
     }
 
