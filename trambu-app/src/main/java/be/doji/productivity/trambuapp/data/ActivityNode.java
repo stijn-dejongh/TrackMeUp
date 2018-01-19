@@ -64,13 +64,17 @@ public class ActivityNode extends TitledPane {
     private void updateHeader(Activity activity) {
         this.setText(activity.getName());
         Button titleLabel = new Button();
-        FontAwesomeIconView checkedCalendar = new FontAwesomeIconView(FontAwesomeIcon.CALENDAR_CHECK_ALT);
+        FontAwesomeIconView checkedCalendar = new FontAwesomeIconView(FontAwesomeIcon.CHECK_CIRCLE);
         checkedCalendar.setGlyphStyle(DisplayConstants.STYLE_GLYPH_DEFAULT);
-        FontAwesomeIconView uncheckedCalendar = new FontAwesomeIconView(FontAwesomeIcon.CALENDAR_ALT);
+        FontAwesomeIconView uncheckedCalendar = new FontAwesomeIconView(FontAwesomeIcon.CIRCLE_ALT);
         uncheckedCalendar.setGlyphStyle(DisplayConstants.STYLE_GLYPH_DEFAULT);
         titleLabel.setGraphic(activity.isCompleted()?checkedCalendar:uncheckedCalendar);
         titleLabel.getStyleClass().clear();
         titleLabel.getStyleClass().add("icon-button");
+        titleLabel.setOnAction(event -> {
+            this.toggleCompleted();
+            titleLabel.setGraphic(activity.isCompleted()?checkedCalendar:uncheckedCalendar);
+        });
         this.setGraphic(titleLabel);
         this.getStyleClass()
                 .removeAll(DisplayConstants.STYLE_CLASS_ACTIVITY_DONE, DisplayConstants.STYLE_CLASS_ACTIVITY_TODO,
@@ -340,7 +344,7 @@ public class ActivityNode extends TitledPane {
         done.setGraphic(doneIcon);
         done.setOnAction(event -> {
             try {
-                this.activity.setCompleted(!activity.isCompleted());
+                toggleCompleted();
                 done.setText(DisplayUtils.getDoneButtonText(activity));
                 save();
             } catch (IOException | ParseException e) {
@@ -349,6 +353,10 @@ public class ActivityNode extends TitledPane {
         });
 
         return done;
+    }
+
+    private void toggleCompleted() {
+        this.activity.setCompleted(!activity.isCompleted());
     }
 
     private Button createEditButton() {
@@ -386,7 +394,7 @@ public class ActivityNode extends TitledPane {
         delete.setGraphic(removeIcon);
         delete.setOnAction(event -> {
             try {
-                this.activity.setCompleted(!activity.isCompleted());
+                this.toggleCompleted();
                 application.getActivityController().getActivityManager().delete(this.activity);
                 application.reloadActivities();
             } catch (IOException | ParseException e) {
