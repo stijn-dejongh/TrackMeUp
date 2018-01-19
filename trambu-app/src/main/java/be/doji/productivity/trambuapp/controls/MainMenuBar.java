@@ -1,6 +1,7 @@
 package be.doji.productivity.trambuapp.controls;
 
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
+import be.doji.productivity.trambuapp.utils.TooltipConstants;
 import be.doji.productivity.trambuapp.views.ActivityOverview;
 import be.doji.productivity.trambuapp.views.OptionsView;
 import be.doji.productivity.trambuapp.views.TimesheetView;
@@ -43,6 +44,7 @@ public class MainMenuBar extends UIComponent {
             }
 
         });
+        activityPage.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_MENU_ACTIVITIES));
         return activityPage;
     }
 
@@ -56,6 +58,7 @@ public class MainMenuBar extends UIComponent {
                         new ViewTransition.Slide(Duration.seconds(0.3), ViewTransition.Direction.RIGHT), true, true);
             }
         });
+        timesheetPage.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_MENU_TIMESHEET));
         return timesheetPage;
     }
 
@@ -69,6 +72,7 @@ public class MainMenuBar extends UIComponent {
                         new ViewTransition.Slide(Duration.seconds(0.3), ViewTransition.Direction.DOWN), true, true);
             }
         });
+        options.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_MENU_OPTIONS));
         return options;
     }
 

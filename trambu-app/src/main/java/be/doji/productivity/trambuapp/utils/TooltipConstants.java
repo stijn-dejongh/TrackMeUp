@@ -23,4 +23,8 @@ public final class TooltipConstants {
     public static final String TOOLTIP_TEXT_CONTROL_FILTER_RESET = "Clear active filters";
     public static final String TOOLTIP_TEXT_CONTROL_FILTER_DONE = "Filter all completed activities";
 
+    public static final String TOOLTIP_TEXT_MENU_ACTIVITIES = "Navigate to the activity overview";
+    public static final String TOOLTIP_TEXT_MENU_TIMESHEET = "Navigate to the activity timesheet";
+    public static final String TOOLTIP_TEXT_MENU_OPTIONS = "Navigate to the application options";
+
 }
