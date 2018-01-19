@@ -30,4 +30,8 @@ public final class TrackerUtils {
         bd = bd.round(new MathContext(significantNumbers));
         return bd.doubleValue();
     }
+
+    public static String escape(String input) {
+        return "\"" + input + "\"";
+    }
 }

@@ -4,6 +4,7 @@ import be.doji.productivity.trambucore.exporters.util.ExportConstants;
 import be.doji.productivity.trambucore.managers.ActivityManager;
 import be.doji.productivity.trambucore.model.tasks.Activity;
 import be.doji.productivity.trambucore.model.tracker.ActivityLog;
+import be.doji.productivity.trambucore.utils.TrackerUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,11 +44,11 @@ public class TimesheetToCSVExporter implements Exporter<List<ActivityLog>, List<
         StringBuilder csvLine = new StringBuilder();
         csvLine.append(activityName);
         csvLine.append(ExportConstants.CSV_ITEM_SEPERATOR);
-        csvLine.append(timeLog.getTimeSpentInHours());
+        csvLine.append(TrackerUtils.escape(String.valueOf(timeLog.getTimeSpentInHours())));
         csvLine.append(ExportConstants.CSV_ITEM_SEPERATOR);
-        csvLine.append(timeLog.getTimeSpentInMinutes());
+        csvLine.append(TrackerUtils.escape(String.valueOf(timeLog.getTimeSpentInMinutes())));
         csvLine.append(ExportConstants.CSV_ITEM_SEPERATOR);
-        csvLine.append(timeLog.getTimeSpentInSeconds());
+        csvLine.append(TrackerUtils.escape(String.valueOf(timeLog.getTimeSpentInSeconds())));
         csvLine.append(ExportConstants.CSV_ITEM_SEPERATOR);
         Optional<Activity> parentActivity = savedActivityById
                 .map(activity -> activityManager.getSavedActivityById(activity.getParentActivity()))
