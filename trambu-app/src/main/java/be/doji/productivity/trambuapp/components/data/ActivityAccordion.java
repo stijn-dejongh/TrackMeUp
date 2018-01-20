@@ -1,4 +1,4 @@
-package be.doji.productivity.trambuapp.data;
+package be.doji.productivity.trambuapp.components.data;
 
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
 import be.doji.productivity.trambuapp.views.ActivityOverview;

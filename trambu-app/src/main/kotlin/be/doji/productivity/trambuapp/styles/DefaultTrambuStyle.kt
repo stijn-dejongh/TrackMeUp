@@ -16,6 +16,7 @@ class DefaultTrambuStyle : Stylesheet() {
         val warningLabel by cssclass()
         val default by cssclass()
         val buttonBold by cssclass()
+        val activityOverlay by cssclass()
 
         val mainColor = c("#505050")
         val defaultTextColor = c("#ffffff")
@@ -39,6 +40,12 @@ class DefaultTrambuStyle : Stylesheet() {
             separatorLabel {
                 textFill = c("#820d98")
             }
+        }
+
+        activityOverlay {
+            baseColor = mainColor
+            backgroundColor += c("#8598a6")
+            baseColor = c("#8598a6")
         }
 
 

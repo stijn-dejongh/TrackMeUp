@@ -1,5 +1,6 @@
-package be.doji.productivity.trambuapp.data;
+package be.doji.productivity.trambuapp.components.data;
 
+import be.doji.productivity.trambuapp.components.helper.OverlayPane;
 import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
 import be.doji.productivity.trambuapp.utils.TooltipConstants;
@@ -17,7 +18,9 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +53,7 @@ public class ActivityNode extends TitledPane {
     private boolean parentChanged;
     private TextField warningPeriodInHours;
     private TextField locationField;
+    private OverlayPane overlay;
 
     public ActivityNode(Activity activity, ActivityOverview trambuApplication) {
         super();
@@ -58,9 +62,19 @@ public class ActivityNode extends TitledPane {
         this.activityLog = application.getActivityController().getTimeTrackingManager()
                 .getLogForActivityId(activity.getId());
         updateHeader();
-        this.setContent(createActivityContent());
+        this.setContent(createContentContainer());
+
         this.setVisible(true);
         this.setOnMouseClicked(event -> this.setActive(!this.isActive));
+    }
+
+    @NotNull public StackPane createContentContainer() {
+        StackPane contentContainer = new StackPane();
+        GridPane activityContent = createActivityContent();
+        contentContainer.getChildren().add(activityContent);
+        overlay = new OverlayPane();
+        contentContainer.getChildren().add(overlay);
+        return contentContainer;
     }
 
     private void updateHeader() {
@@ -71,8 +85,13 @@ public class ActivityNode extends TitledPane {
         titleLabel.getStyleClass().clear();
         titleLabel.getStyleClass().add("icon-button");
         titleLabel.setOnAction(event -> {
-            this.toggleCompleted();
-            titleLabel.setGraphic(getHeaderIcon());
+            try {
+                this.toggleCompleted();
+                titleLabel.setGraphic(getHeaderIcon());
+                save();
+            } catch (IOException | ParseException e) {
+                LOG.error("Error while saving activity to file: " + e.getMessage());
+            }
         });
         titleLabel.setTooltip(getDoneTooltipText(activity));
         this.setGraphic(titleLabel);
