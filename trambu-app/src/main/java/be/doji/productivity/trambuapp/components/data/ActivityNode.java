@@ -647,5 +647,4 @@ public class ActivityNode extends TitledPane {
         this.setContent(this.createContentContainer());
         this.updateHeader();
     }
-
 }
