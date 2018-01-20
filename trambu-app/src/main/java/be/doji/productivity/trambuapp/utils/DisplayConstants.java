@@ -2,8 +2,6 @@ package be.doji.productivity.trambuapp.utils;
 
 public final class DisplayConstants {
 
-
-
     /**
      * Utility classes should not have a public or default constructor
      */
@@ -22,6 +20,7 @@ public final class DisplayConstants {
     public static final String STYLE_CLASS_DEFAULT = "default";
 
     public static final String STYLE_LABEL_SPECIAL = "separatorLabel";
+    public static final String STYLE_ACTIVTY_OVERLAY = "-fx-background-color: #8598a6; -fx-border-width: 2px; -fx-border-color: #3a4351; -fx-border-radius: 8px; -fx-background-radius: 9px; -fx-opacity: 0.95;";
 
     public static final String BUTTON_TEXT_IS_NOT_DONE = "Not Done";
     public static final String BUTTON_TEXT_IS_DONE = "Done!";

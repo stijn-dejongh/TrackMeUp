@@ -1,5 +1,6 @@
 package be.doji.productivity.trambuapp.components.helper;
 
+import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import javafx.scene.Node;
@@ -11,7 +12,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class OverlayPane extends BorderPane {
 
-    private final Node content;
+    private Node content;
 
     public OverlayPane() {
         this(null);
@@ -20,12 +21,10 @@ public class OverlayPane extends BorderPane {
     public OverlayPane(Node overlayContent) {
         super();
         this.content = overlayContent;
-        this.getStyleClass().clear();
-        this.getStyleClass().add("activityOverlay");
+        this.setStyle(DisplayConstants.STYLE_ACTIVTY_OVERLAY);
         this.setTop(createCloseButton());
         this.setCenter(createContent());
         this.setVisible(false);
-        this.setStyle("-fx-background-color: #8598a6; -fx-border-width: 2px; -fx-border-color: #3a4351");
     }
 
     @NotNull public Node createContent() {
@@ -47,6 +46,10 @@ public class OverlayPane extends BorderPane {
 
     public Node getContent() {
         return content;
+    }
+
+    public void setContent(Node content) {
+        this.content = content;
     }
 
     public void refreshContent() {

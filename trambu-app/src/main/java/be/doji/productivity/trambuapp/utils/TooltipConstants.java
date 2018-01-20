@@ -17,6 +17,7 @@ public final class TooltipConstants {
     public static final String TOOLTIP_TEXT_ACTIVITY_TIMING_CONTROL_START = "Start tracking time spent on activity";
     public static final String TOOLTIP_TEXT_ACTIVITY_TIMING_CONTROL_STOP = "Start tracking time spent on activity";
     public static final String TOOLTIP_TEXT_ACTIVITY_DELETE = "Permanently delete this activity (can not be undone)";
+    public static final String TOOLTIP_TEXT_ACTIVITY_LOGPOINT_EXPAND = "Show registered timelogs";
 
     public static final String TOOLTIP_TEXT_CONTROL_REFRESH = "Refresh data from files";
     public static final String TOOLTIP_TEXT_CONTROL_CREATE = "Create a new activity";

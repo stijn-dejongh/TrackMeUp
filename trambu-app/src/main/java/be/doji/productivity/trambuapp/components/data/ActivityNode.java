@@ -62,6 +62,7 @@ public class ActivityNode extends TitledPane {
         this.activityLog = application.getActivityController().getTimeTrackingManager()
                 .getLogForActivityId(activity.getId());
         updateHeader();
+        overlay = new OverlayPane();
         this.setContent(createContentContainer());
 
         this.setVisible(true);
@@ -72,7 +73,6 @@ public class ActivityNode extends TitledPane {
         StackPane contentContainer = new StackPane();
         GridPane activityContent = createActivityContent();
         contentContainer.getChildren().add(activityContent);
-        overlay = new OverlayPane();
         contentContainer.getChildren().add(overlay);
         return contentContainer;
     }
@@ -354,6 +354,37 @@ public class ActivityNode extends TitledPane {
         logpointGrid.setVgap(4);
         logpointGrid.setPadding(new Insets(5, 5, 5, 5));
         int logRowIndex = 0;
+        Label logpointInfo = new Label("There are " + logpoints.size() + " timelogs available.  ");
+        logpointGrid.add(logpointInfo, 0, logRowIndex);
+        if (logpoints.size() > 0) {
+            logpointGrid.add(createOpenLogsButton(logpoints), 1, logRowIndex++);
+        } else {
+            logRowIndex++;
+        }
+
+        logpointGrid.add(new Label("Time spent on activity: "), 0, logRowIndex);
+        logpointGrid.add(new Label(activityLog.getTimeSpentInHoursString()), 1, logRowIndex);
+        return logpointGrid;
+    }
+
+    @NotNull private Button createOpenLogsButton(List<TimeLog> logpoints) {
+        Button showLogs = new Button("Show timelogs");
+        showLogs.setGraphic(DisplayUtils.createStyledIcon(FontAwesomeIcon.INFO_CIRCLE));
+        showLogs.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_ACTIVITY_LOGPOINT_EXPAND));
+        showLogs.setOnAction(event -> {
+            this.overlay.setContent(createLogPointGrid(logpoints));
+            this.overlay.refreshContent();
+            this.overlay.setVisible(true);
+        });
+        return showLogs;
+    }
+
+    private GridPane createLogPointGrid(List<TimeLog> logpoints) {
+        GridPane logpointGrid = new GridPane();
+        logpointGrid.setVgap(4);
+        logpointGrid.setPadding(new Insets(5, 5, 5, 5));
+        int logRowIndex = 0;
+
         if (!logpoints.isEmpty()) {
             SimpleDateFormat dateFormat = TrackMeConstants.getDateFormat();
             logpointGrid.add(new Label("Logpoints: "), 0, logRowIndex++);
@@ -362,10 +393,10 @@ public class ActivityNode extends TitledPane {
                         "":
                         (" to " + dateFormat.format(log.getEndTime())))), 1, logRowIndex++);
             }
+        } else {
+            logpointGrid.add(new Label("No timelogs available for this activity"), 0, logRowIndex);
         }
 
-        logpointGrid.add(new Label("Time spent on activity: "), 0, logRowIndex);
-        logpointGrid.add(new Label(activityLog.getTimeSpentInHoursString()), 1, logRowIndex);
         return logpointGrid;
     }
 
@@ -613,7 +644,7 @@ public class ActivityNode extends TitledPane {
     public void refresh() {
         application.getActivityController().getActivityManager().getSavedActivityById(this.activity.getId().toString())
                 .ifPresent(savedActivity -> this.activity = savedActivity);
-        this.setContent(this.createActivityContent());
+        this.setContent(this.createContentContainer());
         this.updateHeader();
     }
 
