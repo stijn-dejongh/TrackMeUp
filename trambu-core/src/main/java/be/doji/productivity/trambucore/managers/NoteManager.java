@@ -67,7 +67,8 @@ public class NoteManager {
     }
 
     public Note createNoteForActivity(UUID activityId) throws IOException {
-        Path noteFile = Files.createFile(fileDirectory.resolve(activityId.toString() + ".txt"));
+        Path noteFile = Files
+                .createFile(fileDirectory.resolve(activityId.toString() + TrackMeConstants.NOTES_FILE_EXTENSION));
         Note note = new Note(activityId, noteFile);
         this.notes.add(note);
         return note;

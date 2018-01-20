@@ -37,6 +37,8 @@ public final class TrackMeConstants {
 
     public static final String REGEX_DATE = "[0-9\\-\\:\\.]*";
 
+    public static final String NOTES_FILE_EXTENSION = ".md";
+
     public static SimpleDateFormat getDateFormat() {
         return new SimpleDateFormat(DATA_DATE_FORMAT, Locale.FRANCE);
     }
