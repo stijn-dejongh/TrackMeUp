@@ -71,3 +71,8 @@ Big shoutout to the awesome people that created the libraries I used to create t
 * https://bitbucket.org/Jerady/fontawesomefx
 * https://github.com/TestFX/TestFX
 * https://github.com/edvin/tornadofx
+
+Thanks to:
+
+* Suzanne VDW for guidance and collaboration on the project ideas and vision
+* all friends and colleagues testing and using TraMBU
