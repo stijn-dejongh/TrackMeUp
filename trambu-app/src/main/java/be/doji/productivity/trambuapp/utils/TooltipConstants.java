@@ -18,6 +18,8 @@ public final class TooltipConstants {
     public static final String TOOLTIP_TEXT_ACTIVITY_TIMING_CONTROL_STOP = "Start tracking time spent on activity";
     public static final String TOOLTIP_TEXT_ACTIVITY_DELETE = "Permanently delete this activity (can not be undone)";
     public static final String TOOLTIP_TEXT_ACTIVITY_LOGPOINT_EXPAND = "Show registered timelogs";
+    public static final String TOOLTIP_TEXT_ACTIVITY_NOTE_EXPAND = "Open the notes associated with this activity";
+    public static final String TOOLTIP_TEXT_ACTIVITY_SAVE_NOTE = "Save your notes";
 
     public static final String TOOLTIP_TEXT_CONTROL_REFRESH = "Refresh data from files";
     public static final String TOOLTIP_TEXT_CONTROL_CREATE = "Create a new activity";
@@ -31,6 +33,7 @@ public final class TooltipConstants {
     public static final String TOOLTIP_TEXT_OPTIONS_TODO_FILE_SELECT = "Select a file to save your activity data to";
     public static final String TOOLTIP_TEXT_OPTIONS_TIME_FILE_SELECT = "Select a file to save your timetracking data to";
     public static final String TOOLTIP_TEXT_OPTIONS_REMEMBER = "Click to make the application remember your choices when you close the program";
+
 
     public static final String TOOLTIP_TEXT_TIMESHEET_REFRESH = "Get timesheet for the selected interval";
     public static final String TOOLTIP_TEXT_TIMESHEET_EXPORT = "Export the timesheet to a CSV file";

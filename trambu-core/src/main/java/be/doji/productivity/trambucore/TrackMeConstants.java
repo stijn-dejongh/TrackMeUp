@@ -17,6 +17,7 @@ public final class TrackMeConstants {
 
     public static final String DEFAULT_TODO_FILE_LOCATION = "data/todo.txt";
     public static final String DEFAULT_TIMELOG_FILE_LOCATION = "data/timelog.txt";
+    public static final String DEFAULT_NOTE_DIRECTORY_LOCATION = "data/notes";
 
     private static final String DATA_DATE_FORMAT = "yyyy-MM-dd:HH:mm:ss.SSS";
     public static final Duration DEFAULT_WARNING_PERIOD = Duration.ofDays(1);
@@ -52,4 +53,5 @@ public final class TrackMeConstants {
         GregorianCalendar calendar = new GregorianCalendar(3550, Calendar.DECEMBER, 31, 0, 0, 0);
         return calendar.getTime();
     }
+
 }

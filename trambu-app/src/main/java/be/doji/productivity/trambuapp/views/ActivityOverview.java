@@ -138,4 +138,5 @@ public class ActivityOverview extends View {
     public ActivityController getActivityController() {
         return activityController;
     }
+
 }

@@ -11,6 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -32,6 +33,7 @@ public class OptionsView extends View {
 
     private String configuredTodoLocation;
     private String configuredTimeLocation;
+    private String configuredNoteLocation;
 
     public OptionsView() {
         super();
@@ -56,6 +58,10 @@ public class OptionsView extends View {
 
         grid.add(new Label("Timetracking file: "), 0, 1);
         grid.add(createTimeFileSelectButton(), 1, 1);
+
+        grid.add(new Label("Notes directory: "), 0, 2);
+        grid.add(createNotesSelectButton(), 1, 2);
+
         grid.add(DisplayUtils.createHorizontalSpacer(), 0, 2, 2, 1);
 
         grid.add(createSavePreferencesButton(), 0, 3);
@@ -96,6 +102,24 @@ public class OptionsView extends View {
         return openTimeButton;
     }
 
+    @NotNull private Button createNotesSelectButton() {
+        DirectoryChooser notesDirectoryChooser = new DirectoryChooser();
+        notesDirectoryChooser.setTitle("Open notes directory");
+
+        Button notesDirectoryButton = createOpenDirectoryButton("Select timelog file", notesDirectoryChooser, file -> {
+            try {
+                String filePath = file.getAbsolutePath();
+                this.configuredNoteLocation = filePath;
+                this.getActivityController().getNoteManager().updateLocation(filePath);
+            } catch (IOException e) {
+                LOG.error("Error opening time tracking file", e);
+            }
+        });
+        notesDirectoryButton
+                .setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_OPTIONS_TIME_FILE_SELECT));
+        return notesDirectoryButton;
+    }
+
     @NotNull private Button createSavePreferencesButton() {
         Button savePreferences = new Button("Save preferences");
         savePreferences.setOnAction(event -> {
@@ -106,6 +130,11 @@ public class OptionsView extends View {
             if (StringUtils.isNotBlank(configuredTimeLocation)) {
                 this.getActivityController().getConfigManager()
                         .addProperty(DisplayConstants.NAME_PROPERTY_TIME_LOCATION, configuredTimeLocation);
+            }
+
+            if (StringUtils.isNotBlank(configuredNoteLocation)) {
+                this.getActivityController().getConfigManager()
+                        .addProperty(DisplayConstants.NAME_PROPERTY_NOTES_LOCATION, configuredNoteLocation);
             }
             try {
                 this.getActivityController().getConfigManager().writeToFile();
@@ -122,6 +151,20 @@ public class OptionsView extends View {
 
         button.setOnAction(e -> {
             File file = fileChooser.showOpenDialog(null);
+            if (file != null) {
+                fileLambda.accept(file);
+            }
+        });
+
+        return button;
+    }
+
+    private Button createOpenDirectoryButton(String buttonText, DirectoryChooser dirChooser,
+            Consumer<File> fileLambda) {
+        Button button = new Button(buttonText);
+
+        button.setOnAction(e -> {
+            File file = dirChooser.showDialog(null);
             if (file != null) {
                 fileLambda.accept(file);
             }

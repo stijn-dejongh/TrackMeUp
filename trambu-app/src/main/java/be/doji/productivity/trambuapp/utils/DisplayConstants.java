@@ -38,6 +38,7 @@ public final class DisplayConstants {
     public static final String NAME_CONFIGURATION_FILE = "trambu.conf";
     public static final String NAME_PROPERTY_TODO_LOCATION = "todoFile";
     public static final String NAME_PROPERTY_TIME_LOCATION = "timeFile";
+    public static final String NAME_PROPERTY_NOTES_LOCATION = "noteDirectory";
 
     public static final String ERROR_MESSAGE_ACTIVITY_SAVING = "Error while saving activity";
     public static final String ERROR_MESSAGE_INITIALIZATION = "Error while initializing application";

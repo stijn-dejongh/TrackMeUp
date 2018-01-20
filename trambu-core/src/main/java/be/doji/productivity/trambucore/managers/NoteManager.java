@@ -8,10 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,13 +21,17 @@ public class NoteManager {
     private Path fileDirectory;
     private List<Note> notes = new ArrayList<>();
 
+    public NoteManager(String fileDirectory) throws IOException {
+        this(Paths.get(fileDirectory));
+    }
+
     public NoteManager(Path fileDirectory) throws IOException {
         LOG.info("Creating new NoteManager on location: " + fileDirectory.toString());
         this.fileDirectory = fileDirectory;
-        this.readNoteDate();
+        this.readNoteData();
     }
 
-    private void readNoteDate() throws IOException {
+    private void readNoteData() throws IOException {
         if (Files.isDirectory(fileDirectory)) {
             Files.walkFileTree(fileDirectory, new SimpleFileVisitor<Path>() {
 
@@ -76,5 +77,10 @@ public class NoteManager {
 
     public List<Note> getAllNotes() {
         return this.notes;
+    }
+
+    public void updateLocation(String filePath) throws IOException {
+        this.fileDirectory = Paths.get(filePath);
+        this.readNoteData();
     }
 }

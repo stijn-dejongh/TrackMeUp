@@ -4,6 +4,7 @@ import be.doji.productivity.trambuapp.userconfiguration.UserConfigurationManager
 import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import be.doji.productivity.trambucore.TrackMeConstants;
 import be.doji.productivity.trambucore.managers.ActivityManager;
+import be.doji.productivity.trambucore.managers.NoteManager;
 import be.doji.productivity.trambucore.managers.TimeTrackingManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,7 @@ public class ActivityController extends Controller {
     private ActivityManager activityManager;
     private TimeTrackingManager timeTrackingManager;
     private UserConfigurationManager configManager;
+    private NoteManager noteManager;
 
     public ActivityController() {
         super();
@@ -29,6 +31,8 @@ public class ActivityController extends Controller {
             initializeActivities(todoLocation.orElse(TrackMeConstants.DEFAULT_TODO_FILE_LOCATION));
             Optional<String> timeLocation = configManager.getProperty(DisplayConstants.NAME_PROPERTY_TIME_LOCATION);
             initializeTimeTracking(timeLocation.orElse(TrackMeConstants.DEFAULT_TIMELOG_FILE_LOCATION));
+            Optional<String> notesLocation = configManager.getProperty(DisplayConstants.NAME_PROPERTY_NOTES_LOCATION);
+            initializeNotes(notesLocation.orElse(TrackMeConstants.DEFAULT_NOTE_DIRECTORY_LOCATION));
         } catch (IOException | ParseException e) {
             LOG.error(DisplayConstants.ERROR_MESSAGE_INITIALIZATION, e);
         }
@@ -45,6 +49,12 @@ public class ActivityController extends Controller {
         if (timeTrackingManager == null) {
             this.timeTrackingManager = new TimeTrackingManager(fileLocation);
             this.timeTrackingManager.readLogs();
+        }
+    }
+
+    private void initializeNotes(String noteLocation) throws IOException, ParseException {
+        if (noteManager == null) {
+            this.noteManager = new NoteManager(noteLocation);
         }
     }
 
@@ -75,5 +85,9 @@ public class ActivityController extends Controller {
     public boolean isSetFileOptions() {
         return configManager.containsProperty(DisplayConstants.NAME_PROPERTY_TODO_LOCATION) || configManager
                 .containsProperty(DisplayConstants.NAME_PROPERTY_TIME_LOCATION);
+    }
+
+    public NoteManager getNoteManager() {
+        return noteManager;
     }
 }

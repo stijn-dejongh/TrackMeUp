@@ -6,7 +6,9 @@ import be.doji.productivity.trambuapp.utils.DisplayUtils;
 import be.doji.productivity.trambuapp.utils.TooltipConstants;
 import be.doji.productivity.trambuapp.views.ActivityOverview;
 import be.doji.productivity.trambucore.TrackMeConstants;
+import be.doji.productivity.trambucore.managers.NoteManager;
 import be.doji.productivity.trambucore.model.tasks.Activity;
+import be.doji.productivity.trambucore.model.tasks.Note;
 import be.doji.productivity.trambucore.model.tracker.ActivityLog;
 import be.doji.productivity.trambucore.model.tracker.TimeLog;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
@@ -14,6 +16,7 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -31,10 +34,7 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ActivityNode extends TitledPane {
@@ -179,6 +179,9 @@ public class ActivityNode extends TitledPane {
         content.add(createProjects(), 1, rowIndex++);
 
         content.add(createLogPoints(), 0, rowIndex++, 2, 1);
+
+        content.add(new Label("Notes: "), 0, rowIndex);
+        content.add(createNotes(), 1, rowIndex++);
 
         if (isEditable) {
             Label parentTitle = new Label("Select parent: ");
@@ -398,6 +401,54 @@ public class ActivityNode extends TitledPane {
         }
 
         return logpointGrid;
+    }
+
+    private Button createNotes() {
+        Button noteButton = new Button("View notes");
+        noteButton.setGraphic(DisplayUtils.createStyledIcon(FontAwesomeIcon.STICKY_NOTE));
+        noteButton.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_ACTIVITY_NOTE_EXPAND));
+        noteButton.setOnAction(event -> {
+            NoteManager noteManager = application.getActivityController().getNoteManager();
+            try {
+                Optional<Note> noteForActivity = noteManager.findNoteForActivity(activity.getId());
+                Note note;
+                if (noteForActivity.isPresent()) {
+                    note = noteForActivity.get();
+                } else {
+                    note = noteManager.createNoteForActivity(activity.getId());
+                }
+
+                TextField textField = new TextField();
+                textField.setPrefWidth(overlay.getWidth());
+                textField.setPrefHeight(overlay.getHeight());
+                textField.setText(note.getContent().stream().collect(Collectors.joining()));
+                textField.setAlignment(Pos.TOP_LEFT);
+                textField.setEditable(true);
+                overlay.setContent(textField);
+                overlay.addControlButton(createSaveNoteButton(note, textField));
+                overlay.refreshContent();
+                overlay.setVisible(true);
+            } catch (IOException e) {
+                overlay.setContent(new Label("Error reading notes: " + e.getMessage()));
+            }
+        });
+        return noteButton;
+    }
+
+    private Button createSaveNoteButton(Note noteToSave, TextField textField) {
+        Button saveButton = new Button("Save changes");
+        saveButton.setGraphic(DisplayUtils.createStyledIcon(FontAwesomeIcon.SAVE));
+        saveButton.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_ACTIVITY_SAVE_NOTE));
+        saveButton.setOnAction(event -> {
+            try {
+                noteToSave.setContent(Arrays.asList(textField.getText().split(System.lineSeparator())));
+                noteToSave.save();
+            } catch (IOException e) {
+                LOG.error("Error saving note to file: " + e.getMessage());
+            }
+        });
+
+        return saveButton;
     }
 
     private Node createParentSelector() {
