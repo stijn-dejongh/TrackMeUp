@@ -68,8 +68,9 @@ public class OverlayPane extends BorderPane {
         }
     }
 
-    public void addControlButton(Button control) {
-        this.controls.add(control);
+    public void setControlButtons(List<Button> control) {
+        this.controls.clear();
+        this.controls.addAll(control);
     }
 
     private Node createOptionalControls() {

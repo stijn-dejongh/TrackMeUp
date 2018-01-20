@@ -16,7 +16,6 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -418,14 +417,14 @@ public class ActivityNode extends TitledPane {
                     note = noteManager.createNoteForActivity(activity.getId());
                 }
 
-                TextField textField = new TextField();
+                TextArea textField = new TextArea();
                 textField.setPrefWidth(overlay.getWidth());
                 textField.setPrefHeight(overlay.getHeight());
-                textField.setText(note.getContent().stream().collect(Collectors.joining()));
-                textField.setAlignment(Pos.TOP_LEFT);
+                textField.setText(note.getContent().stream().collect(Collectors.joining(System.lineSeparator())));
+                textField.setWrapText(true);
                 textField.setEditable(true);
                 overlay.setContent(textField);
-                overlay.addControlButton(createSaveNoteButton(note, textField));
+                overlay.setControlButtons(createNoteControlButtons(note, textField));
                 overlay.refreshContent();
                 overlay.setVisible(true);
             } catch (IOException e) {
@@ -435,7 +434,8 @@ public class ActivityNode extends TitledPane {
         return noteButton;
     }
 
-    private Button createSaveNoteButton(Note noteToSave, TextField textField) {
+    private List<Button> createNoteControlButtons(Note noteToSave, TextArea textField) {
+        List<Button> controls = new ArrayList<>();
         Button saveButton = new Button("Save changes");
         saveButton.setGraphic(DisplayUtils.createStyledIcon(FontAwesomeIcon.SAVE));
         saveButton.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_ACTIVITY_SAVE_NOTE));
@@ -447,8 +447,8 @@ public class ActivityNode extends TitledPane {
                 LOG.error("Error saving note to file: " + e.getMessage());
             }
         });
-
-        return saveButton;
+        controls.add(saveButton);
+        return controls;
     }
 
     private Node createParentSelector() {
