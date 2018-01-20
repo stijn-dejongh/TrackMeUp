@@ -15,7 +15,7 @@ import java.util.List;
 public final class ActivityParser {
 
     private static final String REGEX_TERMINATOR = "(\\s|$)";
-    private static final String REGEX_UUID = "([a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12})";
+    public static final String REGEX_UUID = "([a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12})";
     private static final String COMPLETED_REGEX =
             "^[" + TrackMeConstants.INDICATOR_DONE + StringUtils.upperCase(TrackMeConstants.INDICATOR_DONE) + "]";
     private static final String PRIORITY_REGEX = "\\([a-zA-Z]\\)";

@@ -1,0 +1,48 @@
+package be.doji.productivity.trambucore.model.tasks;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.UUID;
+
+public class Note {
+
+    private Path location;
+    private List<String> content;
+    private UUID activityId;
+
+    public Note(UUID activityId, Path location) {
+        this.activityId = activityId;
+        this.location = location;
+    }
+
+    public Note(String activityId, Path path) {
+        this(UUID.fromString(activityId), path);
+    }
+
+    public List<String> readContent() throws IOException {
+        if (this.location == null || !Files.exists(location)) {
+            throw new IOException("File does not exist: " + location.toString());
+        }
+
+        this.content = Files.readAllLines(location);
+        return content;
+    }
+
+    public List<String> getContent() {
+        return content;
+    }
+
+    public void setContent(List<String> content) {
+        this.content = content;
+    }
+
+    public void save() throws IOException {
+        Files.write(location, content);
+    }
+
+    public UUID getActivityId() {
+        return activityId;
+    }
+}
