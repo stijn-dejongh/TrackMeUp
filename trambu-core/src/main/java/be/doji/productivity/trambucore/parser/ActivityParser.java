@@ -17,7 +17,7 @@ public final class ActivityParser {
     private static final String REGEX_TERMINATOR = "(\\s|$)";
     private static final String REGEX_UUID = "([a-f0-9]{8}(-[a-f0-9]{4}){3}-[a-f0-9]{12})";
     private static final String COMPLETED_REGEX =
-            "^[" + TrackMeConstants.INDICATOR_DONE + StringUtils.lowerCase(TrackMeConstants.INDICATOR_DONE) + "]";
+            "^[" + TrackMeConstants.INDICATOR_DONE + StringUtils.upperCase(TrackMeConstants.INDICATOR_DONE) + "]";
     private static final String PRIORITY_REGEX = "\\([a-zA-Z]\\)";
     private static final String NAME_REGEX =
             "\\b[a-zA-Z]([\\w\\s\\.\\- && [^\\+]])*(\\s\\+|$|\\s\\@|\\s" + TrackMeConstants.INDICATOR_WARNING_PERIOD

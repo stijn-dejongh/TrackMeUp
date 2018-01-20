@@ -21,7 +21,7 @@ public final class TrackMeConstants {
     private static final String DATA_DATE_FORMAT = "yyyy-MM-dd:HH:mm:ss.SSS";
     public static final Duration DEFAULT_WARNING_PERIOD = Duration.ofDays(1);
 
-    public static final String INDICATOR_DONE = "X";
+    public static final String INDICATOR_DONE = "x";
     public static final String INDICATOR_PROJECT = "+";
     public static final String INDICATOR_TAG = "@";
     public static final String INDICATOR_DEADLINE = "due:";
