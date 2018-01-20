@@ -74,4 +74,7 @@ public class NoteManager {
         return note;
     }
 
+    public List<Note> getAllNotes() {
+        return this.notes;
+    }
 }

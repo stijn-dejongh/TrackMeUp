@@ -3,13 +3,14 @@ package be.doji.productivity.trambucore.model.tasks;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 public class Note {
 
     private Path location;
-    private List<String> content;
+    private List<String> content = new ArrayList<>();
     private UUID activityId;
 
     public Note(UUID activityId, Path location) {
@@ -30,7 +31,10 @@ public class Note {
         return content;
     }
 
-    public List<String> getContent() {
+    public List<String> getContent() throws IOException {
+        if (content.isEmpty()) {
+            return this.readContent();
+        }
         return content;
     }
 
@@ -44,5 +48,9 @@ public class Note {
 
     public UUID getActivityId() {
         return activityId;
+    }
+
+    public Path getLocation() {
+        return this.location;
     }
 }
