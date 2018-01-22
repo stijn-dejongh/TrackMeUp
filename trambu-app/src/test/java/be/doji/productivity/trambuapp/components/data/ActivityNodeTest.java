@@ -1,5 +1,6 @@
 package be.doji.productivity.trambuapp.components.data;
 
+import be.doji.productivity.trambuapp.components.helper.AutocompleteTextField;
 import be.doji.productivity.trambuapp.controllers.ActivityController;
 import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import be.doji.productivity.trambuapp.views.ActivityOverview;
@@ -238,7 +239,7 @@ public class ActivityNodeTest extends ApplicationTest {
 
         testNode.makeEditable();
         tags = testNode.createTags();
-        Assert.assertEquals(TextField.class, tags.getClass());
+        Assert.assertEquals(AutocompleteTextField.class, tags.getClass());
     }
 
     @Test public void testCreateTagsEditableNoTags() {
@@ -247,7 +248,7 @@ public class ActivityNodeTest extends ApplicationTest {
         testNode.makeEditable();
         Assert.assertTrue(testNode.isEditable());
         Node tags = testNode.createTags();
-        Assert.assertEquals(TextField.class, tags.getClass());
+        Assert.assertEquals(AutocompleteTextField.class, tags.getClass());
         TextField castedTags = (TextField) tags;
         Assert.assertTrue(StringUtils.isBlank(castedTags.getText()));
     }
@@ -261,8 +262,8 @@ public class ActivityNodeTest extends ApplicationTest {
         testNode.makeEditable();
         Assert.assertTrue(testNode.isEditable());
         Node tags = testNode.createTags();
-        Assert.assertEquals(TextField.class, tags.getClass());
-        TextField castedTags = (TextField) tags;
+        Assert.assertEquals(AutocompleteTextField.class, tags.getClass());
+        AutocompleteTextField castedTags = (AutocompleteTextField) tags;
         Assert.assertTrue(StringUtils.isNotBlank(castedTags.getText()));
         Assert.assertTrue(castedTags.getText().contains("TagOne"));
         Assert.assertTrue(castedTags.getText().contains("TagTwo"));
@@ -294,7 +295,7 @@ public class ActivityNodeTest extends ApplicationTest {
 
         testNode.makeEditable();
         projects = testNode.createProjects();
-        Assert.assertEquals(TextField.class, projects.getClass());
+        Assert.assertEquals(AutocompleteTextField.class, projects.getClass());
     }
 
     @Test public void testCreateProjectsEditableNoProjects() {
@@ -303,8 +304,8 @@ public class ActivityNodeTest extends ApplicationTest {
         testNode.makeEditable();
         Assert.assertTrue(testNode.isEditable());
         Node projects = testNode.createProjects();
-        Assert.assertEquals(TextField.class, projects.getClass());
-        TextField castedProjects = (TextField) projects;
+        Assert.assertEquals(AutocompleteTextField.class, projects.getClass());
+        AutocompleteTextField castedProjects = (AutocompleteTextField) projects;
         Assert.assertTrue(StringUtils.isBlank(castedProjects.getText()));
     }
 
@@ -317,7 +318,7 @@ public class ActivityNodeTest extends ApplicationTest {
         testNode.makeEditable();
         Assert.assertTrue(testNode.isEditable());
         Node projects = testNode.createProjects();
-        Assert.assertEquals(TextField.class, projects.getClass());
+        Assert.assertEquals(AutocompleteTextField.class, projects.getClass());
         TextField castedProjects = (TextField) projects;
         Assert.assertTrue(StringUtils.isNotBlank(castedProjects.getText()));
         Assert.assertTrue(castedProjects.getText().contains("ProjectOne"));

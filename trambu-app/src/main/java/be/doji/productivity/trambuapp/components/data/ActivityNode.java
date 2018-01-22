@@ -1,5 +1,6 @@
 package be.doji.productivity.trambuapp.components.data;
 
+import be.doji.productivity.trambuapp.components.helper.AutocompleteTextField;
 import be.doji.productivity.trambuapp.components.helper.OverlayPane;
 import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
@@ -46,8 +47,8 @@ public class ActivityNode extends TitledPane {
     private boolean isEditable = false;
     private Activity activity;
     private TextField nameField;
-    private TextField projectsField;
-    private TextField tagsField;
+    private AutocompleteTextField projectsField;
+    private AutocompleteTextField tagsField;
     private ActivityLog activityLog;
     private boolean parentChanged;
     private TextField warningPeriodInHours;
@@ -302,8 +303,12 @@ public class ActivityNode extends TitledPane {
 
     private Node createEditableTags() {
         Optional<String> reducedTags = activity.getTags().stream().reduce((s, s2) -> s + FIELD_SEPERATOR + " " + s2);
-        tagsField = new TextField();
+        tagsField = new AutocompleteTextField();
         reducedTags.ifPresent(s -> tagsField.setText(s));
+
+        SortedSet<String> treeSetTags = new TreeSet<>();
+        treeSetTags.addAll(application.getActivityController().getActivityManager().getExistingTags());
+        tagsField.setSuggestions(treeSetTags);
         return tagsField;
     }
 
@@ -331,8 +336,11 @@ public class ActivityNode extends TitledPane {
     private Node createEditableProjects() {
         Optional<String> reducedProjects = activity.getProjects().stream()
                 .reduce((s, s2) -> s + FIELD_SEPERATOR + " " + s2);
-        projectsField = new TextField();
+        projectsField = new AutocompleteTextField();
         reducedProjects.ifPresent(s -> projectsField.setText(s));
+        SortedSet<String> treeSetProjects = new TreeSet<>();
+        treeSetProjects.addAll(application.getActivityController().getActivityManager().getExistingProjects());
+        projectsField.setSuggestions(treeSetProjects);
         return projectsField;
     }
 

@@ -12,6 +12,7 @@ import tornadofx.Controller;
 
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Collection;
 import java.util.Optional;
 
 public class ActivityController extends Controller {

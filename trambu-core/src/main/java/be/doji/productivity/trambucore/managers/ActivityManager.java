@@ -12,6 +12,7 @@ import java.nio.file.*;
 import java.text.ParseException;
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -139,7 +140,7 @@ public class ActivityManager {
         if (StringUtils.isBlank(name)) {
             return Optional.empty();
         }
-        
+
         for (Activity savedActivity : activities) {
             Optional<Activity> foundSub = findActivityInList(name, savedActivity.getSubActivities(), comparator);
             if (foundSub.isPresent()) {
@@ -271,11 +272,34 @@ public class ActivityManager {
     }
 
     private List<String> getRecursiveActivityNames(List<Activity> activities) {
-        ArrayList<String> names = new ArrayList<>();
+        return getRecursiveActivityProperty(activities, Activity::getName);
+    }
+
+    private List<String> getRecursiveActivityProperty(List<Activity> activities,
+            Function<Activity, String> propertyMapping) {
+        ArrayList<String> props = new ArrayList<>();
         for (Activity activity : activities) {
-            names.addAll(getRecursiveActivityNames(activity.getSubActivities()));
-            names.add(activity.getName());
+            props.addAll(getRecursiveActivityProperty(activity.getSubActivities(), propertyMapping));
+            props.add(propertyMapping.apply(activity));
         }
-        return names;
+        return props;
+    }
+
+    private List<String> getRecursiveActivityListProperty(List<Activity> activities,
+            Function<Activity, List<String>> propertyMapping) {
+        ArrayList<String> props = new ArrayList<>();
+        for (Activity activity : activities) {
+            props.addAll(getRecursiveActivityListProperty(activity.getSubActivities(), propertyMapping));
+            props.addAll(propertyMapping.apply(activity));
+        }
+        return props;
+    }
+
+    public List<String> getExistingTags() {
+        return getRecursiveActivityListProperty(this.activities, Activity::getTags);
+    }
+
+    public List<String> getExistingProjects() {
+        return getRecursiveActivityListProperty(this.activities, Activity::getProjects);
     }
 }

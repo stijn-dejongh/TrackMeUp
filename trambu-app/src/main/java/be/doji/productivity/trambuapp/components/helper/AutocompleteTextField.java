@@ -7,6 +7,7 @@ import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,13 +41,11 @@ public class AutocompleteTextField extends TextField {
                 suggestionsPopup.hide();
             } else {
                 List<String> matchingSuggestions = suggestions.stream().filter(suggestion -> suggestion.toLowerCase()
-                        .contains(StringUtils
-                                .substringAfter(currentText.toLowerCase(), DisplayConstants.SEPARATOR_TAGS_PROJECTS)))
-                        .collect(Collectors.toList());
+                        .contains(getLatestEntry(currentText).toLowerCase())).collect(Collectors.toList());
                 if (!matchingSuggestions.isEmpty()) {
                     updateSuggestionPopup(matchingSuggestions, currentText);
-                    if (suggestionsPopup.isShowing()) {
-                        suggestionsPopup.show(this, Side.BOTTOM, 0, 0);
+                    if (!suggestionsPopup.isShowing()) {
+                        suggestionsPopup.show(AutocompleteTextField.this, Side.BOTTOM, 0, 0);
                     }
                 } else {
                     suggestionsPopup.hide();
@@ -57,8 +56,7 @@ public class AutocompleteTextField extends TextField {
 
     private void updateSuggestionPopup(List<String> matchingSuggestions, String currentText) {
         List<CustomMenuItem> items = new ArrayList<>();
-        String currentEnteredText = StringUtils
-                .substringAfter(currentText.toLowerCase(), DisplayConstants.SEPARATOR_TAGS_PROJECTS);
+        String currentEnteredText = getLatestEntry(currentText);
 
         for (int i = 0; i < MAX_AMOUNT_OF_SUGGESTIONS && i < matchingSuggestions.size(); i++) {
             String suggestion = matchingSuggestions.get(i);
@@ -76,9 +74,22 @@ public class AutocompleteTextField extends TextField {
     }
 
     private void addDefaultListener() {
-        this.textProperty().addListener((observable, oldVal, newVal) -> {
+        this.focusedProperty().addListener((observable, oldVal, newVal) -> {
             suggestionsPopup.hide();
         });
     }
 
+    @NotNull private String getLatestEntry(String currentText) {
+        String afterIndicator = StringUtils.substringAfter(currentText, DisplayConstants.SEPARATOR_TAGS_PROJECTS)
+                .trim();
+        return StringUtils.isBlank(afterIndicator)?currentText:afterIndicator;
+    }
+
+    public SortedSet<String> getSuggestions() {
+        return suggestions;
+    }
+
+    public void setSuggestions(SortedSet<String> suggestions) {
+        this.suggestions = suggestions;
+    }
 }
