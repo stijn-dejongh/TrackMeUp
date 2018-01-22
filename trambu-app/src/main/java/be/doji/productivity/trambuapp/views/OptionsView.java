@@ -62,7 +62,7 @@ public class OptionsView extends View {
         grid.add(new Label("Notes directory: "), 0, 2);
         grid.add(createNotesSelectButton(), 1, 2);
 
-        grid.add(DisplayUtils.createHorizontalSpacer(), 0, 2, 2, 1);
+        grid.add(DisplayUtils.createHorizontalSpacer(), 0, 3, 2, 1);
 
         grid.add(createSavePreferencesButton(), 0, 3);
         return grid;
@@ -106,7 +106,7 @@ public class OptionsView extends View {
         DirectoryChooser notesDirectoryChooser = new DirectoryChooser();
         notesDirectoryChooser.setTitle("Open notes directory");
 
-        Button notesDirectoryButton = createOpenDirectoryButton("Select timelog file", notesDirectoryChooser, file -> {
+        Button notesDirectoryButton = createOpenDirectoryButton("Select notes directory", notesDirectoryChooser, file -> {
             try {
                 String filePath = file.getAbsolutePath();
                 this.configuredNoteLocation = filePath;

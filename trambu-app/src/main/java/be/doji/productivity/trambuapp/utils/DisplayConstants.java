@@ -2,11 +2,15 @@ package be.doji.productivity.trambuapp.utils;
 
 public final class DisplayConstants {
 
+
+
     /**
      * Utility classes should not have a public or default constructor
      */
     private DisplayConstants() {
     }
+
+    public static final String SEPARATOR_TAGS_PROJECTS = ",";
 
     public static final String TITLE_APPLICATION = "TraMBU - visual activity and time tracking";
     public static final String TITLE_ACTIVITY = "[Activities]";
