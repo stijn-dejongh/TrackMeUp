@@ -26,7 +26,7 @@ public class NoteManager {
     }
 
     public NoteManager(Path fileDirectory) throws IOException {
-        LOG.info("Creating new NoteManager on location: {0}", fileDirectory.toString());
+        LOG.info("Creating new NoteManager");
         this.fileDirectory = fileDirectory;
         this.readNoteData();
     }

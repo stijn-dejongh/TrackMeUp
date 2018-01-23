@@ -23,8 +23,8 @@ public class Note {
     }
 
     public List<String> readContent() throws IOException {
-        if (this.location == null || !Files.exists(location)) {
-            throw new IOException("File does not exist: " + this.location == null? "null" :location.toString());
+        if (this.location == null || !location.toFile().exists()) {
+            throw new IOException("Notes directory not found");
         }
 
         this.content = Files.readAllLines(location);
