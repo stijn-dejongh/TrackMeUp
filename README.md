@@ -13,12 +13,10 @@ open and portable.
 The project currently consists of three modules:
 
 * Trambu-core: The core library containing data models and logic
-* Trambu-web: Display package for Angular web-based interface
 * Trambu-app: Display package for stand-alone desktop application
 
-Note: The *Trambu-web* package is currently no longer under active development. It remains in the project in case someone 
-wants to use it a a basis for their own web-based version of TraMBU. Bug fixes and enhancements will only be developed and
-tested on the trambu-app module.
+Note: The *Trambu-web* package is currently no longer under active development. It was removed from the repository 
+due to build complications. It can still be found in the prerelease 0.7.0.
 
 
 ### Version 0.2.0
@@ -44,11 +42,6 @@ follow these steps:
 * In the root directory (which contains the pom) execute 'mvn clean install'
 * For each module, a 'target' directory will be created
 
-### Run the web application
-* Open a terminal window and navigate to the 'trambu-web/target' directory
-* Execute 'java -jar XXXX' , where XXXX is the name of the TraMBU jar
-* Navigate your browser to 'http://localhost:9666'
-* Set up the application to use your own 'todo.txt' file
 
 ### Run the standalone application
 * Open a terminal window and navigate to the 'trambu-app/target' directory
