@@ -52,7 +52,7 @@ public class ActivityNode extends TitledPane {
     private ActivityLog activityLog;
     private boolean parentChanged;
     private TextField warningPeriodInHours;
-    private TextField locationField;
+    private AutocompleteTextField locationField;
     private OverlayPane overlay;
 
     public ActivityNode(Activity activity, ActivityOverview trambuApplication) {
@@ -257,7 +257,11 @@ public class ActivityNode extends TitledPane {
     }
 
     private Node createEditableLocation() {
-        locationField = new TextField();
+        locationField = new AutocompleteTextField();
+        SortedSet<String> existingLocations = new TreeSet<>();
+        existingLocations.addAll(application.getActivityController().getActivityManager().getExistingLocations());
+        locationField.setSuggestions(existingLocations);
+
         if (activity.isSetLocation()) {
             locationField.setText(activity.getLocation());
         }

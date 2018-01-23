@@ -8,6 +8,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +18,8 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 public class AutocompleteTextField extends TextField {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AutocompleteTextField.class);
 
     private SortedSet<String> suggestions;
     private ContextMenu suggestionsPopup;
@@ -45,7 +49,11 @@ public class AutocompleteTextField extends TextField {
                 if (!matchingSuggestions.isEmpty()) {
                     updateSuggestionPopup(matchingSuggestions, currentText);
                     if (!suggestionsPopup.isShowing()) {
-                        suggestionsPopup.show(AutocompleteTextField.this, Side.BOTTOM, 0, 0);
+                        try {
+                            suggestionsPopup.show(AutocompleteTextField.this, Side.BOTTOM, 0, 0);
+                        } catch (IllegalArgumentException e) {
+                            LOG.error("Error while displaying popup with suggestions :" + e.getMessage());
+                        }
                     }
                 } else {
                     suggestionsPopup.hide();
@@ -65,6 +73,7 @@ public class AutocompleteTextField extends TextField {
             menuItem.setOnAction(click -> {
                 this.setText(currentText.replace(currentEnteredText, suggestion));
                 suggestionsPopup.hide();
+                this.positionCaret(this.getText().length());
             });
             items.add(menuItem);
         }

@@ -1,1 +1,0 @@
-angular.module('activityOverview', ['ui.bootstrap']);

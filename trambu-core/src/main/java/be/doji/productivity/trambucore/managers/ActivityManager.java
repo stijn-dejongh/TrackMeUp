@@ -302,4 +302,9 @@ public class ActivityManager {
     public List<String> getExistingProjects() {
         return getRecursiveActivityListProperty(this.activities, Activity::getProjects);
     }
+
+    public List<String> getExistingLocations() {
+        return getRecursiveActivityProperty(this.activities, Activity::getLocation).stream()
+                .filter(activity -> activity != null).collect(Collectors.toList());
+    }
 }

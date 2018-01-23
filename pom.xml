@@ -65,7 +65,6 @@
 
     <modules>
         <module>trambu-core</module>
-        <module>trambu-web</module>
         <module>trambu-app</module>
     </modules>
 </project>
