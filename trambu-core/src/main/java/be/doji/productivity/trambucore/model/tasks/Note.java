@@ -24,7 +24,7 @@ public class Note {
 
     public List<String> readContent() throws IOException {
         if (this.location == null || !Files.exists(location)) {
-            throw new IOException("File does not exist: " + location.toString());
+            throw new IOException("File does not exist: " + this.location == null? "null" :location.toString());
         }
 
         this.content = Files.readAllLines(location);
