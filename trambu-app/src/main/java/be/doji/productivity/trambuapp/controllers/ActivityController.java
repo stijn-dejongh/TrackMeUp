@@ -12,7 +12,6 @@ import tornadofx.Controller;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Collection;
 import java.util.Optional;
 
 public class ActivityController extends Controller {
@@ -53,7 +52,7 @@ public class ActivityController extends Controller {
         }
     }
 
-    private void initializeNotes(String noteLocation) throws IOException, ParseException {
+    private void initializeNotes(String noteLocation) throws IOException {
         if (noteManager == null) {
             this.noteManager = new NoteManager(noteLocation);
         }

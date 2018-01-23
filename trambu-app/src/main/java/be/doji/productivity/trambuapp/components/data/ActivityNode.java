@@ -370,7 +370,7 @@ public class ActivityNode extends TitledPane {
         int logRowIndex = 0;
         Label logpointInfo = new Label("There are " + logpoints.size() + " timelogs available.  ");
         logpointGrid.add(logpointInfo, 0, logRowIndex);
-        if (logpoints.size() > 0) {
+        if (!logpoints.isEmpty()) {
             logpointGrid.add(createOpenLogsButton(logpoints), 1, logRowIndex++);
         } else {
             logRowIndex++;

@@ -26,13 +26,13 @@ public class NoteManager {
     }
 
     public NoteManager(Path fileDirectory) throws IOException {
-        LOG.info("Creating new NoteManager on location: " + fileDirectory.toString());
+        LOG.info("Creating new NoteManager on location: {0}", fileDirectory.toString());
         this.fileDirectory = fileDirectory;
         this.readNoteData();
     }
 
     private void readNoteData() throws IOException {
-        if (Files.isDirectory(fileDirectory)) {
+        if (fileDirectory.toFile().isDirectory()) {
             Files.walkFileTree(fileDirectory, new SimpleFileVisitor<Path>() {
 
                 @Override public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
@@ -51,7 +51,8 @@ public class NoteManager {
 
     private Optional<String> findActivityIdFromFileName(String fileName) {
         List<String> uuidMatches = TrackerUtils.findAllMatches(ActivityParser.REGEX_UUID, fileName);
-        for (String uuidMatch : uuidMatches) {
+        if (!uuidMatches.isEmpty()) {
+            String uuidMatch = uuidMatches.get(0);
             String uuidString = uuidMatch.replace(TrackMeConstants.INDICATOR_UUID, "").trim();
             return Optional.of(uuidString);
         }

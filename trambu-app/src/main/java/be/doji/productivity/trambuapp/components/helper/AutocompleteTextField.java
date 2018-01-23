@@ -39,27 +39,31 @@ public class AutocompleteTextField extends TextField {
     }
 
     private void addTextEntryListener() {
-        this.textProperty().addListener((observable, oldVal, newVal) -> {
-            String currentText = getText();
-            if (StringUtils.isBlank(currentText)) {
-                suggestionsPopup.hide();
-            } else {
-                List<String> matchingSuggestions = suggestions.stream().filter(suggestion -> suggestion.toLowerCase()
-                        .contains(getLatestEntry(currentText).toLowerCase())).collect(Collectors.toList());
-                if (!matchingSuggestions.isEmpty()) {
-                    updateSuggestionPopup(matchingSuggestions, currentText);
-                    if (!suggestionsPopup.isShowing()) {
-                        try {
-                            suggestionsPopup.show(AutocompleteTextField.this, Side.BOTTOM, 0, 0);
-                        } catch (IllegalArgumentException e) {
-                            LOG.error("Error while displaying popup with suggestions :" + e.getMessage());
-                        }
+        this.textProperty().addListener((observable, oldVal, newVal) -> suggestionForTextListener());
+
+    }
+
+    private void suggestionForTextListener() {
+        String currentText = getText();
+        if (StringUtils.isBlank(currentText)) {
+            suggestionsPopup.hide();
+        } else {
+            List<String> matchingSuggestions = suggestions.stream()
+                    .filter(suggestion -> suggestion.toLowerCase().contains(getLatestEntry(currentText).toLowerCase()))
+                    .collect(Collectors.toList());
+            if (!matchingSuggestions.isEmpty()) {
+                updateSuggestionPopup(matchingSuggestions, currentText);
+                if (!suggestionsPopup.isShowing()) {
+                    try {
+                        suggestionsPopup.show(AutocompleteTextField.this, Side.BOTTOM, 0, 0);
+                    } catch (IllegalArgumentException e) {
+                        LOG.error("Error while displaying popup with suggestions :" + e.getMessage());
                     }
-                } else {
-                    suggestionsPopup.hide();
                 }
+            } else {
+                suggestionsPopup.hide();
             }
-        });
+        }
     }
 
     private void updateSuggestionPopup(List<String> matchingSuggestions, String currentText) {
@@ -83,9 +87,7 @@ public class AutocompleteTextField extends TextField {
     }
 
     private void addDefaultListener() {
-        this.focusedProperty().addListener((observable, oldVal, newVal) -> {
-            suggestionsPopup.hide();
-        });
+        this.focusedProperty().addListener((observable, oldVal, newVal) -> suggestionsPopup.hide());
     }
 
     @NotNull private String getLatestEntry(String currentText) {
