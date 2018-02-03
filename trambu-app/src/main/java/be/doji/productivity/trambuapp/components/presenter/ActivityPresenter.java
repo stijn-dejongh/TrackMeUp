@@ -4,22 +4,25 @@ import be.doji.productivity.trambuapp.components.view.ActivityView;
 import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
 import be.doji.productivity.trambuapp.utils.TooltipConstants;
+import be.doji.productivity.trambucore.managers.NoteManager;
 import be.doji.productivity.trambucore.model.tasks.Activity;
+import be.doji.productivity.trambucore.model.tasks.Note;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.collections.ObservableList;
-import javafx.scene.control.TitledPane;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.time.Duration;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class ActivityPresenter extends Presenter {
 
@@ -28,7 +31,7 @@ public class ActivityPresenter extends Presenter {
     private final ActivityManagerContainer managerContainer;
     private Activity model;
     private ActivityView view;
-    private Presenter parent;
+    private ActivityPagePresenter parent;
     private boolean modelParentChanged;
 
     public ActivityPresenter(ActivityView view, Activity model) {
@@ -37,7 +40,7 @@ public class ActivityPresenter extends Presenter {
         this.managerContainer = find(ActivityManagerContainer.class);
     }
 
-    public ActivityPresenter(ActivityView view, Activity model, Presenter parent) {
+    public ActivityPresenter(ActivityView view, Activity model, ActivityPagePresenter parent) {
         this(view, model);
         this.parent = parent;
     }
@@ -55,6 +58,8 @@ public class ActivityPresenter extends Presenter {
     public void refreshFields() {
         refreshSubActivities();
         refreshEditableTagsField();
+        refreshEditableProjectsField();
+        refreshEditableLocation();
     }
 
     public void refreshHeader() {
@@ -92,13 +97,7 @@ public class ActivityPresenter extends Presenter {
     }
 
     public void headerButtonClicked() {
-        try {
-            view.toggleCompleted();
-            refreshHeader();
-            save();
-        } catch (IOException | ParseException e) {
-            LOG.error("Error while saving activity to file: " + e.getMessage());
-        }
+        this.doneClicked();
     }
 
     public String getActivityStyle() {
@@ -213,6 +212,62 @@ public class ActivityPresenter extends Presenter {
         view.getTagsField().setSuggestions(treeSetTags);
     }
 
+    private void refreshEditableProjectsField() {
+        Optional<String> reducedProjects = this.model.getProjects().stream()
+                .reduce((s, s2) -> s + DisplayConstants.FIELD_SEPERATOR + " " + s2);
+
+        reducedProjects.ifPresent(s -> view.getProjectsField().setText(s));
+        SortedSet<String> treeSetProjects = new TreeSet<>();
+        treeSetProjects.addAll(this.managerContainer.getActivityManager().getExistingProjects());
+        view.getProjectsField().setSuggestions(treeSetProjects);
+    }
+
+    private void refreshEditableLocation() {
+        SortedSet<String> existingLocations = new TreeSet<>();
+        existingLocations.addAll(this.managerContainer.getActivityManager().getExistingLocations());
+        view.getLocationField().setSuggestions(existingLocations);
+
+        if (this.model.isSetLocation()) {
+            view.getLocationField().setText(this.model.getLocation());
+        } else {
+            view.getLocationField().setText("UNKNOWN");
+        }
+    }
+
+    private void refreshDeadlineLabel() {
+        view.getDeadlineLabel()
+                .setText(DateFormat.getDateInstance(DateFormat.DEFAULT).format(this.model.getDeadline()));
+        if (this.model.isAlertActive()) {
+            view.getDeadlineLabel().getStyleClass().add("warningLabel");
+        }
+    }
+
+    private void refreshTags() {
+        view.getTagsBox().getChildren().addAll(this.model.getTags().stream().map(tag -> {
+            Button button = new Button(tag);
+            button.setOnAction(e -> {
+                if (parent != null) {
+                    parent.setTagFilter(tag);
+                }
+                refresh();
+            });
+            return button;
+        }).collect(Collectors.toList()));
+    }
+
+    private void refreshProjects() {
+        view.getProjectsBox().getChildren().addAll(this.model.getProjects().stream().map(project -> {
+            Button button = new Button(project);
+            button.setOnAction(e -> {
+                if (parent != null) {
+                    parent.setProjectFilter(project);
+                }
+                refresh();
+            });
+            return button;
+        }).collect(Collectors.toList()));
+    }
+
     public boolean hasSubActivities() {
         return !this.model.getSubActivities().isEmpty();
     }
@@ -231,5 +286,83 @@ public class ActivityPresenter extends Presenter {
         view.getDeadlineDatePicker().getValue();
         this.model.setDeadline(
                 Date.from(view.getDeadlineDatePicker().getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+    }
+
+    public void openNotes() {
+        try {
+            NoteManager noteManager = this.managerContainer.getNoteManager();
+            Optional<Note> noteForActivity = noteManager.findNoteForActivity(this.model.getId());
+            Note note;
+            if (noteForActivity.isPresent()) {
+                note = noteForActivity.get();
+            } else {
+                note = noteManager.createNoteForActivity(this.model.getId());
+            }
+
+            TextArea textField = new TextArea();
+            textField.setPrefWidth(view.getOverlay().getWidth());
+            textField.setPrefHeight(view.getOverlay().getHeight());
+            textField.setText(note.getContent().stream().collect(Collectors.joining(System.lineSeparator())));
+            textField.setWrapText(true);
+            textField.setEditable(true);
+            view.getOverlay().setContent(textField);
+            view.getOverlay().setControlButtons(createNoteControlButtons(note, textField));
+            view.getOverlay().refreshContent();
+            view.getOverlay().setVisible(true);
+        } catch (IOException e) {
+            view.getOverlay().setContent(new Label("Error reading notes: " + e.getMessage()));
+        }
+    }
+
+    private List<Button> createNoteControlButtons(Note noteToSave, TextArea textField) {
+        List<Button> controls = new ArrayList<>();
+        Button saveButton = new Button("Save changes");
+        saveButton.setGraphic(DisplayUtils.createStyledIcon(FontAwesomeIcon.SAVE));
+        saveButton.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_ACTIVITY_SAVE_NOTE));
+        saveButton.setOnAction(event -> {
+            try {
+                noteToSave.setContent(Arrays.asList(textField.getText().split(System.lineSeparator())));
+                noteToSave.save();
+            } catch (IOException e) {
+                LOG.error("Error saving note to file: " + e.getMessage());
+            }
+        });
+        controls.add(saveButton);
+        return controls;
+    }
+
+    public List<String> getPossibleParents() {
+        List<String> possibleParents = this.managerContainer.getActivityManager().getAllActivityNames();
+        possibleParents.remove(this.model.getName());
+        return possibleParents;
+    }
+
+    public void changeParent(String newParent) {
+        Optional<Activity> savedParent = this.managerContainer.getActivityManager().getSavedActivityByName(newParent);
+        if (savedParent.isPresent()) {
+            this.managerContainer.getActivityManager().addActivityAsSub(this.model, savedParent.get());
+        }
+        this.modelParentChanged = true;
+    }
+
+    public void refreshDoneButton() {
+        view.getDoneButton().setText(DisplayUtils.getDoneButtonText(this.model));
+        view.getDoneButton().setTooltip(getDoneTooltipText());
+    }
+
+    public void doneClicked() {
+        try {
+            if (!this.model.isCompleted() && !this.model.isAllSubActivitiesCompleted()) {
+                LOG.warn("Completing activity with incomplete subactivities");
+            }
+
+            this.model.setCompleted(!model.isCompleted());
+            view.getDoneButton().setText(DisplayUtils.getDoneButtonText(this.model));
+            view.getDoneButton().setTooltip(getDoneTooltipText());
+            save();
+            refreshHeader();
+        } catch (IOException | ParseException e) {
+            LOG.error(DisplayConstants.ERROR_MESSAGE_ACTIVITY_SAVING + ": " + e.getMessage());
+        }
     }
 }
