@@ -42,6 +42,7 @@ public class ActivityPresenter extends Component {
     }
 
     public void populateActivities() {
+        view.getPanes().clear();
         Map<Date, List<Activity>> groupedActivities = model.getActivityManager().getActivitiesWithDateHeader();
         for (Map.Entry<Date, List<Activity>> activityGroupEntry : groupedActivities.entrySet()) {
             List<Activity> activityGroup = activityGroupEntry.getValue();

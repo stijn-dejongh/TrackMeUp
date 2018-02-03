@@ -83,7 +83,7 @@ public class ActivityView extends View {
 
     public void refreshAccordion() {
         this.activityAccordion.getPanes().clear();
-        this.activityAccordion.getPanes().addAll(this.getActivityPanes());
+        this.activityAccordion.getPanes().addAll(this.getPanes());
         getActivePane().ifPresent(activityAccordion::setExpandedPane);
     }
 
