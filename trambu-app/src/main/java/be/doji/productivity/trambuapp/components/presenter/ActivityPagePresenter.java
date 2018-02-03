@@ -53,7 +53,7 @@ public class ActivityPagePresenter extends Presenter {
                 view.addPane(DisplayUtils
                         .createSeperatorPane(DisplayUtils.getDateSeperatorText(activityGroupEntry.getKey())));
                 for (Activity activity : activityGroup) {
-                    view.addPane(new ActivityView(activity));
+                    view.addPane(new ActivityView(activity, this));
                 }
             }
         }
@@ -70,13 +70,9 @@ public class ActivityPagePresenter extends Presenter {
     }
 
     public boolean shouldBeFiltered(ActivityView pane) {
-        boolean shouldFilterBasedOnProject =
-                StringUtils.isNotBlank(getProjectFilter()) && !pane.getActivity().getProjects().parallelStream()
-                        .anyMatch(project -> StringUtils.equalsIgnoreCase(project, getProjectFilter()));
-        boolean shouldFilterBasedOnTag =
-                StringUtils.isNotBlank(getTagFilter()) && !pane.getActivity().getTags().parallelStream()
-                        .anyMatch(project -> StringUtils.equalsIgnoreCase(project, getTagFilter()));
-        boolean shouldFilterBasedOnCompletion = filterDone && pane.getActivity().isCompleted();
+        boolean shouldFilterBasedOnProject = pane.getPresenter().shouldBeFilteredOnProject(getProjectFilter());
+        boolean shouldFilterBasedOnTag = pane.getPresenter().shouldBeFilteredOnTag(getTagFilter());
+        boolean shouldFilterBasedOnCompletion = filterDone && pane.getPresenter().isActivityCompleted();
         return shouldFilterBasedOnProject || shouldFilterBasedOnTag || shouldFilterBasedOnCompletion;
     }
 

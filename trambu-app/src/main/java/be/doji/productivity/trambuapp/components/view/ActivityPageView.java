@@ -77,7 +77,7 @@ public class ActivityPageView extends View {
     }
 
     @NotNull private ActivityView createActivityPane(Activity activity) {
-        return new ActivityView(activity, presenter);
+        return new ActivityView(activity);
     }
 
     public void refreshAccordion() {

@@ -7,6 +7,8 @@ import be.doji.productivity.trambuapp.utils.TooltipConstants;
 import be.doji.productivity.trambucore.managers.NoteManager;
 import be.doji.productivity.trambucore.model.tasks.Activity;
 import be.doji.productivity.trambucore.model.tasks.Note;
+import be.doji.productivity.trambucore.model.tracker.ActivityLog;
+import be.doji.productivity.trambucore.model.tracker.TimeLog;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.collections.ObservableList;
@@ -28,7 +30,8 @@ public class ActivityPresenter extends Presenter {
 
     private static final Logger LOG = LoggerFactory.getLogger(ActivityPresenter.class);
 
-    private final ActivityManagerContainer managerContainer;
+    private ActivityManagerContainer managerContainer;
+    private ActivityLog activityLog;
     private Activity model;
     private ActivityView view;
     private ActivityPagePresenter parent;
@@ -38,6 +41,7 @@ public class ActivityPresenter extends Presenter {
         this.view = view;
         this.model = model;
         this.managerContainer = find(ActivityManagerContainer.class);
+        this.activityLog = getActivityLog();
     }
 
     public ActivityPresenter(ActivityView view, Activity model, ActivityPagePresenter parent) {
@@ -50,9 +54,14 @@ public class ActivityPresenter extends Presenter {
     }
 
     public void refresh() {
+        this.activityLog = getActivityLog();
         refreshHeader();
         refreshViewStyle();
         refreshFields();
+    }
+
+    public ActivityLog getActivityLog() {
+        return managerContainer.getTimeTrackingManager().getLogForActivityId(this.model.getId());
     }
 
     public void refreshFields() {
@@ -364,5 +373,89 @@ public class ActivityPresenter extends Presenter {
         } catch (IOException | ParseException e) {
             LOG.error(DisplayConstants.ERROR_MESSAGE_ACTIVITY_SAVING + ": " + e.getMessage());
         }
+    }
+
+    public void editButtonClicked() {
+        try {
+            if (view.isEditable()) {
+                view.makeUneditable();
+                save();
+            } else {
+                view.makeEditable();
+            }
+            refresh();
+            view.getEditButton().setText(getEditButonText());
+        } catch (IOException | ParseException e) {
+            LOG.error(DisplayConstants.ERROR_MESSAGE_ACTIVITY_SAVING + ": " + e.getMessage());
+        }
+    }
+
+    public String getEditButonText() {
+        return view.isEditable()?DisplayConstants.BUTTON_TEXT_SAVE:DisplayConstants.BUTTON_TEXT_EDIT;
+    }
+
+    public void deleteButtonClicked() {
+        try {
+            this.managerContainer.getActivityManager().delete(this.model);
+            view.setVisible(false);
+            if (this.parent != null) {
+                parent.refresh();
+            }
+        } catch (IOException | ParseException e) {
+            LOG.error(DisplayConstants.ERROR_MESSAGE_ACTIVITY_SAVING + ": " + e.getMessage());
+        }
+    }
+
+    public void timingButtonPressed() {
+        if (getActiveLog().isPresent()) {
+            activityLog.stopActiveLog();
+        } else {
+            activityLog.startLog();
+        }
+        view.getTimingButton().setText(getTimingButtonText());
+        view.getTimingButton().setGraphic(getTimingButtonIcon());
+        this.managerContainer.getTimeTrackingManager().save(activityLog);
+    }
+
+    public FontAwesomeIconView getTimingButtonIcon() {
+        return DisplayUtils.createStyledIcon(
+                activityLog.getActiveLog().isPresent()?FontAwesomeIcon.HOURGLASS_END:FontAwesomeIcon.HOURGLASS_START);
+    }
+
+    public String getTimingButtonText() {
+        Optional<TimeLog> activeLog = getActiveLog();
+        if (activeLog.isPresent()) {
+            return DisplayConstants.BUTTON_TEXT_TIMER_STOP;
+        } else {
+            return DisplayConstants.BUTTON_TEXT_TIMER_START;
+        }
+    }
+
+    public Tooltip getTimingButtonTooltipText() {
+        return DisplayUtils.createTooltip(getActiveLog().isPresent()?
+                TooltipConstants.TOOLTIP_TEXT_ACTIVITY_TIMING_CONTROL_STOP:
+                TooltipConstants.TOOLTIP_TEXT_ACTIVITY_TIMING_CONTROL_START);
+    }
+
+    private Optional<TimeLog> getActiveLog() {
+        return getActivityLog().getActiveLog();
+    }
+
+    void setManagerContainer(ActivityManagerContainer container) {
+        this.managerContainer = container;
+    }
+
+    public boolean shouldBeFilteredOnProject(String projectFilter) {
+        return StringUtils.isNotBlank(projectFilter) && !this.model.getProjects().parallelStream()
+                .anyMatch(project -> StringUtils.equalsIgnoreCase(project, projectFilter));
+    }
+
+    public boolean shouldBeFilteredOnTag(String tagFilter) {
+        return StringUtils.isNotBlank(tagFilter) && !this.model.getTags().parallelStream()
+                .anyMatch(tag -> StringUtils.equalsIgnoreCase(tag, tagFilter));
+    }
+
+    public boolean isActivityCompleted() {
+        return this.model.isCompleted();
     }
 }

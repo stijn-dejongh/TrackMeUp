@@ -2,13 +2,13 @@ package be.doji.productivity.trambuapp.components.view;
 
 import be.doji.productivity.trambuapp.components.elements.AutocompleteTextField;
 import be.doji.productivity.trambuapp.components.elements.OverlayPane;
+import be.doji.productivity.trambuapp.components.presenter.ActivityPagePresenter;
 import be.doji.productivity.trambuapp.components.presenter.ActivityPresenter;
 import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
 import be.doji.productivity.trambuapp.utils.TooltipConstants;
 import be.doji.productivity.trambucore.TrackMeConstants;
 import be.doji.productivity.trambucore.model.tasks.Activity;
-import be.doji.productivity.trambucore.model.tracker.ActivityLog;
 import be.doji.productivity.trambucore.model.tracker.TimeLog;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
@@ -24,11 +24,8 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
-import java.util.Optional;
 
 public class ActivityView extends TitledPane {
 
@@ -42,7 +39,6 @@ public class ActivityView extends TitledPane {
     private TextField nameField;
     private AutocompleteTextField projectsField;
     private AutocompleteTextField tagsField;
-    private ActivityLog activityLog;
     private TextField warningPeriodInHours;
     private AutocompleteTextField locationField;
     private OverlayPane overlay;
@@ -55,15 +51,24 @@ public class ActivityView extends TitledPane {
     private HBox tagsBox;
     private HBox projectsBox;
     private Button doneButton;
+    private Button editButton;
+    private Button deleteButton;
+    private Button timingButton;
 
     public ActivityView(Activity activity) {
         super();
         this.presenter = new ActivityPresenter(this, activity);
+        setUp();
+    }
 
-        /**
-         * TODO: add this to presenter
-         * this.activityLog = presenter.getLogForActivityId(activity.getId());
-         */
+    public ActivityView(Activity activity, ActivityPagePresenter parentPresenter) {
+        super();
+        this.presenter = new ActivityPresenter(this, activity, parentPresenter);
+        setUp();
+
+    }
+
+    public void setUp() {
         overlay = new OverlayPane();
         this.createHeader();
         this.setContent(createContentContainer());
@@ -72,7 +77,7 @@ public class ActivityView extends TitledPane {
         presenter.populate();
     }
 
-    @NotNull public StackPane createContentContainer() {
+    @NotNull private StackPane createContentContainer() {
         StackPane contentContainer = new StackPane();
         GridPane activityContent = createActivityContent();
         contentContainer.getChildren().add(activityContent);
@@ -80,12 +85,12 @@ public class ActivityView extends TitledPane {
         return contentContainer;
     }
 
-    public void createHeader() {
+    private void createHeader() {
         this.setText(presenter.getActivityName());
         this.setGraphic(createTitleLabel());
     }
 
-    public Button createTitleLabel() {
+    private Button createTitleLabel() {
         this.titleLabel = new Button();
         titleLabel.getStyleClass().clear();
         titleLabel.getStyleClass().add("icon-button");
@@ -106,6 +111,7 @@ public class ActivityView extends TitledPane {
         int rowIndex = 0;
         content.add(createActvityControls(), 0, rowIndex++, 2, 1);
         content.add(DisplayUtils.createHorizontalSpacer(), 0, rowIndex++, 2, 1);
+        content.add(createTimingControls(), 0, rowIndex++, 2, 1);
 
         content.add(new Label("Priority: "), 0, rowIndex);
         content.add(createStaticPriority(), 1, rowIndex++);
@@ -269,7 +275,7 @@ public class ActivityView extends TitledPane {
         return hbox;
     }
 
-    private Node createEditableTags() {
+    Node createEditableTags() {
         tagsField = new AutocompleteTextField();
         return tagsField;
     }
@@ -280,7 +286,7 @@ public class ActivityView extends TitledPane {
     }
 
     private GridPane createLogPoints() {
-        List<TimeLog> logpoints = activityLog.getLogpoints();
+        List<TimeLog> logpoints = presenter.getActivityLog().getLogpoints();
 
         GridPane logpointGrid = new GridPane();
         logpointGrid.setVgap(4);
@@ -295,7 +301,7 @@ public class ActivityView extends TitledPane {
         }
 
         logpointGrid.add(new Label("Time spent on activity: "), 0, logRowIndex);
-        logpointGrid.add(new Label(activityLog.getTimeSpentInHoursString()), 1, logRowIndex);
+        logpointGrid.add(new Label(presenter.getActivityLog().getTimeSpentInHoursString()), 1, logRowIndex);
         return logpointGrid;
     }
 
@@ -365,6 +371,23 @@ public class ActivityView extends TitledPane {
         return content;
     }
 
+    HBox createTimingControls() {
+        HBox timingControls = new HBox();
+
+        this.timingButton = new Button(presenter.getTimingButtonText());
+        timingButton.setOnAction(event -> {
+            presenter.timingButtonPressed();
+        });
+
+        FontAwesomeIconView iconView = presenter.getTimingButtonIcon();
+        timingButton.setGraphic(iconView);
+        timingButton.setTooltip(presenter.getTimingButtonTooltipText());
+
+        timingControls.getChildren().add(timingButton);
+
+        return timingControls;
+    }
+
     private Button createDoneButton() {
         this.doneButton = new Button();
         FontAwesomeIconView doneIcon = DisplayUtils.createStyledIcon(FontAwesomeIcon.REFRESH);
@@ -375,11 +398,31 @@ public class ActivityView extends TitledPane {
         return this.doneButton;
     }
 
-    void makeEditable() {
+    private Button createEditButton() {
+        this.editButton = new Button(presenter.getEditButonText());
+        FontAwesomeIconView editIcon = DisplayUtils.createStyledIcon(FontAwesomeIcon.EDIT);
+        editButton.setGraphic(editIcon);
+        editButton.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_ACTIVITY_EDIT));
+        editButton.setOnAction(event -> presenter.editButtonClicked());
+        return editButton;
+    }
+
+    private Node createDeleteButton() {
+        this.deleteButton = new Button(DisplayConstants.BUTTON_TEXT_DELETE);
+        FontAwesomeIconView removeIcon = DisplayUtils.createStyledIcon(FontAwesomeIcon.REMOVE);
+        deleteButton.setGraphic(removeIcon);
+        deleteButton.setOnAction(event -> {
+            presenter.deleteButtonClicked();
+        });
+        deleteButton.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_ACTIVITY_DELETE));
+        return deleteButton;
+    }
+
+    public void makeEditable() {
         this.isEditable = true;
     }
 
-    void makeUneditable() {
+    public void makeUneditable() {
         this.isEditable = false;
     }
 
@@ -402,6 +445,14 @@ public class ActivityView extends TitledPane {
 
     public void setDoneButton(Button doneButton) {
         this.doneButton = doneButton;
+    }
+
+    public Button getEditButton() {
+        return editButton;
+    }
+
+    public void setEditButton(Button editButton) {
+        this.editButton = editButton;
     }
 
     public HBox getTagsBox() {
@@ -458,14 +509,6 @@ public class ActivityView extends TitledPane {
 
     public void setTagsField(AutocompleteTextField tagsField) {
         this.tagsField = tagsField;
-    }
-
-    public ActivityLog getActivityLog() {
-        return activityLog;
-    }
-
-    public void setActivityLog(ActivityLog activityLog) {
-        this.activityLog = activityLog;
     }
 
     public TextField getWarningPeriodInHours() {
@@ -532,111 +575,31 @@ public class ActivityView extends TitledPane {
         this.locationLabel = locationLabel;
     }
 
-    private Button createEditButton() {
-        Button edit = new Button(getEditButonText());
-        FontAwesomeIconView editIcon = DisplayUtils.createStyledIcon(FontAwesomeIcon.EDIT);
-        edit.setGraphic(editIcon);
-        edit.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_ACTIVITY_EDIT));
-        edit.setOnAction(event -> {
-            try {
-                if (isEditable) {
-                    makeUneditable();
-                    save();
-                    setContent(createActivityContent());
-
-                } else {
-                    makeEditable();
-                    setContent(createActivityContent());
-                }
-                updateHeader();
-                edit.setText(getEditButonText());
-            } catch (IOException | ParseException e) {
-                LOG.error(DisplayConstants.ERROR_MESSAGE_ACTIVITY_SAVING + ": " + e.getMessage());
-            }
-        });
-        return edit;
+    public Button getDeleteButton() {
+        return deleteButton;
     }
 
-    private String getEditButonText() {
-        return this.isEditable?DisplayConstants.BUTTON_TEXT_SAVE:DisplayConstants.BUTTON_TEXT_EDIT;
+    public void setDeleteButton(Button deleteButton) {
+        this.deleteButton = deleteButton;
     }
 
-    private Node createDeleteButton() {
-        Button delete = new Button(DisplayConstants.BUTTON_TEXT_DELETE);
-        FontAwesomeIconView removeIcon = DisplayUtils.createStyledIcon(FontAwesomeIcon.REMOVE);
-        delete.setGraphic(removeIcon);
-        delete.setOnAction(event -> {
-            try {
-                this.toggleCompleted();
-                presenter.getActivityController().getActivityManager().delete(this.activity);
-                presenter.refresh();
-            } catch (IOException | ParseException e) {
-                LOG.error(DisplayConstants.ERROR_MESSAGE_ACTIVITY_SAVING + ": " + e.getMessage());
-            }
-        });
-        delete.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_ACTIVITY_DELETE));
-        return delete;
+    public Button getTimingButton() {
+        return timingButton;
     }
 
-    HBox createTimingControls() {
-        activityLog = presenter.getActivityController().getTimeTrackingManager()
-                .getLogForActivityId(this.activity.getId());
-        HBox timingControls = new HBox();
-
-        Button startStopButton = new Button(getTimingButtonText());
-        Optional<TimeLog> activeLog = activityLog.getActiveLog();
-        startStopButton.setOnAction(event -> {
-            if (activeLog.isPresent()) {
-                activityLog.stopActiveLog();
-            } else {
-                activityLog.startLog();
-            }
-            startStopButton.setText(getTimingButtonText());
-            startStopButton.setGraphic(getTimingButtonIcon());
-            presenter.getActivityController().getTimeTrackingManager().save(activityLog);
-            this.setContent(createActivityContent());
-        });
-
-        FontAwesomeIconView iconView = getTimingButtonIcon();
-        startStopButton.setGraphic(iconView);
-        startStopButton.setTooltip(getTimingButtonTooltipText());
-
-        timingControls.getChildren().add(startStopButton);
-
-        return timingControls;
-    }
-
-    private FontAwesomeIconView getTimingButtonIcon() {
-        return DisplayUtils.createStyledIcon(
-                activityLog.getActiveLog().isPresent()?FontAwesomeIcon.HOURGLASS_END:FontAwesomeIcon.HOURGLASS_START);
-    }
-
-    private String getTimingButtonText() {
-        Optional<TimeLog> activeLog = getActiveLog();
-        if (activeLog.isPresent()) {
-            return DisplayConstants.BUTTON_TEXT_TIMER_STOP;
-        } else {
-            return DisplayConstants.BUTTON_TEXT_TIMER_START;
-        }
-    }
-
-    private Optional<TimeLog> getActiveLog() {
-        activityLog = presenter.getActivityController().getTimeTrackingManager()
-                .getLogForActivityId(this.activity.getId());
-        return activityLog.getActiveLog();
-    }
-
-    public Tooltip getTimingButtonTooltipText() {
-        return DisplayUtils.createTooltip(getActiveLog().isPresent()?
-                TooltipConstants.TOOLTIP_TEXT_ACTIVITY_TIMING_CONTROL_STOP:
-                TooltipConstants.TOOLTIP_TEXT_ACTIVITY_TIMING_CONTROL_START);
+    public void setTimingButton(Button timingButton) {
+        this.timingButton = timingButton;
     }
 
     public void refresh() {
-        presenter.getActivityController().getActivityManager().getSavedActivityById(this.activity.getId().toString())
-                .ifPresent(savedActivity -> this.activity = savedActivity);
-        this.setContent(this.createContentContainer());
-        this.updateHeader();
+        this.presenter.refresh();
     }
 
+    public ActivityPresenter getPresenter() {
+        return this.presenter;
+    }
+
+    void setPresenter() {
+        this.presenter = presenter;
+    }
 }
