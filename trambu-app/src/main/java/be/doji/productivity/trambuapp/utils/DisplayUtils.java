@@ -5,6 +5,7 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Separator;
+import javafx.scene.control.TitledPane;
 import javafx.scene.control.Tooltip;
 
 import java.text.DateFormat;
@@ -59,6 +60,15 @@ public final class DisplayUtils {
         FontAwesomeIconView tooltipIcon = new FontAwesomeIconView(icon);
         tooltipIcon.setGlyphStyle(DisplayConstants.STYLE_GLYPH_DEFAULT);
         return tooltipIcon;
+    }
+
+    public static TitledPane createSeperatorPane(String text) {
+        TitledPane headerPane = new TitledPane();
+
+        headerPane.setText(text);
+        headerPane.setCollapsible(false);
+        headerPane.setStyle("-fx-start-margin: 15px;");
+        return headerPane;
     }
 
 }

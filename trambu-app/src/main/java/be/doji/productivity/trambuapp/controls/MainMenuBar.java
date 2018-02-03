@@ -2,9 +2,9 @@ package be.doji.productivity.trambuapp.controls;
 
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
 import be.doji.productivity.trambuapp.utils.TooltipConstants;
-import be.doji.productivity.trambuapp.views.ActivityOverview;
-import be.doji.productivity.trambuapp.views.OptionsView;
-import be.doji.productivity.trambuapp.views.TimesheetView;
+import be.doji.productivity.trambuapp.components.view.ActivityView;
+import be.doji.productivity.trambuapp.components.view.OptionsView;
+import be.doji.productivity.trambuapp.components.view.TimesheetView;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.scene.Parent;
@@ -38,8 +38,8 @@ public class MainMenuBar extends UIComponent {
         FontAwesomeIconView activityIcon = DisplayUtils.createStyledIcon(FontAwesomeIcon.CALENDAR_ALT);
         activityPage.setGraphic(activityIcon);
         activityPage.setOnAction(event -> {
-            if (!superView.getClass().equals(ActivityOverview.class)) {
-                superView.replaceWith(JvmClassMappingKt.getKotlinClass(ActivityOverview.class),
+            if (!superView.getClass().equals(ActivityView.class)) {
+                superView.replaceWith(JvmClassMappingKt.getKotlinClass(ActivityView.class),
                         new ViewTransition.Slide(Duration.seconds(0.3), ViewTransition.Direction.LEFT), true, true);
             }
         });

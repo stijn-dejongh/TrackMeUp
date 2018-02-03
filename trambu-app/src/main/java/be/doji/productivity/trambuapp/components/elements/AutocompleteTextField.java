@@ -1,4 +1,4 @@
-package be.doji.productivity.trambuapp.components.helper;
+package be.doji.productivity.trambuapp.components.elements;
 
 import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import javafx.geometry.Side;

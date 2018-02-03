@@ -1,7 +1,7 @@
 package be.doji.productivity.trambuapp;
 
 import be.doji.productivity.trambuapp.styles.DefaultTrambuStyle;
-import be.doji.productivity.trambuapp.views.ActivityOverview;
+import be.doji.productivity.trambuapp.components.view.ActivityView;
 import kotlin.jvm.JvmClassMappingKt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +17,7 @@ public class TrambuApplication extends App {
     private static final Logger LOG = LoggerFactory.getLogger(TrambuApplication.class);
 
     public TrambuApplication() throws IOException {
-        super(JvmClassMappingKt.getKotlinClass(ActivityOverview.class),
+        super(JvmClassMappingKt.getKotlinClass(ActivityView.class),
                 JvmClassMappingKt.getKotlinClass(DefaultTrambuStyle.class));
     }
 

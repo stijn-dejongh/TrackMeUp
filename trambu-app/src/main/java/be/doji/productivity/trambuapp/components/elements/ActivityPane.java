@@ -1,11 +1,9 @@
-package be.doji.productivity.trambuapp.components.data;
+package be.doji.productivity.trambuapp.components.elements;
 
-import be.doji.productivity.trambuapp.components.helper.AutocompleteTextField;
-import be.doji.productivity.trambuapp.components.helper.OverlayPane;
+import be.doji.productivity.trambuapp.components.presenter.ActivityPresenter;
 import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
 import be.doji.productivity.trambuapp.utils.TooltipConstants;
-import be.doji.productivity.trambuapp.views.ActivityOverview;
 import be.doji.productivity.trambucore.TrackMeConstants;
 import be.doji.productivity.trambucore.managers.NoteManager;
 import be.doji.productivity.trambucore.model.tasks.Activity;
@@ -37,30 +35,32 @@ import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class ActivityNode extends TitledPane {
+/**
+ * TODO: Refactor to MVP pattern
+ */
+public class ActivityPane extends TitledPane {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ActivityNode.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ActivityPane.class);
 
     private static final String FIELD_SEPERATOR = ",";
     private boolean isActive;
-    private ActivityOverview application;
-    private boolean isEditable = false;
-    private Activity activity;
-    private TextField nameField;
-    private AutocompleteTextField projectsField;
-    private AutocompleteTextField tagsField;
-    private ActivityLog activityLog;
-    private boolean parentChanged;
-    private TextField warningPeriodInHours;
-    private AutocompleteTextField locationField;
-    private OverlayPane overlay;
+    public ActivityPresenter presenter;
+    public boolean isEditable = false;
+    public Activity activity;
+    public TextField nameField;
+    public AutocompleteTextField projectsField;
+    public AutocompleteTextField tagsField;
+    public ActivityLog activityLog;
+    public boolean parentChanged;
+    public TextField warningPeriodInHours;
+    public AutocompleteTextField locationField;
+    public OverlayPane overlay;
 
-    public ActivityNode(Activity activity, ActivityOverview trambuApplication) {
+    public ActivityPane(Activity activity, ActivityPresenter presenter) {
         super();
         this.activity = activity;
-        this.application = trambuApplication;
-        this.activityLog = application.getActivityController().getTimeTrackingManager()
-                .getLogForActivityId(activity.getId());
+        this.presenter = presenter;
+        this.activityLog = presenter.getLogForActivityId(activity.getId());
         updateHeader();
         overlay = new OverlayPane();
         this.setContent(createContentContainer());
@@ -259,7 +259,7 @@ public class ActivityNode extends TitledPane {
     private Node createEditableLocation() {
         locationField = new AutocompleteTextField();
         SortedSet<String> existingLocations = new TreeSet<>();
-        existingLocations.addAll(application.getActivityController().getActivityManager().getExistingLocations());
+        existingLocations.addAll(presenter.getExistingLocations());
         locationField.setSuggestions(existingLocations);
 
         if (activity.isSetLocation()) {
@@ -311,7 +311,7 @@ public class ActivityNode extends TitledPane {
         reducedTags.ifPresent(s -> tagsField.setText(s));
 
         SortedSet<String> treeSetTags = new TreeSet<>();
-        treeSetTags.addAll(application.getActivityController().getActivityManager().getExistingTags());
+        treeSetTags.addAll(presenter.getExistingTags());
         tagsField.setSuggestions(treeSetTags);
         return tagsField;
     }
@@ -321,8 +321,8 @@ public class ActivityNode extends TitledPane {
         tags.getChildren().addAll(activity.getTags().stream().map(tag -> {
             Button button = new Button(tag);
             button.setOnAction(e -> {
-                application.setTagFilter(tag);
-                application.reloadActivities();
+                presenter.setTagFilter(tag);
+                presenter.refresh();
             });
             return button;
         }).collect(Collectors.toList()));
@@ -343,7 +343,7 @@ public class ActivityNode extends TitledPane {
         projectsField = new AutocompleteTextField();
         reducedProjects.ifPresent(s -> projectsField.setText(s));
         SortedSet<String> treeSetProjects = new TreeSet<>();
-        treeSetProjects.addAll(application.getActivityController().getActivityManager().getExistingProjects());
+        treeSetProjects.addAll(presenter.getExistingProjects());
         projectsField.setSuggestions(treeSetProjects);
         return projectsField;
     }
@@ -353,8 +353,8 @@ public class ActivityNode extends TitledPane {
         projecs.getChildren().addAll(activity.getProjects().stream().map(project -> {
             Button button = new Button(project);
             button.setOnAction(e -> {
-                application.setProjectFilter(project);
-                application.reloadActivities();
+                presenter.setProjectFilter(project);
+                presenter.refresh();
             });
             return button;
         }).collect(Collectors.toList()));
@@ -419,7 +419,7 @@ public class ActivityNode extends TitledPane {
         noteButton.setGraphic(DisplayUtils.createStyledIcon(FontAwesomeIcon.STICKY_NOTE));
         noteButton.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_ACTIVITY_NOTE_EXPAND));
         noteButton.setOnAction(event -> {
-            NoteManager noteManager = application.getActivityController().getNoteManager();
+            NoteManager noteManager = presenter.getNoteManager();
             try {
                 Optional<Note> noteForActivity = noteManager.findNoteForActivity(activity.getId());
                 Note note;
@@ -464,14 +464,13 @@ public class ActivityNode extends TitledPane {
     }
 
     private Node createParentSelector() {
-        ObservableList<String> options = FXCollections
-                .observableArrayList(application.getActivityController().getActivityManager().getAllActivityNames());
+        ObservableList<String> options = FXCollections.observableArrayList(presenter.getAllActivityNames());
         final ComboBox<String> parent = new ComboBox<>(options);
         parent.valueProperty().addListener((ov, t, t1) -> {
-            Optional<Activity> savedParent = application.getActivityController().getActivityManager()
+            Optional<Activity> savedParent = presenter.getActivityController().getActivityManager()
                     .getSavedActivityByName(t1);
             if (savedParent.isPresent()) {
-                application.getActivityController().getActivityManager().addActivityAsSub(activity, savedParent.get());
+                presenter.getActivityController().getActivityManager().addActivityAsSub(activity, savedParent.get());
             }
             this.parentChanged = true;
         });
@@ -479,7 +478,11 @@ public class ActivityNode extends TitledPane {
     }
 
     private Node createSubActivities() {
-        return new ActivityAccordion(application, activity.getSubActivities());
+        Accordion accordion = new Accordion();
+        for (Activity subActivity : this.activity.getSubActivities()) {
+            accordion.getPanes().add(new ActivityPane(subActivity, presenter));
+        }
+        return accordion;
     }
 
     private Button createDoneButton() {
@@ -546,8 +549,8 @@ public class ActivityNode extends TitledPane {
         delete.setOnAction(event -> {
             try {
                 this.toggleCompleted();
-                application.getActivityController().getActivityManager().delete(this.activity);
-                application.reloadActivities();
+                presenter.getActivityController().getActivityManager().delete(this.activity);
+                presenter.refresh();
             } catch (IOException | ParseException e) {
                 LOG.error(DisplayConstants.ERROR_MESSAGE_ACTIVITY_SAVING + ": " + e.getMessage());
             }
@@ -557,7 +560,7 @@ public class ActivityNode extends TitledPane {
     }
 
     HBox createTimingControls() {
-        activityLog = application.getActivityController().getTimeTrackingManager()
+        activityLog = presenter.getActivityController().getTimeTrackingManager()
                 .getLogForActivityId(this.activity.getId());
         HBox timingControls = new HBox();
 
@@ -571,7 +574,7 @@ public class ActivityNode extends TitledPane {
             }
             startStopButton.setText(getTimingButtonText());
             startStopButton.setGraphic(getTimingButtonIcon());
-            application.getActivityController().getTimeTrackingManager().save(activityLog);
+            presenter.getActivityController().getTimeTrackingManager().save(activityLog);
             this.setContent(createActivityContent());
         });
 
@@ -599,7 +602,7 @@ public class ActivityNode extends TitledPane {
     }
 
     private Optional<TimeLog> getActiveLog() {
-        activityLog = application.getActivityController().getTimeTrackingManager()
+        activityLog = presenter.getActivityController().getTimeTrackingManager()
                 .getLogForActivityId(this.activity.getId());
         return activityLog.getActiveLog();
     }
@@ -612,11 +615,11 @@ public class ActivityNode extends TitledPane {
 
     private void save() throws IOException, ParseException {
         updateActivityFields();
-        application.getActivityController().getActivityManager().save(getActivityToSave());
+        presenter.getActivityController().getActivityManager().save(getActivityToSave());
         if (!this.parentChanged) {
             this.refresh();
         } else {
-            application.reloadActivities();
+            presenter.refresh();
         }
 
     }
@@ -670,7 +673,7 @@ public class ActivityNode extends TitledPane {
     private Activity getActivityToSave() {
         Activity activityToSave = this.getActivity();
         while (StringUtils.isNotBlank(activityToSave.getParentActivity())) {
-            Optional<Activity> savedParent = application.getActivityController().getActivityManager()
+            Optional<Activity> savedParent = presenter.getActivityController().getActivityManager()
                     .getSavedActivityById(activityToSave.getParentActivity());
             if (savedParent.isPresent()) {
                 activityToSave = savedParent.get();
@@ -705,7 +708,7 @@ public class ActivityNode extends TitledPane {
     }
 
     public void refresh() {
-        application.getActivityController().getActivityManager().getSavedActivityById(this.activity.getId().toString())
+        presenter.getActivityController().getActivityManager().getSavedActivityById(this.activity.getId().toString())
                 .ifPresent(savedActivity -> this.activity = savedActivity);
         this.setContent(this.createContentContainer());
         this.updateHeader();

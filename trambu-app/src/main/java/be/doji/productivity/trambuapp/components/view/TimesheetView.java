@@ -1,6 +1,6 @@
-package be.doji.productivity.trambuapp.views;
+package be.doji.productivity.trambuapp.components.view;
 
-import be.doji.productivity.trambuapp.controllers.ActivityController;
+import be.doji.productivity.trambuapp.components.presenter.ActivityManagerContainer;
 import be.doji.productivity.trambuapp.controls.MainMenuBar;
 import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
@@ -39,7 +39,7 @@ public class TimesheetView extends View {
 
     private static final Logger LOG = LoggerFactory.getLogger(TimesheetView.class);
 
-    private final ActivityController activityController;
+    private final ActivityManagerContainer activityController;
     private List<ActivityLog> logs;
     private BorderPane root;
     private Date startDate;
@@ -48,7 +48,7 @@ public class TimesheetView extends View {
     public TimesheetView() {
         super();
         this.setTitle(DisplayConstants.TITLE_APPLICATION + " - " + DisplayConstants.TITLE_TIMESHEET);
-        this.activityController = find(ActivityController.class);
+        this.activityController = find(ActivityManagerContainer.class);
 
         endDate = new Date();
         startDate = DateUtils.addDays(endDate, -7);

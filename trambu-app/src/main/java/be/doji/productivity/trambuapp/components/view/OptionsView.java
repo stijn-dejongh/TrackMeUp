@@ -1,6 +1,6 @@
-package be.doji.productivity.trambuapp.views;
+package be.doji.productivity.trambuapp.components.view;
 
-import be.doji.productivity.trambuapp.controllers.ActivityController;
+import be.doji.productivity.trambuapp.components.presenter.ActivityManagerContainer;
 import be.doji.productivity.trambuapp.controls.MainMenuBar;
 import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
@@ -28,7 +28,7 @@ public class OptionsView extends View {
 
     private static final Logger LOG = LoggerFactory.getLogger(OptionsView.class);
 
-    private final ActivityController activityController;
+    private final ActivityManagerContainer activityController;
     private BorderPane root;
 
     private String configuredTodoLocation;
@@ -40,7 +40,7 @@ public class OptionsView extends View {
         this.setTitle(DisplayConstants.TITLE_APPLICATION + " - " + DisplayConstants.TITLE_OPTIONS);
 
         this.root = new BorderPane();
-        this.activityController = find(ActivityController.class);
+        this.activityController = find(ActivityManagerContainer.class);
         root.setPrefHeight(DisplayConstants.UI_DEFAULT_WINDOW_HEIGHT);
         root.setPrefWidth(DisplayConstants.UI_DEFAULT_WINDOW_WIDTH);
 
@@ -173,7 +173,7 @@ public class OptionsView extends View {
         return button;
     }
 
-    private ActivityController getActivityController() {
+    private ActivityManagerContainer getActivityController() {
         return activityController;
     }
 

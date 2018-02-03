@@ -1,4 +1,4 @@
-package be.doji.productivity.trambuapp.controllers;
+package be.doji.productivity.trambuapp.components.presenter;
 
 import be.doji.productivity.trambuapp.userconfiguration.UserConfigurationManager;
 import be.doji.productivity.trambuapp.utils.DisplayConstants;
@@ -14,16 +14,16 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.Optional;
 
-public class ActivityController extends Controller {
+public class ActivityManagerContainer extends Controller {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ActivityController.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ActivityManagerContainer.class);
 
     private ActivityManager activityManager;
     private TimeTrackingManager timeTrackingManager;
     private UserConfigurationManager configManager;
     private NoteManager noteManager;
 
-    public ActivityController() {
+    public ActivityManagerContainer() {
         super();
         try {
             this.configManager = new UserConfigurationManager(DisplayConstants.NAME_CONFIGURATION_FILE);

@@ -1,9 +1,8 @@
-package be.doji.productivity.trambuapp.components.data;
+package be.doji.productivity.trambuapp.components.elements;
 
-import be.doji.productivity.trambuapp.components.helper.AutocompleteTextField;
-import be.doji.productivity.trambuapp.controllers.ActivityController;
+import be.doji.productivity.trambuapp.components.presenter.ActivityManagerContainer;
+import be.doji.productivity.trambuapp.components.presenter.ActivityPresenter;
 import be.doji.productivity.trambuapp.utils.DisplayConstants;
-import be.doji.productivity.trambuapp.views.ActivityOverview;
 import be.doji.productivity.trambucore.TrackMeConstants;
 import be.doji.productivity.trambucore.managers.ActivityManager;
 import be.doji.productivity.trambucore.managers.TimeTrackingManager;
@@ -39,11 +38,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-public class ActivityNodeTest extends ApplicationTest {
-    private static final Logger LOG = LoggerFactory.getLogger(ActivityNodeTest.class);
+public class ActivityPaneTest extends ApplicationTest {
+    private static final Logger LOG = LoggerFactory.getLogger(ActivityPaneTest.class);
 
-    @Mock private ActivityOverview mockApplication;
-    @Mock private ActivityController mockActController;
+    @Mock private ActivityPresenter mockPresenter;
+    @Mock private ActivityManagerContainer mockActController;
 
     private ActivityManager activityManager;
 
@@ -58,21 +57,21 @@ public class ActivityNodeTest extends ApplicationTest {
         this.activityManager = new ActivityManager(activityTestFile.toString());
         this.timeTrackingManager = new TimeTrackingManager(timeTrackingTestFile.toString());
         MockitoAnnotations.initMocks(this);
-        Mockito.when(mockApplication.getActivityController()).thenReturn(mockActController);
+        Mockito.when(mockPresenter.getActivityController()).thenReturn(mockActController);
         Mockito.when(mockActController.getActivityManager()).thenReturn(activityManager);
         Mockito.when(mockActController.getTimeTrackingManager()).thenReturn(timeTrackingManager);
     }
 
     @Test public void testGetActivityStyleTodo() {
         Activity testActivity = new Activity("DefaultActivity");
-        ActivityNode testNode = new ActivityNode(testActivity, mockApplication);
+        ActivityPane testNode = new ActivityPane(testActivity, mockPresenter);
         Assert.assertEquals(DisplayConstants.STYLE_CLASS_ACTIVITY_TODO, testNode.getActivityStyle());
     }
 
     @Test public void testGetActivityStyleDone() {
         Activity testActivity = new Activity("DefaultActivity");
         testActivity.setCompleted(true);
-        ActivityNode testNode = new ActivityNode(testActivity, mockApplication);
+        ActivityPane testNode = new ActivityPane(testActivity, mockPresenter);
         Assert.assertEquals(DisplayConstants.STYLE_CLASS_ACTIVITY_DONE, testNode.getActivityStyle());
     }
 
@@ -82,13 +81,13 @@ public class ActivityNodeTest extends ApplicationTest {
         Date passedDeadline = new Date(referenceDate.getTime() - 5000);
         testActivity.setDeadline(passedDeadline);
         Assert.assertTrue(testActivity.isAlertActive());
-        ActivityNode testNode = new ActivityNode(testActivity, mockApplication);
+        ActivityPane testNode = new ActivityPane(testActivity, mockPresenter);
         Assert.assertEquals(DisplayConstants.STYLE_CLASS_ACTIVITY_ALERT, testNode.getActivityStyle());
     }
 
     @Test public void testCreateControlsUneditable() {
         Activity testActivity = new Activity("DefaultActivity");
-        ActivityNode testNode = new ActivityNode(testActivity, mockApplication);
+        ActivityPane testNode = new ActivityPane(testActivity, mockPresenter);
         Assert.assertFalse(testNode.isEditable());
         GridPane createdContent = testNode.createActivityContent();
         ObservableList<Node> contentNodes = createdContent.getChildren();
@@ -98,7 +97,7 @@ public class ActivityNodeTest extends ApplicationTest {
 
     @Test public void testCreateActivityControlsDefaults() {
         Activity testActivity = new Activity("DefaultActivity");
-        ActivityNode testNode = new ActivityNode(testActivity, mockApplication);
+        ActivityPane testNode = new ActivityPane(testActivity, mockPresenter);
         GridPane actvityControls = testNode.createActvityControls();
         ObservableList<Node> controls = actvityControls.getChildren();
         Assert.assertNotNull(controls);
@@ -116,7 +115,7 @@ public class ActivityNodeTest extends ApplicationTest {
 
     @Test public void testCreateActivityControlsActivityNodeEditable() {
         Activity testActivity = new Activity("DefaultActivity");
-        ActivityNode testNode = new ActivityNode(testActivity, mockApplication);
+        ActivityPane testNode = new ActivityPane(testActivity, mockPresenter);
         testNode.makeEditable();
         Assert.assertTrue(testNode.isEditable());
         GridPane actvityControls = testNode.createActvityControls();
@@ -138,7 +137,7 @@ public class ActivityNodeTest extends ApplicationTest {
         Activity testActivity = new Activity("DefaultActivity");
         testActivity.setCompleted(true);
         Assert.assertTrue(testActivity.isCompleted());
-        ActivityNode testNode = new ActivityNode(testActivity, mockApplication);
+        ActivityPane testNode = new ActivityPane(testActivity, mockPresenter);
         GridPane actvityControls = testNode.createActvityControls();
         ObservableList<Node> controls = actvityControls.getChildren();
         Assert.assertNotNull(controls);
@@ -163,7 +162,7 @@ public class ActivityNodeTest extends ApplicationTest {
 
         Mockito.when(mockActController.getTimeTrackingManager()).thenReturn(mockTimeManager);
 
-        ActivityNode testNode = new ActivityNode(testActivity, mockApplication);
+        ActivityPane testNode = new ActivityPane(testActivity, mockPresenter);
         HBox timingControls = testNode.createTimingControls();
         Assert.assertNotNull(timingControls.getChildren());
         Assert.assertEquals(1, timingControls.getChildren().size());
@@ -182,7 +181,7 @@ public class ActivityNodeTest extends ApplicationTest {
 
         Mockito.when(mockActController.getTimeTrackingManager()).thenReturn(mockTimeManager);
 
-        ActivityNode testNode = new ActivityNode(testActivity, mockApplication);
+        ActivityPane testNode = new ActivityPane(testActivity, mockPresenter);
         HBox timingControls = testNode.createTimingControls();
         Assert.assertNotNull(timingControls.getChildren());
         Assert.assertEquals(1, timingControls.getChildren().size());
@@ -194,7 +193,7 @@ public class ActivityNodeTest extends ApplicationTest {
 
     @Test public void testCreatePriority() {
         Activity testActivity = new Activity("DefaultActivity");
-        ActivityNode testNode = new ActivityNode(testActivity, mockApplication);
+        ActivityPane testNode = new ActivityPane(testActivity, mockPresenter);
 
         Assert.assertFalse(testNode.isEditable());
         Assert.assertEquals(Label.class, testNode.createPriority().getClass());
@@ -205,7 +204,7 @@ public class ActivityNodeTest extends ApplicationTest {
 
     @Test public void testCreateEditablePriority() {
         Activity testActivity = new Activity("DefaultActivity");
-        ActivityNode testNode = new ActivityNode(testActivity, mockApplication);
+        ActivityPane testNode = new ActivityPane(testActivity, mockPresenter);
 
         Node editableNode = testNode.createEditablePriority();
         Assert.assertEquals(ComboBox.class, editableNode.getClass());
@@ -221,7 +220,7 @@ public class ActivityNodeTest extends ApplicationTest {
 
     @Test public void testCreateDeadline() {
         Activity testActivity = new Activity("DefaultActivity");
-        ActivityNode testNode = new ActivityNode(testActivity, mockApplication);
+        ActivityPane testNode = new ActivityPane(testActivity, mockPresenter);
         testActivity.setDeadline(new Date());
         Assert.assertFalse(testNode.isEditable());
         Assert.assertEquals(Label.class, testNode.createDeadline().getClass());
@@ -232,7 +231,7 @@ public class ActivityNodeTest extends ApplicationTest {
 
     @Test public void testCreateTags() {
         Activity testActivity = new Activity("DefaultActivity");
-        ActivityNode testNode = new ActivityNode(testActivity, mockApplication);
+        ActivityPane testNode = new ActivityPane(testActivity, mockPresenter);
         Assert.assertFalse(testNode.isEditable());
         Node tags = testNode.createTags();
         Assert.assertEquals(HBox.class, tags.getClass());
@@ -244,7 +243,7 @@ public class ActivityNodeTest extends ApplicationTest {
 
     @Test public void testCreateTagsEditableNoTags() {
         Activity testActivity = new Activity("DefaultActivity");
-        ActivityNode testNode = new ActivityNode(testActivity, mockApplication);
+        ActivityPane testNode = new ActivityPane(testActivity, mockPresenter);
         testNode.makeEditable();
         Assert.assertTrue(testNode.isEditable());
         Node tags = testNode.createTags();
@@ -258,7 +257,7 @@ public class ActivityNodeTest extends ApplicationTest {
         testActivity.addTag("TagOne");
         testActivity.addTag("TagTwo");
         Assert.assertEquals(2, testActivity.getTags().size());
-        ActivityNode testNode = new ActivityNode(testActivity, mockApplication);
+        ActivityPane testNode = new ActivityPane(testActivity, mockPresenter);
         testNode.makeEditable();
         Assert.assertTrue(testNode.isEditable());
         Node tags = testNode.createTags();
@@ -275,7 +274,7 @@ public class ActivityNodeTest extends ApplicationTest {
         testActivity.addTag("TagTwo");
         int initialTagSize = testActivity.getTags().size();
         Assert.assertEquals(2, initialTagSize);
-        ActivityNode testNode = new ActivityNode(testActivity, mockApplication);
+        ActivityPane testNode = new ActivityPane(testActivity, mockPresenter);
         Assert.assertFalse(testNode.isEditable());
         Node tags = testNode.createTags();
         Assert.assertEquals(HBox.class, tags.getClass());
@@ -288,7 +287,7 @@ public class ActivityNodeTest extends ApplicationTest {
 
     @Test public void testCreateProjects() {
         Activity testActivity = new Activity("DefaultActivity");
-        ActivityNode testNode = new ActivityNode(testActivity, mockApplication);
+        ActivityPane testNode = new ActivityPane(testActivity, mockPresenter);
         Assert.assertFalse(testNode.isEditable());
         Node projects = testNode.createProjects();
         Assert.assertEquals(HBox.class, projects.getClass());
@@ -300,7 +299,7 @@ public class ActivityNodeTest extends ApplicationTest {
 
     @Test public void testCreateProjectsEditableNoProjects() {
         Activity testActivity = new Activity("DefaultActivity");
-        ActivityNode testNode = new ActivityNode(testActivity, mockApplication);
+        ActivityPane testNode = new ActivityPane(testActivity, mockPresenter);
         testNode.makeEditable();
         Assert.assertTrue(testNode.isEditable());
         Node projects = testNode.createProjects();
@@ -311,7 +310,7 @@ public class ActivityNodeTest extends ApplicationTest {
 
     @Test public void testCreateProjectsEditableWithProjects() {
         Activity testActivity = new Activity("DefaultActivity");
-        ActivityNode testNode = new ActivityNode(testActivity, mockApplication);
+        ActivityPane testNode = new ActivityPane(testActivity, mockPresenter);
         testActivity.addProject("ProjectOne");
         testActivity.addProject("ProjectTwo");
         Assert.assertEquals(2, testActivity.getProjects().size());
@@ -331,7 +330,7 @@ public class ActivityNodeTest extends ApplicationTest {
         testActivity.addProject("TagTwo");
         int initialProjectSize = testActivity.getProjects().size();
         Assert.assertEquals(2, initialProjectSize);
-        ActivityNode testNode = new ActivityNode(testActivity, mockApplication);
+        ActivityPane testNode = new ActivityPane(testActivity, mockPresenter);
         Assert.assertFalse(testNode.isEditable());
         Node tags = testNode.createProjects();
         Assert.assertEquals(HBox.class, tags.getClass());
