@@ -34,6 +34,12 @@ public class ActivityView extends TitledPane {
     private boolean isActive;
     private GridPane activityContent;
 
+
+    private Button doneButton;
+    private Button editButton;
+    private Button deleteButton;
+    private Button timingButton;
+
     private Button titleLabel;
     private ActivityPresenter presenter;
     private boolean isEditable = false;
@@ -51,10 +57,7 @@ public class ActivityView extends TitledPane {
     private Label deadlineLabel;
     private HBox tagsBox;
     private HBox projectsBox;
-    private Button doneButton;
-    private Button editButton;
-    private Button deleteButton;
-    private Button timingButton;
+
     private Label deadLineHeader;
     private Label locationHeader;
 
