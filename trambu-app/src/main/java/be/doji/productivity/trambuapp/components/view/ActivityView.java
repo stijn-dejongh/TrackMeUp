@@ -30,8 +30,6 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -52,6 +50,9 @@ public class ActivityView extends TitledPane {
     private AutocompleteTextField locationField;
     private OverlayPane overlay;
     private Accordion subActivitiesAccordion;
+    private DatePicker deadlineDatePicker;
+    private Label warningPeriod;
+    private Label priorityField;
 
     public ActivityView(Activity activity) {
         super();
@@ -78,7 +79,7 @@ public class ActivityView extends TitledPane {
     }
 
     public void createHeader() {
-        this.setText(presenter.getHeaderTitle());
+        this.setText(presenter.getActivityName());
         this.setGraphic(createTitleLabel());
     }
 
@@ -88,6 +89,179 @@ public class ActivityView extends TitledPane {
         titleLabel.getStyleClass().add("icon-button");
         titleLabel.setOnAction(event -> presenter.headerButtonClicked());
         return this.titleLabel;
+    }
+
+    GridPane createActivityContent() {
+        if (isEditable) {
+            return createEditableContent();
+        } else {
+            return createStaticContent();
+        }
+    }
+
+    GridPane createStaticContent() {
+        GridPane content = DisplayUtils.createDefaultGridPane();
+        int rowIndex = 0;
+        content.add(createActvityControls(), 0, rowIndex++, 2, 1);
+        content.add(DisplayUtils.createHorizontalSpacer(), 0, rowIndex++, 2, 1);
+
+        content.add(new Label("Priority: "), 0, rowIndex);
+        content.add(createStaticPriority(), 1, rowIndex++);
+
+        content.add(new Label("Deadline: "), 0, rowIndex);
+        content.add(createStaticDeadline(), 1, rowIndex++);
+
+        content.add(new Label("Location :"), 0, rowIndex);
+        content.add(createStaticLocation(), 1, rowIndex++);
+
+        content.add(new Label("Warning period: "), 0, rowIndex);
+        content.add(createStaticWarningPeriod(), 1, rowIndex++);
+
+        content.add(new Label("Tags: "), 0, rowIndex);
+        content.add(createUneditableTags(), 1, rowIndex++);
+
+        content.add(new Label("Projects: "), 0, rowIndex);
+        content.add(createUneditableProjects(), 1, rowIndex++);
+
+        content.add(createLogPoints(), 0, rowIndex++, 2, 1);
+
+        content.add(new Label("Notes: "), 0, rowIndex);
+        content.add(createNotes(), 1, rowIndex++);
+
+        if (!presenter.hasSubActivities()) {
+            Label subActivityTitle = new Label("Subactivities: ");
+            subActivityTitle.getStyleClass().clear();
+            subActivityTitle.getStyleClass().add("separator-label");
+            content.add(subActivityTitle, 0, rowIndex++);
+            content.add(createSubActivities(), 0, rowIndex, 2, 1);
+        }
+
+        content.setVisible(true);
+        return content;
+
+    }
+
+    GridPane createEditableContent() {
+        GridPane content = DisplayUtils.createDefaultGridPane();
+
+        int rowIndex = 0;
+        content.add(createActvityControls(), 0, rowIndex++, 2, 1);
+        content.add(DisplayUtils.createHorizontalSpacer(), 0, rowIndex++, 2, 1);
+        content.add(createTimingControls(), 0, rowIndex++, 2, 1);
+
+        content.add(new Label("Change activity name:"), 0, rowIndex);
+        content.add(createEditableName(), 1, rowIndex++);
+
+        content.add(new Label("Priority: "), 0, rowIndex);
+        content.add(createEditablePriority(), 1, rowIndex++);
+
+        content.add(new Label("Deadline: "), 0, rowIndex);
+        content.add(createEditableDeadline(), 1, rowIndex++);
+
+        content.add(new Label("Location :"), 0, rowIndex);
+        content.add(createEditableLocation(), 1, rowIndex++);
+
+        content.add(new Label("Warning period: "), 0, rowIndex);
+        content.add(createEditableWarningPeriod(), 1, rowIndex++);
+
+        content.add(new Label("Tags: "), 0, rowIndex);
+        content.add(createEditableTags(), 1, rowIndex++);
+
+        content.add(new Label("Projects: "), 0, rowIndex);
+        content.add(createEditableProjects(), 1, rowIndex++);
+
+        content.add(createLogPoints(), 0, rowIndex++, 2, 1);
+
+        content.add(new Label("Notes: "), 0, rowIndex);
+        content.add(createNotes(), 1, rowIndex++);
+
+        if (!presenter.hasSubActivities()) {
+            Label subActivityTitle = new Label("Subactivities: ");
+            subActivityTitle.getStyleClass().clear();
+            subActivityTitle.getStyleClass().add("separator-label");
+            content.add(subActivityTitle, 0, rowIndex++);
+            content.add(createSubActivities(), 0, rowIndex, 2, 1);
+        }
+
+        Label parentTitle = new Label("Select parent: ");
+        parentTitle.getStyleClass().clear();
+        parentTitle.getStyleClass().add("separator-label");
+        content.add(parentTitle, 0, rowIndex++);
+        content.add(createParentSelector(), 0, rowIndex++, 2, 1);
+
+        content.setVisible(true);
+        return content;
+    }
+
+    private Node createEditableName() {
+        nameField = new TextField();
+        nameField.setText(presenter.getActivityName());
+        return nameField;
+    }
+
+    Node createEditablePriority() {
+        ObservableList<String> options = FXCollections.observableArrayList(TrackMeConstants.getPriorityList());
+        final ComboBox<String> comboBox = new ComboBox<>(options);
+        comboBox.setValue(this.presenter.getActivityPriority());
+        comboBox.valueProperty().addListener((ov, t, t1) -> this.presenter.setActivityPriority(t1));
+        return comboBox;
+    }
+
+    private Node createEditableDeadline() {
+        HBox deadlinePicker = new HBox();
+        deadlinePicker.getChildren().add(createDatePicker());
+        return deadlinePicker;
+    }
+
+    private DatePicker createDatePicker() {
+        this.deadlineDatePicker = new DatePicker();
+        deadlineDatePicker.setOnAction(event -> this.presenter.deadlinePicked());
+        return deadlineDatePicker;
+    }
+
+    @NotNull private HBox createEditableWarningPeriod() {
+        HBox hbox = new HBox();
+        warningPeriodInHours = new TextField();
+        hbox.getChildren().add(warningPeriodInHours);
+        hbox.getChildren().add(new Label("hours"));
+        return hbox;
+    }
+
+    private Node createEditableTags() {
+        tagsField = new AutocompleteTextField();
+        return tagsField;
+    }
+
+    GridPane createActvityControls() {
+        GridPane content = new GridPane();
+        content.setVgap(4);
+        content.setHgap(4);
+        content.setPadding(new Insets(5, 5, 5, 5));
+        content.add(createDoneButton(), 0, 0);
+        content.add(createEditButton(), 1, 0);
+        content.add(createDeleteButton(), 2, 0);
+        return content;
+    }
+
+    void makeEditable() {
+        this.isEditable = true;
+    }
+
+    void makeUneditable() {
+        this.isEditable = false;
+    }
+
+    public boolean isEditable() {
+        return isEditable;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        LOG.debug("Making pane active: " + this.presenter.getActivityName());
+        this.isActive = active;
     }
 
     public Button getTitleLabel() {
@@ -154,12 +328,12 @@ public class ActivityView extends TitledPane {
         this.overlay = overlay;
     }
 
-    public LocalDate getDatePickerDate() {
-        return datePickerDate;
+    public DatePicker getDeadlineDatePicker() {
+        return deadlineDatePicker;
     }
 
-    public void setDatePickerDate(LocalDate datePickerDate) {
-        this.datePickerDate = datePickerDate;
+    public void setDeadlineDatePicker(DatePicker deadlineDatePicker) {
+        this.deadlineDatePicker = deadlineDatePicker;
     }
 
     public Accordion getSubActivitiesAccordion() {
@@ -170,123 +344,32 @@ public class ActivityView extends TitledPane {
         this.subActivitiesAccordion = subActivitiesAccordion;
     }
 
-    GridPane createActivityContent() {
-        GridPane content = new GridPane();
-        content.setVgap(4);
-        content.setPadding(new Insets(5, 5, 5, 5));
-        int rowIndex = 0;
-
-        content.add(createActvityControls(), 0, rowIndex++, 2, 1);
-
-        content.add(DisplayUtils.createHorizontalSpacer(), 0, rowIndex++, 2, 1);
-
-        content.add(createTimingControls(), 0, rowIndex++, 2, 1);
-
-        if (isEditable) {
-            content.add(new Label("Change activity name:"), 0, rowIndex);
-            content.add(createNameEdit(), 1, rowIndex++);
-        }
-
-        content.add(new Label("Priority: "), 0, rowIndex);
-        content.add(createPriority(), 1, rowIndex++);
-
-        if (activity.isSetDeadline() || isEditable) {
-            content.add(new Label("Deadline: "), 0, rowIndex);
-            content.add(createDeadline(), 1, rowIndex++);
-        }
-
-        if (activity.isSetLocation() || isEditable) {
-            content.add(new Label("Location :"), 0, rowIndex);
-            content.add(createLocation(), 1, rowIndex++);
-        }
-
-        Label warningPeriodLabel = new Label("Warning period: ");
-        content.add(warningPeriodLabel, 0, rowIndex);
-        if (isEditable) {
-
-            warningPeriodInHours = new TextField();
-            Label warningPeriodUnit = new Label("hours");
-            content.add(warningPeriodInHours, 1, rowIndex);
-            content.add(warningPeriodUnit, 2, rowIndex++);
-        } else {
-            Label warningPeriod = new Label(activity.getWarningTimeFrame().toString());
-            content.add(warningPeriod, 1, rowIndex++);
-
-        }
-
-        content.add(new Label("Tags: "), 0, rowIndex);
-        content.add(createTags(), 1, rowIndex++);
-
-        content.add(new Label("Projects: "), 0, rowIndex);
-        content.add(createProjects(), 1, rowIndex++);
-
-        content.add(createLogPoints(), 0, rowIndex++, 2, 1);
-
-        content.add(new Label("Notes: "), 0, rowIndex);
-        content.add(createNotes(), 1, rowIndex++);
-
-        if (isEditable) {
-            Label parentTitle = new Label("Select parent: ");
-            parentTitle.getStyleClass().clear();
-            parentTitle.getStyleClass().add("separator-label");
-            content.add(parentTitle, 0, rowIndex++);
-            content.add(createParentSelector(), 0, rowIndex++, 2, 1);
-        }
-
-        if (!activity.getSubActivities().isEmpty()) {
-            Label subActivityTitle = new Label("Subactivities: ");
-            subActivityTitle.getStyleClass().clear();
-            subActivityTitle.getStyleClass().add("separator-label");
-            content.add(subActivityTitle, 0, rowIndex++);
-            content.add(createSubActivities(), 0, rowIndex, 2, 1);
-        }
-
-        content.setVisible(true);
-        return content;
+    public Label getWarningPeriod() {
+        return warningPeriod;
     }
 
-    private Node createNameEdit() {
-        nameField = new TextField();
-        nameField.setText(activity.getName());
-        return nameField;
+    public void setWarningPeriod(Label warningPeriod) {
+        this.warningPeriod = warningPeriod;
     }
 
-    GridPane createActvityControls() {
-        GridPane content = new GridPane();
-        content.setVgap(4);
-        content.setHgap(4);
-        content.setPadding(new Insets(5, 5, 5, 5));
-        content.add(createDoneButton(), 0, 0);
-        content.add(createEditButton(), 1, 0);
-        content.add(createDeleteButton(), 2, 0);
-        return content;
+    @NotNull private HBox createStaticWarningPeriod() {
+        HBox hbox = new HBox();
+        this.warningPeriod = new Label();
+        hbox.getChildren().add(warningPeriod);
+        return hbox;
     }
 
-    Node createPriority() {
-        if (isEditable) {
-            return createEditablePriority();
-        } else {
-            return createUneditablePriority();
-        }
-    }
 
-    Node createEditablePriority() {
-        ObservableList<String> options = FXCollections.observableArrayList(TrackMeConstants.getPriorityList());
-        final ComboBox<String> comboBox = new ComboBox<>(options);
-        comboBox.setValue(activity.getPriority());
-        comboBox.valueProperty().addListener((ov, t, t1) -> activity.setPriority(t1));
-        return comboBox;
-    }
-
-    private Node createUneditablePriority() {
-        return new Label(activity.getPriority());
+    private Node createStaticPriority() {
+        this.priorityField = new Label("Priority");
+        return this.priorityField;
     }
 
     Node createDeadline() {
         if (isEditable) {
             return createEditableDeadline();
         } else {
-            return createUneditableDeadline();
+            return createStaticDeadline();
         }
     }
 
@@ -294,7 +377,7 @@ public class ActivityView extends TitledPane {
         if (isEditable) {
             return createEditableLocation();
         } else {
-            return createUneditableLocation();
+            return createStaticLocation();
         }
     }
 
@@ -310,28 +393,11 @@ public class ActivityView extends TitledPane {
         return locationField;
     }
 
-    private Node createUneditableLocation() {
+    private Node createStaticLocation() {
         return new Label(activity.getLocation());
     }
 
-    private LocalDate datePickerDate;
-
-    private Node createEditableDeadline() {
-        HBox deadlinePicker = new HBox();
-        deadlinePicker.getChildren().add(createDatePicker());
-        return deadlinePicker;
-    }
-
-    private DatePicker createDatePicker() {
-        DatePicker datePicker = new DatePicker();
-        datePicker.setOnAction(event -> {
-            datePickerDate = datePicker.getValue();
-            activity.setDeadline(Date.from(datePickerDate.atStartOfDay(ZoneId.systemDefault()).toInstant()));
-        });
-        return datePicker;
-    }
-
-    private Node createUneditableDeadline() {
+    private Node createStaticDeadline() {
         Label deadlineLabel = new Label(DateFormat.getDateInstance(DateFormat.DEFAULT).format(activity.getDeadline()));
         if (activity.isAlertActive()) {
             deadlineLabel.getStyleClass().add("warningLabel");
@@ -347,16 +413,7 @@ public class ActivityView extends TitledPane {
         }
     }
 
-    private Node createEditableTags() {
-        Optional<String> reducedTags = activity.getTags().stream().reduce((s, s2) -> s + FIELD_SEPERATOR + " " + s2);
-        tagsField = new AutocompleteTextField();
-        reducedTags.ifPresent(s -> tagsField.setText(s));
 
-        SortedSet<String> treeSetTags = new TreeSet<>();
-        treeSetTags.addAll(presenter.getExistingTags());
-        tagsField.setSuggestions(treeSetTags);
-        return tagsField;
-    }
 
     private HBox createUneditableTags() {
         HBox tags = new HBox(5);
@@ -651,31 +708,6 @@ public class ActivityView extends TitledPane {
         return DisplayUtils.createTooltip(getActiveLog().isPresent()?
                 TooltipConstants.TOOLTIP_TEXT_ACTIVITY_TIMING_CONTROL_STOP:
                 TooltipConstants.TOOLTIP_TEXT_ACTIVITY_TIMING_CONTROL_START);
-    }
-
-    void makeEditable() {
-        this.isEditable = true;
-    }
-
-    void makeUneditable() {
-        this.isEditable = false;
-    }
-
-    public Activity getActivity() {
-        return activity;
-    }
-
-    public boolean isEditable() {
-        return isEditable;
-    }
-
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public void setActive(boolean active) {
-        LOG.debug("Making pane active: " + this.activity.getName());
-        this.isActive = active;
     }
 
     public void refresh() {

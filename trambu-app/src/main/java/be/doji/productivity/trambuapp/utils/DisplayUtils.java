@@ -3,10 +3,12 @@ package be.doji.productivity.trambuapp.utils;
 import be.doji.productivity.trambucore.model.tasks.Activity;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
+import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
 import javafx.scene.control.Separator;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.GridPane;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -54,6 +56,13 @@ public final class DisplayUtils {
         tooltip.setText(tooltipText);
         tooltip.setGraphic(createStyledIcon(tooltipIconDone));
         return tooltip;
+    }
+
+    public static GridPane createDefaultGridPane() {
+        GridPane gridPane = new GridPane();
+        gridPane.setVgap(4);
+        gridPane.setPadding(new Insets(5, 5, 5, 5));
+        return gridPane;
     }
 
     public static FontAwesomeIconView createStyledIcon(FontAwesomeIcon icon) {

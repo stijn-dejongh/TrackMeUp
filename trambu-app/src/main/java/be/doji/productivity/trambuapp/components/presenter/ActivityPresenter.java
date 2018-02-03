@@ -18,9 +18,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.text.ParseException;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.time.ZoneId;
+import java.util.*;
 
 public class ActivityPresenter extends Presenter {
 
@@ -55,10 +54,11 @@ public class ActivityPresenter extends Presenter {
 
     public void refreshFields() {
         refreshSubActivities();
+        refreshEditableTagsField();
     }
 
     public void refreshHeader() {
-        view.setText(getHeaderTitle());
+        view.setText(getActivityName());
         view.getTitleLabel().setGraphic(getHeaderIcon());
         view.getTitleLabel().setTooltip(getDoneTooltipText());
     }
@@ -87,7 +87,7 @@ public class ActivityPresenter extends Presenter {
                 TooltipConstants.TOOLTIP_TEXT_ACTIVITY_DONE);
     }
 
-    public String getHeaderTitle() {
+    public String getActivityName() {
         return model.getName();
     }
 
@@ -120,7 +120,7 @@ public class ActivityPresenter extends Presenter {
     }
 
     private void save() throws IOException, ParseException {
-        updateActivityFields();
+        updateModel();
         this.managerContainer.getActivityManager().save(getActivityToSave());
         if (!this.modelParentChanged) {
             refresh();
@@ -150,7 +150,7 @@ public class ActivityPresenter extends Presenter {
         return activityToSave;
     }
 
-    private void updateActivityFields() {
+    private void updateModel() {
         if (view.getNameField() != null) {
             model.setName(view.getNameField().getText());
         }
@@ -203,4 +203,33 @@ public class ActivityPresenter extends Presenter {
         }
     }
 
+    private void refreshEditableTagsField() {
+        Optional<String> reducedTags = this.model.getTags().stream()
+                .reduce((s, s2) -> s + DisplayConstants.FIELD_SEPERATOR + " " + s2);
+        reducedTags.ifPresent(s -> view.getTagsField().setText(s));
+
+        SortedSet<String> treeSetTags = new TreeSet<>();
+        treeSetTags.addAll(this.managerContainer.getActivityManager().getExistingTags());
+        view.getTagsField().setSuggestions(treeSetTags);
+    }
+
+    public boolean hasSubActivities() {
+        return !this.model.getSubActivities().isEmpty();
+    }
+
+    public String getActivityPriority() {
+        return this.model.getPriority();
+    }
+
+    public void setActivityPriority(String priority) {
+        if (StringUtils.isNotBlank(priority)) {
+            this.model.setPriority(priority);
+        }
+    }
+
+    public void deadlinePicked() {
+        view.getDeadlineDatePicker().getValue();
+        this.model.setDeadline(
+                Date.from(view.getDeadlineDatePicker().getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
+    }
 }
