@@ -2,8 +2,6 @@ package be.doji.productivity.trambuapp.utils;
 
 public final class DisplayConstants {
 
-
-
     /**
      * Utility classes should not have a public or default constructor
      */

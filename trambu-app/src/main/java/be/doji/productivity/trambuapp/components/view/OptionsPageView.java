@@ -106,15 +106,16 @@ public class OptionsPageView extends View {
         DirectoryChooser notesDirectoryChooser = new DirectoryChooser();
         notesDirectoryChooser.setTitle("Open notes directory");
 
-        Button notesDirectoryButton = createOpenDirectoryButton("Select notes directory", notesDirectoryChooser, file -> {
-            try {
-                String filePath = file.getAbsolutePath();
-                this.configuredNoteLocation = filePath;
-                this.getActivityController().getNoteManager().updateLocation(filePath);
-            } catch (IOException e) {
-                LOG.error("Error opening time tracking file", e);
-            }
-        });
+        Button notesDirectoryButton = createOpenDirectoryButton("Select notes directory", notesDirectoryChooser,
+                file -> {
+                    try {
+                        String filePath = file.getAbsolutePath();
+                        this.configuredNoteLocation = filePath;
+                        this.getActivityController().getNoteManager().updateLocation(filePath);
+                    } catch (IOException e) {
+                        LOG.error("Error opening time tracking file", e);
+                    }
+                });
         notesDirectoryButton
                 .setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_OPTIONS_TIME_FILE_SELECT));
         return notesDirectoryButton;

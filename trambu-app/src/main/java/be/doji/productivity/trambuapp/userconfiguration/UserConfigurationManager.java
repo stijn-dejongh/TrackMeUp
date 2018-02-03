@@ -55,12 +55,12 @@ public class UserConfigurationManager {
         Files.write(configFilePath, lines);
     }
 
-    public void setProperties(Map<String, String> properties) {
-        this.properties = properties;
-    }
-
     public Map<String, String> getProperties() {
         return properties;
+    }
+
+    public void setProperties(Map<String, String> properties) {
+        this.properties = properties;
     }
 
     public Optional<String> getProperty(String key) {

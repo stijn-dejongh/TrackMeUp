@@ -1,7 +1,7 @@
 package be.doji.productivity.trambuapp;
 
-import be.doji.productivity.trambuapp.styles.DefaultTrambuStyle;
 import be.doji.productivity.trambuapp.components.view.ActivityPageView;
+import be.doji.productivity.trambuapp.styles.DefaultTrambuStyle;
 import kotlin.jvm.JvmClassMappingKt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

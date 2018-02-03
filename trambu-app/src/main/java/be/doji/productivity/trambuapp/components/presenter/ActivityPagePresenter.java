@@ -34,14 +34,14 @@ public class ActivityPagePresenter extends Presenter {
         this.model = find(ActivityManagerContainer.class);
     }
 
-    public void populate() {
-        refresh();
-    }
-
     public void refresh() {
         populateActivities();
         applyFilters();
         view.refreshAccordion();
+    }
+
+    public void populate() {
+        refresh();
     }
 
     public void populateActivities() {

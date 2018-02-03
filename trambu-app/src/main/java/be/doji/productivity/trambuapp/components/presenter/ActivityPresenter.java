@@ -37,6 +37,11 @@ public class ActivityPresenter extends Presenter {
     private ActivityPagePresenter parent;
     private boolean modelParentChanged;
 
+    public ActivityPresenter(ActivityView view, Activity model, ActivityPagePresenter parent) {
+        this(view, model);
+        this.parent = parent;
+    }
+
     public ActivityPresenter(ActivityView view, Activity model) {
         this.view = view;
         this.model = model;
@@ -44,13 +49,12 @@ public class ActivityPresenter extends Presenter {
         this.activityLog = getActivityLog();
     }
 
-    public ActivityPresenter(ActivityView view, Activity model, ActivityPagePresenter parent) {
-        this(view, model);
-        this.parent = parent;
+    public ActivityLog getActivityLog() {
+        return managerContainer.getTimeTrackingManager().getLogForActivityId(this.model.getId());
     }
 
-    public void populate() {
-        this.refresh();
+    public void headerButtonClicked() {
+        this.doneClicked();
     }
 
     public void refresh() {
@@ -60,85 +64,8 @@ public class ActivityPresenter extends Presenter {
         refreshFields();
     }
 
-    public ActivityLog getActivityLog() {
-        return managerContainer.getTimeTrackingManager().getLogForActivityId(this.model.getId());
-    }
-
-    public void refreshFields() {
-        if (view.isEditable()) {
-            refreshEditableFields();
-        } else {
-            refreshStaticFields();
-        }
-    }
-
-    private void refreshStaticFields() {
-        refreshSubActivities();
-    }
-
-    private void refreshEditableFields() {
-        refreshSubActivities();
-        refreshEditableTagsField();
-        refreshEditableProjectsField();
-        refreshEditableLocation();
-    }
-
-    public void refreshHeader() {
-        view.setText(getActivityName());
-        view.getTitleLabel().setGraphic(getHeaderIcon());
-        view.getTitleLabel().setTooltip(getDoneTooltipText());
-    }
-
-    public void refreshViewStyle() {
-        view.getStyleClass()
-                .removeAll(DisplayConstants.STYLE_CLASS_ACTIVITY_DONE, DisplayConstants.STYLE_CLASS_ACTIVITY_TODO,
-                        DisplayConstants.STYLE_CLASS_ACTIVITY_ALERT);
-        view.getStyleClass().add(getActivityStyle());
-    }
-
-    private FontAwesomeIconView getHeaderIcon() {
-        FontAwesomeIconView checkedCalendar = DisplayUtils.createStyledIcon(FontAwesomeIcon.CHECK_CIRCLE);
-        FontAwesomeIconView uncheckedCalendar = DisplayUtils.createStyledIcon(FontAwesomeIcon.CIRCLE_ALT);
-        FontAwesomeIconView editing = DisplayUtils.createStyledIcon(FontAwesomeIcon.EDIT);
-        if (view.isEditable()) {
-            return editing;
-        } else {
-            return model.isCompleted()?checkedCalendar:uncheckedCalendar;
-        }
-    }
-
-    private Tooltip getDoneTooltipText() {
-        return DisplayUtils.createTooltip(model.isCompleted()?
-                TooltipConstants.TOOLTIP_TEXT_ACTIVITY_NOT_DONE:
-                TooltipConstants.TOOLTIP_TEXT_ACTIVITY_DONE);
-    }
-
-    public String getActivityName() {
-        return model.getName();
-    }
-
-    public void headerButtonClicked() {
-        this.doneClicked();
-    }
-
-    public String getActivityStyle() {
-        if (this.model.isCompleted() && this.model.isAllSubActivitiesCompleted()) {
-            return DisplayConstants.STYLE_CLASS_ACTIVITY_DONE;
-        } else {
-            return this.model.isAlertActive()?
-                    DisplayConstants.STYLE_CLASS_ACTIVITY_ALERT:
-                    DisplayConstants.STYLE_CLASS_ACTIVITY_TODO;
-        }
-    }
-
-    public void refreshSubActivities() {
-        if (view.getSubActivitiesAccordion() != null) {
-            ObservableList<TitledPane> panes = view.getSubActivitiesAccordion().getPanes();
-            panes.clear();
-            for (Activity subActivity : this.model.getSubActivities()) {
-                panes.add(new ActivityView(subActivity));
-            }
-        }
+    public void populate() {
+        this.refresh();
     }
 
     private void save() throws IOException, ParseException {
@@ -160,6 +87,14 @@ public class ActivityPresenter extends Presenter {
 
     }
 
+    public void refreshFields() {
+        if (view.isEditable()) {
+            refreshEditableFields();
+        } else {
+            refreshStaticFields();
+        }
+    }
+
     @NotNull private Activity getRootActivity() {
         Activity activityToSave = this.model;
         while (StringUtils.isNotBlank(activityToSave.getParentActivity())) {
@@ -170,6 +105,10 @@ public class ActivityPresenter extends Presenter {
             }
         }
         return activityToSave;
+    }
+
+    private void refreshStaticFields() {
+        refreshSubActivities();
     }
 
     private void updateModel() {
@@ -184,6 +123,13 @@ public class ActivityPresenter extends Presenter {
         updateActivityWarningPeriod();
     }
 
+    private void refreshEditableFields() {
+        refreshSubActivities();
+        refreshEditableTagsField();
+        refreshEditableProjectsField();
+        refreshEditableLocation();
+    }
+
     private void updateActivityWarningPeriod() {
         if (warningFieldFilledInCorrectly()) {
             String warningTimeframe = view.getWarningPeriodInHours().getText();
@@ -192,10 +138,23 @@ public class ActivityPresenter extends Presenter {
         }
     }
 
+    public void refreshHeader() {
+        view.setText(getActivityName());
+        view.getTitleLabel().setGraphic(getHeaderIcon());
+        view.getTitleLabel().setTooltip(getDoneTooltipText());
+    }
+
     private boolean warningFieldFilledInCorrectly() {
         return view.getWarningPeriodInHours() != null && StringUtils
                 .isNotBlank(view.getWarningPeriodInHours().getText()) && view.getWarningPeriodInHours().getText()
                 .matches(DisplayConstants.REGEX_WARNING_PERIOD);
+    }
+
+    public void refreshViewStyle() {
+        view.getStyleClass()
+                .removeAll(DisplayConstants.STYLE_CLASS_ACTIVITY_DONE, DisplayConstants.STYLE_CLASS_ACTIVITY_TODO,
+                        DisplayConstants.STYLE_CLASS_ACTIVITY_ALERT);
+        view.getStyleClass().add(getActivityStyle());
     }
 
     private void updateActivityProjects() {
@@ -204,6 +163,17 @@ public class ActivityPresenter extends Presenter {
             List<String> newProjects = splitTextFieldValueOnSeperator(conctatenatedProjects,
                     DisplayConstants.FIELD_SEPERATOR);
             model.setProjects(newProjects);
+        }
+    }
+
+    private FontAwesomeIconView getHeaderIcon() {
+        FontAwesomeIconView checkedCalendar = DisplayUtils.createStyledIcon(FontAwesomeIcon.CHECK_CIRCLE);
+        FontAwesomeIconView uncheckedCalendar = DisplayUtils.createStyledIcon(FontAwesomeIcon.CIRCLE_ALT);
+        FontAwesomeIconView editing = DisplayUtils.createStyledIcon(FontAwesomeIcon.EDIT);
+        if (view.isEditable()) {
+            return editing;
+        } else {
+            return model.isCompleted()?checkedCalendar:uncheckedCalendar;
         }
     }
 
@@ -216,6 +186,12 @@ public class ActivityPresenter extends Presenter {
         return newTags;
     }
 
+    private Tooltip getDoneTooltipText() {
+        return DisplayUtils.createTooltip(model.isCompleted()?
+                TooltipConstants.TOOLTIP_TEXT_ACTIVITY_NOT_DONE:
+                TooltipConstants.TOOLTIP_TEXT_ACTIVITY_DONE);
+    }
+
     private void updateActivityTags() {
         if (view.getTagsField() != null && StringUtils.isNotBlank(view.getTagsField().getText())) {
             String conctatenatedProjects = view.getTagsField().getText();
@@ -225,36 +201,8 @@ public class ActivityPresenter extends Presenter {
         }
     }
 
-    private void refreshEditableTagsField() {
-        Optional<String> reducedTags = this.model.getTags().stream()
-                .reduce((s, s2) -> s + DisplayConstants.FIELD_SEPERATOR + " " + s2);
-        reducedTags.ifPresent(s -> view.getTagsField().setText(s));
-
-        SortedSet<String> treeSetTags = new TreeSet<>();
-        treeSetTags.addAll(this.managerContainer.getActivityManager().getExistingTags());
-        view.getTagsField().setSuggestions(treeSetTags);
-    }
-
-    private void refreshEditableProjectsField() {
-        Optional<String> reducedProjects = this.model.getProjects().stream()
-                .reduce((s, s2) -> s + DisplayConstants.FIELD_SEPERATOR + " " + s2);
-
-        reducedProjects.ifPresent(s -> view.getProjectsField().setText(s));
-        SortedSet<String> treeSetProjects = new TreeSet<>();
-        treeSetProjects.addAll(this.managerContainer.getActivityManager().getExistingProjects());
-        view.getProjectsField().setSuggestions(treeSetProjects);
-    }
-
-    private void refreshEditableLocation() {
-        SortedSet<String> existingLocations = new TreeSet<>();
-        existingLocations.addAll(this.managerContainer.getActivityManager().getExistingLocations());
-        view.getLocationField().setSuggestions(existingLocations);
-
-        if (this.model.isSetLocation()) {
-            view.getLocationField().setText(this.model.getLocation());
-        } else {
-            view.getLocationField().setText("UNKNOWN");
-        }
+    public String getActivityName() {
+        return model.getName();
     }
 
     private void refreshDeadlineLabel() {
@@ -278,6 +226,16 @@ public class ActivityPresenter extends Presenter {
         }).collect(Collectors.toList()));
     }
 
+    public String getActivityStyle() {
+        if (this.model.isCompleted() && this.model.isAllSubActivitiesCompleted()) {
+            return DisplayConstants.STYLE_CLASS_ACTIVITY_DONE;
+        } else {
+            return this.model.isAlertActive()?
+                    DisplayConstants.STYLE_CLASS_ACTIVITY_ALERT:
+                    DisplayConstants.STYLE_CLASS_ACTIVITY_TODO;
+        }
+    }
+
     private void refreshProjects() {
         view.getProjectsBox().getChildren().addAll(this.model.getProjects().stream().map(project -> {
             Button button = new Button(project);
@@ -289,6 +247,16 @@ public class ActivityPresenter extends Presenter {
             });
             return button;
         }).collect(Collectors.toList()));
+    }
+
+    public void refreshSubActivities() {
+        if (view.getSubActivitiesAccordion() != null) {
+            ObservableList<TitledPane> panes = view.getSubActivitiesAccordion().getPanes();
+            panes.clear();
+            for (Activity subActivity : this.model.getSubActivities()) {
+                panes.add(new ActivityView(subActivity));
+            }
+        }
     }
 
     public boolean hasSubActivities() {
@@ -389,6 +357,16 @@ public class ActivityPresenter extends Presenter {
         }
     }
 
+    private void refreshEditableTagsField() {
+        Optional<String> reducedTags = this.model.getTags().stream()
+                .reduce((s, s2) -> s + DisplayConstants.FIELD_SEPERATOR + " " + s2);
+        reducedTags.ifPresent(s -> view.getTagsField().setText(s));
+
+        SortedSet<String> treeSetTags = new TreeSet<>();
+        treeSetTags.addAll(this.managerContainer.getActivityManager().getExistingTags());
+        view.getTagsField().setSuggestions(treeSetTags);
+    }
+
     public void editButtonClicked() {
         try {
             if (view.isEditable()) {
@@ -404,8 +382,30 @@ public class ActivityPresenter extends Presenter {
         }
     }
 
+    private void refreshEditableProjectsField() {
+        Optional<String> reducedProjects = this.model.getProjects().stream()
+                .reduce((s, s2) -> s + DisplayConstants.FIELD_SEPERATOR + " " + s2);
+
+        reducedProjects.ifPresent(s -> view.getProjectsField().setText(s));
+        SortedSet<String> treeSetProjects = new TreeSet<>();
+        treeSetProjects.addAll(this.managerContainer.getActivityManager().getExistingProjects());
+        view.getProjectsField().setSuggestions(treeSetProjects);
+    }
+
     public String getEditButonText() {
         return view.isEditable()?DisplayConstants.BUTTON_TEXT_SAVE:DisplayConstants.BUTTON_TEXT_EDIT;
+    }
+
+    private void refreshEditableLocation() {
+        SortedSet<String> existingLocations = new TreeSet<>();
+        existingLocations.addAll(this.managerContainer.getActivityManager().getExistingLocations());
+        view.getLocationField().setSuggestions(existingLocations);
+
+        if (this.model.isSetLocation()) {
+            view.getLocationField().setText(this.model.getLocation());
+        } else {
+            view.getLocationField().setText("UNKNOWN");
+        }
     }
 
     public void deleteButtonClicked() {
@@ -431,9 +431,8 @@ public class ActivityPresenter extends Presenter {
         this.managerContainer.getTimeTrackingManager().save(activityLog);
     }
 
-    public FontAwesomeIconView getTimingButtonIcon() {
-        return DisplayUtils.createStyledIcon(
-                activityLog.getActiveLog().isPresent()?FontAwesomeIcon.HOURGLASS_END:FontAwesomeIcon.HOURGLASS_START);
+    private Optional<TimeLog> getActiveLog() {
+        return getActivityLog().getActiveLog();
     }
 
     public String getTimingButtonText() {
@@ -445,14 +444,15 @@ public class ActivityPresenter extends Presenter {
         }
     }
 
+    public FontAwesomeIconView getTimingButtonIcon() {
+        return DisplayUtils.createStyledIcon(
+                activityLog.getActiveLog().isPresent()?FontAwesomeIcon.HOURGLASS_END:FontAwesomeIcon.HOURGLASS_START);
+    }
+
     public Tooltip getTimingButtonTooltipText() {
         return DisplayUtils.createTooltip(getActiveLog().isPresent()?
                 TooltipConstants.TOOLTIP_TEXT_ACTIVITY_TIMING_CONTROL_STOP:
                 TooltipConstants.TOOLTIP_TEXT_ACTIVITY_TIMING_CONTROL_START);
-    }
-
-    private Optional<TimeLog> getActiveLog() {
-        return getActivityLog().getActiveLog();
     }
 
     void setManagerContainer(ActivityManagerContainer container) {
@@ -472,4 +472,5 @@ public class ActivityPresenter extends Presenter {
     public boolean isActivityCompleted() {
         return this.model.isCompleted();
     }
+
 }

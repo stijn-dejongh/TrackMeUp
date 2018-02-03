@@ -34,10 +34,6 @@ public class ActivityPageView extends View {
     private Accordion activityAccordion;
     private List<TitledPane> activityPanes = new ArrayList<>();
 
-    @NotNull @Override public Parent getRoot() {
-        return this.root;
-    }
-
     public ActivityPageView() {
         super();
         this.setTitle(DisplayConstants.TITLE_APPLICATION + " - " + DisplayConstants.TITLE_ACTIVITY);
@@ -48,6 +44,18 @@ public class ActivityPageView extends View {
         root.setPrefWidth(DisplayConstants.UI_DEFAULT_WINDOW_WIDTH);
         root.setBottom(new MainMenuBar(this).getRoot());
         this.populate();
+    }
+
+    @NotNull @Override public Parent getRoot() {
+        return this.root;
+    }
+
+    @Override public void onDock() {
+        presenter.onViewLoad();
+    }
+
+    @Override public void onDelete() {
+        presenter.onViewClose();
     }
 
     private void populate() {
@@ -126,9 +134,7 @@ public class ActivityPageView extends View {
     }
 
     public List<ActivityView> getActivityPanes() {
-        return activityPanes.stream()
-                .filter(ActivityView.class::isInstance)
-                .map(ActivityView.class::cast)
+        return activityPanes.stream().filter(ActivityView.class::isInstance).map(ActivityView.class::cast)
                 .collect(Collectors.toList());
     }
 
@@ -138,13 +144,5 @@ public class ActivityPageView extends View {
 
     public void addPane(TitledPane pane) {
         this.activityPanes.add(pane);
-    }
-
-    @Override public void onDelete() {
-        presenter.onViewClose();
-    }
-
-    @Override public void onDock() {
-        presenter.onViewLoad();
     }
 }

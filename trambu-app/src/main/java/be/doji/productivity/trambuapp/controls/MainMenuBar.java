@@ -1,10 +1,10 @@
 package be.doji.productivity.trambuapp.controls;
 
-import be.doji.productivity.trambuapp.utils.DisplayUtils;
-import be.doji.productivity.trambuapp.utils.TooltipConstants;
 import be.doji.productivity.trambuapp.components.view.ActivityPageView;
 import be.doji.productivity.trambuapp.components.view.OptionsPageView;
 import be.doji.productivity.trambuapp.components.view.TimesheetPageView;
+import be.doji.productivity.trambuapp.utils.DisplayUtils;
+import be.doji.productivity.trambuapp.utils.TooltipConstants;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.scene.Parent;
