@@ -2,7 +2,7 @@ package be.doji.productivity.trambuapp.components.view;
 
 import be.doji.productivity.trambuapp.components.elements.AutocompleteTextField;
 import be.doji.productivity.trambuapp.components.elements.OverlayPane;
-import be.doji.productivity.trambuapp.components.presenter.ActivityPagePresenter;
+import be.doji.productivity.trambuapp.components.presenter.ActivityPresenter;
 import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
 import be.doji.productivity.trambuapp.utils.TooltipConstants;
@@ -22,7 +22,6 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +30,6 @@ import java.io.IOException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
@@ -41,31 +39,34 @@ public class ActivityView extends TitledPane {
 
     private static final Logger LOG = LoggerFactory.getLogger(ActivityView.class);
 
-    private static final String FIELD_SEPERATOR = ",";
     private boolean isActive;
-    public ActivityPagePresenter presenter;
-    public boolean isEditable = false;
-    public Activity activity;
-    public TextField nameField;
-    public AutocompleteTextField projectsField;
-    public AutocompleteTextField tagsField;
-    public ActivityLog activityLog;
-    public boolean parentChanged;
-    public TextField warningPeriodInHours;
-    public AutocompleteTextField locationField;
-    public OverlayPane overlay;
 
-    public ActivityView(Activity activity, ActivityPagePresenter presenter) {
+    private Button titleLabel;
+    private ActivityPresenter presenter;
+    private boolean isEditable = false;
+    private TextField nameField;
+    private AutocompleteTextField projectsField;
+    private AutocompleteTextField tagsField;
+    private ActivityLog activityLog;
+    private TextField warningPeriodInHours;
+    private AutocompleteTextField locationField;
+    private OverlayPane overlay;
+    private Accordion subActivitiesAccordion;
+
+    public ActivityView(Activity activity) {
         super();
-        this.activity = activity;
-        this.presenter = presenter;
-        this.activityLog = presenter.getLogForActivityId(activity.getId());
-        updateHeader();
-        overlay = new OverlayPane();
-        this.setContent(createContentContainer());
+        this.presenter = new ActivityPresenter(this, activity);
 
+        /**
+         * TODO: add this to presenter
+         * this.activityLog = presenter.getLogForActivityId(activity.getId());
+         */
+        overlay = new OverlayPane();
+        this.createHeader();
+        this.setContent(createContentContainer());
         this.setVisible(true);
         this.setOnMouseClicked(event -> this.setActive(!this.isActive));
+        presenter.populate();
     }
 
     @NotNull public StackPane createContentContainer() {
@@ -76,55 +77,97 @@ public class ActivityView extends TitledPane {
         return contentContainer;
     }
 
-    private void updateHeader() {
-        this.setText(activity.getName());
-        Button titleLabel = new Button();
+    public void createHeader() {
+        this.setText(presenter.getHeaderTitle());
+        this.setGraphic(createTitleLabel());
+    }
 
-        titleLabel.setGraphic(getHeaderIcon());
+    public Button createTitleLabel() {
+        this.titleLabel = new Button();
         titleLabel.getStyleClass().clear();
         titleLabel.getStyleClass().add("icon-button");
-        titleLabel.setOnAction(event -> {
-            try {
-                this.toggleCompleted();
-                titleLabel.setGraphic(getHeaderIcon());
-                save();
-            } catch (IOException | ParseException e) {
-                LOG.error("Error while saving activity to file: " + e.getMessage());
-            }
-        });
-        titleLabel.setTooltip(getDoneTooltipText(activity));
-        this.setGraphic(titleLabel);
-        this.getStyleClass()
-                .removeAll(DisplayConstants.STYLE_CLASS_ACTIVITY_DONE, DisplayConstants.STYLE_CLASS_ACTIVITY_TODO,
-                        DisplayConstants.STYLE_CLASS_ACTIVITY_ALERT);
-        this.getStyleClass().add(getActivityStyle());
+        titleLabel.setOnAction(event -> presenter.headerButtonClicked());
+        return this.titleLabel;
     }
 
-    private FontAwesomeIconView getHeaderIcon() {
-        FontAwesomeIconView checkedCalendar = DisplayUtils.createStyledIcon(FontAwesomeIcon.CHECK_CIRCLE);
-        FontAwesomeIconView uncheckedCalendar = DisplayUtils.createStyledIcon(FontAwesomeIcon.CIRCLE_ALT);
-        FontAwesomeIconView editing = DisplayUtils.createStyledIcon(FontAwesomeIcon.EDIT);
-        if (isEditable) {
-            return editing;
-        } else {
-            return activity.isCompleted()?checkedCalendar:uncheckedCalendar;
-        }
+    public Button getTitleLabel() {
+        return titleLabel;
     }
 
-    private Tooltip getDoneTooltipText(Activity activity) {
-        return DisplayUtils.createTooltip(activity.isCompleted()?
-                TooltipConstants.TOOLTIP_TEXT_ACTIVITY_NOT_DONE:
-                TooltipConstants.TOOLTIP_TEXT_ACTIVITY_DONE);
+    public void setTitleLabel(Button titleLabel) {
+        this.titleLabel = titleLabel;
     }
 
-    String getActivityStyle() {
-        if (this.activity.isCompleted() && this.activity.isAllSubActivitiesCompleted()) {
-            return DisplayConstants.STYLE_CLASS_ACTIVITY_DONE;
-        } else {
-            return this.activity.isAlertActive()?
-                    DisplayConstants.STYLE_CLASS_ACTIVITY_ALERT:
-                    DisplayConstants.STYLE_CLASS_ACTIVITY_TODO;
-        }
+    public TextField getNameField() {
+        return nameField;
+    }
+
+    public void setNameField(TextField nameField) {
+        this.nameField = nameField;
+    }
+
+    public AutocompleteTextField getProjectsField() {
+        return projectsField;
+    }
+
+    public void setProjectsField(AutocompleteTextField projectsField) {
+        this.projectsField = projectsField;
+    }
+
+    public AutocompleteTextField getTagsField() {
+        return tagsField;
+    }
+
+    public void setTagsField(AutocompleteTextField tagsField) {
+        this.tagsField = tagsField;
+    }
+
+    public ActivityLog getActivityLog() {
+        return activityLog;
+    }
+
+    public void setActivityLog(ActivityLog activityLog) {
+        this.activityLog = activityLog;
+    }
+
+    public TextField getWarningPeriodInHours() {
+        return warningPeriodInHours;
+    }
+
+    public void setWarningPeriodInHours(TextField warningPeriodInHours) {
+        this.warningPeriodInHours = warningPeriodInHours;
+    }
+
+    public AutocompleteTextField getLocationField() {
+        return locationField;
+    }
+
+    public void setLocationField(AutocompleteTextField locationField) {
+        this.locationField = locationField;
+    }
+
+    public OverlayPane getOverlay() {
+        return overlay;
+    }
+
+    public void setOverlay(OverlayPane overlay) {
+        this.overlay = overlay;
+    }
+
+    public LocalDate getDatePickerDate() {
+        return datePickerDate;
+    }
+
+    public void setDatePickerDate(LocalDate datePickerDate) {
+        this.datePickerDate = datePickerDate;
+    }
+
+    public Accordion getSubActivitiesAccordion() {
+        return subActivitiesAccordion;
+    }
+
+    public void setSubActivitiesAccordion(Accordion subActivitiesAccordion) {
+        this.subActivitiesAccordion = subActivitiesAccordion;
     }
 
     GridPane createActivityContent() {
@@ -477,10 +520,8 @@ public class ActivityView extends TitledPane {
     }
 
     private Node createSubActivities() {
-        Accordion accordion = new Accordion();
-        for (Activity subActivity : this.activity.getSubActivities()) {
-            accordion.getPanes().add(new ActivityView(subActivity, presenter));
-        }
+        this.subActivitiesAccordion = new Accordion();
+
         return accordion;
     }
 
@@ -503,7 +544,7 @@ public class ActivityView extends TitledPane {
         return done;
     }
 
-    private void toggleCompleted() {
+    public void toggleCompleted() {
         if (!activity.isCompleted() && !activity.isAllSubActivitiesCompleted()) {
             LOG.warn("Completing activity with incomplete subactivities");
         }
@@ -612,75 +653,6 @@ public class ActivityView extends TitledPane {
                 TooltipConstants.TOOLTIP_TEXT_ACTIVITY_TIMING_CONTROL_START);
     }
 
-    private void save() throws IOException, ParseException {
-        updateActivityFields();
-        presenter.getActivityController().getActivityManager().save(getActivityToSave());
-        if (!this.parentChanged) {
-            this.refresh();
-        } else {
-            presenter.refresh();
-        }
-
-    }
-
-    private void updateActivityFields() {
-        if (nameField != null) {
-            activity.setName(nameField.getText());
-        }
-        if (locationField != null) {
-            activity.setLocation(locationField.getText());
-        }
-        updateActivityProjects();
-        updateActivityTags();
-        updateActivityWarningPeriod();
-    }
-
-    private void updateActivityWarningPeriod() {
-        if (warningPeriodInHours != null && StringUtils.isNotBlank(warningPeriodInHours.getText())
-                && warningPeriodInHours.getText().matches(DisplayConstants.REGEX_WARNING_PERIOD)) {
-            String warningTimeframe = warningPeriodInHours.getText();
-            Duration timeFrame = Duration.ofHours(Long.parseLong(warningTimeframe));
-            activity.setWarningTimeFrame(timeFrame);
-        }
-    }
-
-    private void updateActivityProjects() {
-        if (projectsField != null && StringUtils.isNotBlank(projectsField.getText())) {
-            String conctatenatedProjects = projectsField.getText();
-            List<String> newProjects = splitTextFieldValueOnSeperator(conctatenatedProjects, FIELD_SEPERATOR);
-            activity.setProjects(newProjects);
-        }
-    }
-
-    private void updateActivityTags() {
-        if (tagsField != null && StringUtils.isNotBlank(tagsField.getText())) {
-            String conctatenatedProjects = tagsField.getText();
-            List<String> newTags = splitTextFieldValueOnSeperator(conctatenatedProjects, FIELD_SEPERATOR);
-            activity.setTags(newTags);
-        }
-    }
-
-    private List<String> splitTextFieldValueOnSeperator(String conctatenatedProjects, String seperator) {
-        List<String> newTags = new ArrayList<>();
-        String[] split = conctatenatedProjects.split(seperator);
-        for (String aSplit : split) {
-            newTags.add(aSplit.trim());
-        }
-        return newTags;
-    }
-
-    private Activity getActivityToSave() {
-        Activity activityToSave = this.getActivity();
-        while (StringUtils.isNotBlank(activityToSave.getParentActivity())) {
-            Optional<Activity> savedParent = presenter.getActivityController().getActivityManager()
-                    .getSavedActivityById(activityToSave.getParentActivity());
-            if (savedParent.isPresent()) {
-                activityToSave = savedParent.get();
-            }
-        }
-        return activityToSave;
-    }
-
     void makeEditable() {
         this.isEditable = true;
     }
@@ -693,7 +665,7 @@ public class ActivityView extends TitledPane {
         return activity;
     }
 
-    boolean isEditable() {
+    public boolean isEditable() {
         return isEditable;
     }
 

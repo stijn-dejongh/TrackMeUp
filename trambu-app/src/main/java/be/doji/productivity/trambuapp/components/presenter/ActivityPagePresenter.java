@@ -1,7 +1,7 @@
 package be.doji.productivity.trambuapp.components.presenter;
 
-import be.doji.productivity.trambuapp.components.view.ActivityView;
 import be.doji.productivity.trambuapp.components.view.ActivityPageView;
+import be.doji.productivity.trambuapp.components.view.ActivityView;
 import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
 import be.doji.productivity.trambucore.managers.NoteManager;
@@ -10,7 +10,6 @@ import be.doji.productivity.trambucore.model.tracker.ActivityLog;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tornadofx.Component;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -19,12 +18,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * TODO: split this up
- *  the PagePresenter - collection of AcitivityViews
- *  the ActivityPresenter - for a single acitivty
- */
-public class ActivityPagePresenter extends Component {
+public class ActivityPagePresenter extends Presenter {
 
     private static final Logger LOG = LoggerFactory.getLogger(ActivityPagePresenter.class);
 
@@ -38,6 +32,10 @@ public class ActivityPagePresenter extends Component {
     public ActivityPagePresenter(ActivityPageView view) {
         this.view = view;
         this.model = find(ActivityManagerContainer.class);
+    }
+
+    public void populate() {
+        refresh();
     }
 
     public void refresh() {
@@ -55,7 +53,7 @@ public class ActivityPagePresenter extends Component {
                 view.addPane(DisplayUtils
                         .createSeperatorPane(DisplayUtils.getDateSeperatorText(activityGroupEntry.getKey())));
                 for (Activity activity : activityGroup) {
-                    view.addPane(new ActivityView(activity, this));
+                    view.addPane(new ActivityView(activity));
                 }
             }
         }

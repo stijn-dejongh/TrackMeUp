@@ -11,6 +11,7 @@ public final class DisplayConstants {
     }
 
     public static final String SEPARATOR_TAGS_PROJECTS = ",";
+    public static final String FIELD_SEPERATOR = ",";
 
     public static final String TITLE_APPLICATION = "TraMBU - visual activity and time tracking";
     public static final String TITLE_ACTIVITY = "[Activities]";
