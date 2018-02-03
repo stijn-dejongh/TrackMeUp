@@ -52,54 +52,6 @@ public class ActivityPageViewTest extends ApplicationTest {
         Mockito.when(mockActController.getTimeTrackingManager()).thenReturn(timeTrackingManager);
     }
 
-    @Test public void testCreateControlsUneditable() {
-        Activity testActivity = new Activity("DefaultActivity");
-        ActivityView testNode = new ActivityView(testActivity);
-        Assert.assertFalse(testNode.isEditable());
-        GridPane createdContent = testNode.createActivityContent();
-        ObservableList<Node> contentNodes = createdContent.getChildren();
-        Assert.assertNotNull(contentNodes);
-        Assert.assertFalse(contentNodes.isEmpty());
-    }
-
-    @Test public void testCreateActivityControlsDefaults() {
-        Activity testActivity = new Activity("DefaultActivity");
-        ActivityView testNode = new ActivityView(testActivity);
-        GridPane actvityControls = testNode.createActvityControls();
-        ObservableList<Node> controls = actvityControls.getChildren();
-        Assert.assertNotNull(controls);
-        Assert.assertEquals(3, controls.size());
-
-        Button shouldBeDoneButton = (Button) controls.get(0);
-        Assert.assertEquals(DisplayConstants.BUTTON_TEXT_IS_DONE, shouldBeDoneButton.getText());
-
-        Button shouldBeEditButton = (Button) controls.get(1);
-        Assert.assertEquals(DisplayConstants.BUTTON_TEXT_EDIT, shouldBeEditButton.getText());
-
-        Button shouldBeDeleteButton = (Button) controls.get(2);
-        Assert.assertEquals(DisplayConstants.BUTTON_TEXT_DELETE, shouldBeDeleteButton.getText());
-    }
-
-    @Test public void testCreateActivityControlsActivityNodeEditable() {
-        Activity testActivity = new Activity("DefaultActivity");
-        ActivityView testNode = new ActivityView(testActivity);
-        testNode.makeEditable();
-        Assert.assertTrue(testNode.isEditable());
-        GridPane actvityControls = testNode.createActvityControls();
-        ObservableList<Node> controls = actvityControls.getChildren();
-        Assert.assertNotNull(controls);
-        Assert.assertEquals(3, controls.size());
-
-        Button shouldBeDoneButton = (Button) controls.get(0);
-        Assert.assertEquals(DisplayConstants.BUTTON_TEXT_IS_DONE, shouldBeDoneButton.getText());
-
-        Button shouldBeEditButton = (Button) controls.get(1);
-        Assert.assertEquals(DisplayConstants.BUTTON_TEXT_SAVE, shouldBeEditButton.getText());
-
-        Button shouldBeDeleteButton = (Button) controls.get(2);
-        Assert.assertEquals(DisplayConstants.BUTTON_TEXT_DELETE, shouldBeDeleteButton.getText());
-    }
-
     @After public void cleanUp() throws IOException {
         if (Files.exists(activityTestFile)) {
             Files.delete(activityTestFile);
