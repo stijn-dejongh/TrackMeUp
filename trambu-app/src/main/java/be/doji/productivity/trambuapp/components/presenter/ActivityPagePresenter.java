@@ -60,6 +60,10 @@ public class ActivityPagePresenter extends Presenter {
     }
 
     public void applyFilters() {
+        if (!StringUtils.equalsIgnoreCase(this.getActiveFilter(), DisplayConstants.LABEL_TEXT_FILTER_NONE)) {
+            view.getHeadingPanes().forEach(pane -> pane.setVisible(false));
+        }
+
         List<ActivityView> acitivtyPanes = view.getActivityPanes();
         for (ActivityView pane : acitivtyPanes) {
             if (shouldBeFiltered(pane)) {

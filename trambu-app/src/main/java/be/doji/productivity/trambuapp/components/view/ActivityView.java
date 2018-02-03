@@ -55,6 +55,7 @@ public class ActivityView extends TitledPane {
     private Button deleteButton;
     private Button timingButton;
     private Label deadLineHeader;
+    private Label locationHeader;
 
     public ActivityView(Activity activity) {
         super();
@@ -110,6 +111,7 @@ public class ActivityView extends TitledPane {
 
     private void createFieldHeaders() {
         this.deadLineHeader = new Label("Deadline: ");
+        this.locationHeader = new Label("Location :");
     }
 
     GridPane createStaticContent() {
@@ -125,7 +127,7 @@ public class ActivityView extends TitledPane {
         content.add(this.deadLineHeader, 0, rowIndex);
         content.add(createStaticDeadline(), 1, rowIndex++);
 
-        content.add(new Label("Location :"), 0, rowIndex);
+        content.add(this.locationHeader, 0, rowIndex);
         content.add(createStaticLocation(), 1, rowIndex++);
 
         content.add(new Label("Warning period: "), 0, rowIndex);
@@ -142,7 +144,7 @@ public class ActivityView extends TitledPane {
         content.add(new Label("Notes: "), 0, rowIndex);
         content.add(createNotes(), 1, rowIndex++);
 
-        if (!presenter.hasSubActivities()) {
+        if (presenter.hasSubActivities()) {
             Label subActivityTitle = new Label("Subactivities: ");
             subActivityTitle.getStyleClass().clear();
             subActivityTitle.getStyleClass().add("separator-label");
@@ -205,7 +207,7 @@ public class ActivityView extends TitledPane {
         content.add(this.deadLineHeader, 0, rowIndex);
         content.add(createEditableDeadline(), 1, rowIndex++);
 
-        content.add(new Label("Location :"), 0, rowIndex);
+        content.add(this.locationHeader, 0, rowIndex);
         content.add(createEditableLocation(), 1, rowIndex++);
 
         content.add(new Label("Warning period: "), 0, rowIndex);
@@ -222,7 +224,7 @@ public class ActivityView extends TitledPane {
         content.add(new Label("Notes: "), 0, rowIndex);
         content.add(createNotes(), 1, rowIndex++);
 
-        if (!presenter.hasSubActivities()) {
+        if (presenter.hasSubActivities()) {
             Label subActivityTitle = new Label("Subactivities: ");
             subActivityTitle.getStyleClass().clear();
             subActivityTitle.getStyleClass().add("separator-label");
@@ -572,7 +574,7 @@ public class ActivityView extends TitledPane {
         this.warningPeriod = warningPeriod;
     }
 
-    public Label getPriorityField() {
+    public Label getPriorityLabel() {
         return priorityField;
     }
 
@@ -614,5 +616,13 @@ public class ActivityView extends TitledPane {
 
     void setPresenter() {
         this.presenter = presenter;
+    }
+
+    public Label getLocationHeader() {
+        return locationHeader;
+    }
+
+    public void setLocationHeader(Label locationHeader) {
+        this.locationHeader = locationHeader;
     }
 }

@@ -133,6 +133,11 @@ public class ActivityPageView extends View {
         return activityPanes;
     }
 
+    public List<TitledPane> getHeadingPanes() {
+        return activityPanes.stream().filter(pane -> !pane.getClass().equals(ActivityView.class))
+                .collect(Collectors.toList());
+    }
+
     public List<ActivityView> getActivityPanes() {
         return activityPanes.stream().filter(ActivityView.class::isInstance).map(ActivityView.class::cast)
                 .collect(Collectors.toList());

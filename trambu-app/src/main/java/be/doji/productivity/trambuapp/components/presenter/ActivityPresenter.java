@@ -61,11 +61,16 @@ public class ActivityPresenter extends Presenter {
         this.activityLog = getActivityLog();
         refreshHeader();
         refreshViewStyle();
+        refreshControls();
         refreshFields();
     }
 
     public void populate() {
         this.refresh();
+    }
+
+    private void refreshControls() {
+        refreshDoneButton();
     }
 
     private void save() throws IOException, ParseException {
@@ -108,10 +113,31 @@ public class ActivityPresenter extends Presenter {
     }
 
     private void refreshStaticFields() {
-        refreshSubActivities();
-        refreshDeadlineLabel();
+        refreshPriority();
+        refreshDeadline();
+        refreshLocation();
+        refreshWarningPeriod();
         refreshProjects();
         refreshTags();
+        refreshSubActivities();
+    }
+
+    private void refreshPriority() {
+        view.getPriorityLabel().setText(this.model.getPriority());
+    }
+
+    private void refreshLocation() {
+        if (StringUtils.isNotBlank(this.model.getLocation())) {
+            view.getLocationLabel().setText(this.model.getLocation());
+            view.getLocationHeader().setVisible(true);
+        } else {
+            view.getLocationLabel().setVisible(false);
+            view.getLocationHeader().setVisible(false);
+        }
+    }
+
+    private void refreshWarningPeriod() {
+        view.getWarningPeriod().setText(this.model.getWarningTimeFrame().toString());
     }
 
     private void updateModel() {
@@ -208,7 +234,7 @@ public class ActivityPresenter extends Presenter {
         return model.getName();
     }
 
-    private void refreshDeadlineLabel() {
+    private void refreshDeadline() {
         if (this.model.getDeadline() != null) {
             view.getDeadlineLabel()
                     .setText(DateFormat.getDateInstance(DateFormat.DEFAULT).format(this.model.getDeadline()));
@@ -231,8 +257,8 @@ public class ActivityPresenter extends Presenter {
             button.setOnAction(e -> {
                 if (parent != null) {
                     parent.setTagFilter(tag);
+                    parent.refresh();
                 }
-                refresh();
             });
             return button;
         }).collect(Collectors.toList()));
@@ -255,8 +281,9 @@ public class ActivityPresenter extends Presenter {
             button.setOnAction(e -> {
                 if (parent != null) {
                     parent.setProjectFilter(project);
+                    parent.refresh();
                 }
-                refresh();
+
             });
             return button;
         }).collect(Collectors.toList()));
