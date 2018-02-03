@@ -65,6 +65,18 @@ public class ActivityPresenter extends Presenter {
     }
 
     public void refreshFields() {
+        if (view.isEditable()) {
+            refreshEditableFields();
+        } else {
+            refreshStaticFields();
+        }
+    }
+
+    private void refreshStaticFields() {
+        refreshSubActivities();
+    }
+
+    private void refreshEditableFields() {
         refreshSubActivities();
         refreshEditableTagsField();
         refreshEditableProjectsField();
@@ -120,10 +132,12 @@ public class ActivityPresenter extends Presenter {
     }
 
     public void refreshSubActivities() {
-        ObservableList<TitledPane> panes = view.getSubActivitiesAccordion().getPanes();
-        panes.clear();
-        for (Activity subActivity : this.model.getSubActivities()) {
-            panes.add(new ActivityView(subActivity));
+        if (view.getSubActivitiesAccordion() != null) {
+            ObservableList<TitledPane> panes = view.getSubActivitiesAccordion().getPanes();
+            panes.clear();
+            for (Activity subActivity : this.model.getSubActivities()) {
+                panes.add(new ActivityView(subActivity));
+            }
         }
     }
 
