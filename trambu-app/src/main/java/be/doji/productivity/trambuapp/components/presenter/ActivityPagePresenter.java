@@ -1,7 +1,7 @@
 package be.doji.productivity.trambuapp.components.presenter;
 
-import be.doji.productivity.trambuapp.components.elements.ActivityPane;
 import be.doji.productivity.trambuapp.components.view.ActivityView;
+import be.doji.productivity.trambuapp.components.view.ActivityPageView;
 import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
 import be.doji.productivity.trambucore.managers.NoteManager;
@@ -19,18 +19,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class ActivityPresenter extends Component {
+/**
+ * TODO: split this up
+ *  the PagePresenter - collection of AcitivityViews
+ *  the ActivityPresenter - for a single acitivty
+ */
+public class ActivityPagePresenter extends Component {
 
-    private static final Logger LOG = LoggerFactory.getLogger(ActivityPresenter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ActivityPagePresenter.class);
 
     private ActivityManagerContainer model;
-    private ActivityView view;
+    private ActivityPageView view;
 
     private String tagFilter;
     private String projectFilter;
     private boolean filterDone = false;
 
-    public ActivityPresenter(ActivityView view) {
+    public ActivityPagePresenter(ActivityPageView view) {
         this.view = view;
         this.model = find(ActivityManagerContainer.class);
     }
@@ -50,15 +55,15 @@ public class ActivityPresenter extends Component {
                 view.addPane(DisplayUtils
                         .createSeperatorPane(DisplayUtils.getDateSeperatorText(activityGroupEntry.getKey())));
                 for (Activity activity : activityGroup) {
-                    view.addPane(new ActivityPane(activity, this));
+                    view.addPane(new ActivityView(activity, this));
                 }
             }
         }
     }
 
     public void applyFilters() {
-        List<ActivityPane> acitivtyPanes = view.getActivityPanes();
-        for (ActivityPane pane : acitivtyPanes) {
+        List<ActivityView> acitivtyPanes = view.getActivityPanes();
+        for (ActivityView pane : acitivtyPanes) {
             if (shouldBeFiltered(pane)) {
                 pane.setVisible(false);
             }
@@ -66,7 +71,7 @@ public class ActivityPresenter extends Component {
         }
     }
 
-    public boolean shouldBeFiltered(ActivityPane pane) {
+    public boolean shouldBeFiltered(ActivityView pane) {
         boolean shouldFilterBasedOnProject =
                 StringUtils.isNotBlank(getProjectFilter()) && !pane.getActivity().getProjects().parallelStream()
                         .anyMatch(project -> StringUtils.equalsIgnoreCase(project, getProjectFilter()));
@@ -120,11 +125,11 @@ public class ActivityPresenter extends Component {
         this.filterDone = filterDone;
     }
 
-    public ActivityView getView() {
+    public ActivityPageView getView() {
         return view;
     }
 
-    public void setView(ActivityView view) {
+    public void setView(ActivityPageView view) {
         this.view = view;
     }
 

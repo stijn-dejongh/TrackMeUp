@@ -2,9 +2,9 @@ package be.doji.productivity.trambuapp.controls;
 
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
 import be.doji.productivity.trambuapp.utils.TooltipConstants;
-import be.doji.productivity.trambuapp.components.view.ActivityView;
-import be.doji.productivity.trambuapp.components.view.OptionsView;
-import be.doji.productivity.trambuapp.components.view.TimesheetView;
+import be.doji.productivity.trambuapp.components.view.ActivityPageView;
+import be.doji.productivity.trambuapp.components.view.OptionsPageView;
+import be.doji.productivity.trambuapp.components.view.TimesheetPageView;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import javafx.scene.Parent;
@@ -38,8 +38,8 @@ public class MainMenuBar extends UIComponent {
         FontAwesomeIconView activityIcon = DisplayUtils.createStyledIcon(FontAwesomeIcon.CALENDAR_ALT);
         activityPage.setGraphic(activityIcon);
         activityPage.setOnAction(event -> {
-            if (!superView.getClass().equals(ActivityView.class)) {
-                superView.replaceWith(JvmClassMappingKt.getKotlinClass(ActivityView.class),
+            if (!superView.getClass().equals(ActivityPageView.class)) {
+                superView.replaceWith(JvmClassMappingKt.getKotlinClass(ActivityPageView.class),
                         new ViewTransition.Slide(Duration.seconds(0.3), ViewTransition.Direction.LEFT), true, true);
             }
         });
@@ -52,8 +52,8 @@ public class MainMenuBar extends UIComponent {
         FontAwesomeIconView timesheetIcon = DisplayUtils.createStyledIcon(FontAwesomeIcon.CLOCK_ALT);
         timesheetPage.setGraphic(timesheetIcon);
         timesheetPage.setOnAction(event -> {
-            if (!superView.getClass().equals(TimesheetView.class)) {
-                superView.replaceWith(JvmClassMappingKt.getKotlinClass(TimesheetView.class),
+            if (!superView.getClass().equals(TimesheetPageView.class)) {
+                superView.replaceWith(JvmClassMappingKt.getKotlinClass(TimesheetPageView.class),
                         new ViewTransition.Slide(Duration.seconds(0.3), ViewTransition.Direction.RIGHT), true, true);
             }
         });
@@ -66,8 +66,8 @@ public class MainMenuBar extends UIComponent {
         FontAwesomeIconView optionIcon = DisplayUtils.createStyledIcon(FontAwesomeIcon.GEARS);
         options.setGraphic(optionIcon);
         options.setOnAction(event -> {
-            if (!superView.getClass().equals(OptionsView.class)) {
-                superView.replaceWith(JvmClassMappingKt.getKotlinClass(OptionsView.class),
+            if (!superView.getClass().equals(OptionsPageView.class)) {
+                superView.replaceWith(JvmClassMappingKt.getKotlinClass(OptionsPageView.class),
                         new ViewTransition.Slide(Duration.seconds(0.3), ViewTransition.Direction.DOWN), true, true);
             }
         });

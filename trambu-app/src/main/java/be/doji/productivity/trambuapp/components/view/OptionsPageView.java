@@ -24,9 +24,9 @@ import java.io.IOException;
 import java.text.ParseException;
 import java.util.function.Consumer;
 
-public class OptionsView extends View {
+public class OptionsPageView extends View {
 
-    private static final Logger LOG = LoggerFactory.getLogger(OptionsView.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OptionsPageView.class);
 
     private final ActivityManagerContainer activityController;
     private BorderPane root;
@@ -35,7 +35,7 @@ public class OptionsView extends View {
     private String configuredTimeLocation;
     private String configuredNoteLocation;
 
-    public OptionsView() {
+    public OptionsPageView() {
         super();
         this.setTitle(DisplayConstants.TITLE_APPLICATION + " - " + DisplayConstants.TITLE_OPTIONS);
 

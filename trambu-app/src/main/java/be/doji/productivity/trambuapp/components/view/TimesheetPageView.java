@@ -35,9 +35,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class TimesheetView extends View {
+public class TimesheetPageView extends View {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TimesheetView.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TimesheetPageView.class);
 
     private final ActivityManagerContainer activityController;
     private List<ActivityLog> logs;
@@ -45,7 +45,7 @@ public class TimesheetView extends View {
     private Date startDate;
     private Date endDate;
 
-    public TimesheetView() {
+    public TimesheetPageView() {
         super();
         this.setTitle(DisplayConstants.TITLE_APPLICATION + " - " + DisplayConstants.TITLE_TIMESHEET);
         this.activityController = find(ActivityManagerContainer.class);

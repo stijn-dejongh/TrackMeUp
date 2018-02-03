@@ -1,6 +1,6 @@
 package be.doji.productivity.trambuapp.controls;
 
-import be.doji.productivity.trambuapp.components.presenter.ActivityPresenter;
+import be.doji.productivity.trambuapp.components.presenter.ActivityPagePresenter;
 import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
 import be.doji.productivity.trambuapp.utils.TooltipConstants;
@@ -20,11 +20,11 @@ public class ActivityControls extends TitledPane {
 
     private static final Logger LOG = LoggerFactory.getLogger(ActivityControls.class);
 
-    private ActivityPresenter presenter;
+    private ActivityPagePresenter presenter;
 
     private Label activeFilter;
 
-    public ActivityControls(ActivityPresenter view) {
+    public ActivityControls(ActivityPagePresenter view) {
         super();
         this.presenter = view;
         this.setContent(createControlGrid());
