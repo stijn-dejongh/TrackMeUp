@@ -109,6 +109,9 @@ public class ActivityPresenter extends Presenter {
 
     private void refreshStaticFields() {
         refreshSubActivities();
+        refreshDeadlineLabel();
+        refreshProjects();
+        refreshTags();
     }
 
     private void updateModel() {
@@ -119,7 +122,7 @@ public class ActivityPresenter extends Presenter {
             model.setLocation(view.getLocationField().getText());
         }
         updateActivityProjects();
-        updateActivityTags();
+        updateModelTags();
         updateActivityWarningPeriod();
     }
 
@@ -192,7 +195,7 @@ public class ActivityPresenter extends Presenter {
                 TooltipConstants.TOOLTIP_TEXT_ACTIVITY_DONE);
     }
 
-    private void updateActivityTags() {
+    private void updateModelTags() {
         if (view.getTagsField() != null && StringUtils.isNotBlank(view.getTagsField().getText())) {
             String conctatenatedProjects = view.getTagsField().getText();
             List<String> newTags = splitTextFieldValueOnSeperator(conctatenatedProjects,
@@ -206,14 +209,23 @@ public class ActivityPresenter extends Presenter {
     }
 
     private void refreshDeadlineLabel() {
-        view.getDeadlineLabel()
-                .setText(DateFormat.getDateInstance(DateFormat.DEFAULT).format(this.model.getDeadline()));
-        if (this.model.isAlertActive()) {
-            view.getDeadlineLabel().getStyleClass().add("warningLabel");
+        if (this.model.getDeadline() != null) {
+            view.getDeadlineLabel()
+                    .setText(DateFormat.getDateInstance(DateFormat.DEFAULT).format(this.model.getDeadline()));
+            if (this.model.isAlertActive()) {
+                view.getDeadlineLabel().getStyleClass().add("warningLabel");
+            }
+            view.getDeadLineHeader().setVisible(true);
+            view.getDeadlineLabel().setVisible(true);
+        } else {
+            view.getDeadLineHeader().setVisible(false);
+            view.getDeadlineLabel().setVisible(false);
         }
+
     }
 
     private void refreshTags() {
+        view.getTagsBox().getChildren().clear();
         view.getTagsBox().getChildren().addAll(this.model.getTags().stream().map(tag -> {
             Button button = new Button(tag);
             button.setOnAction(e -> {
@@ -237,6 +249,7 @@ public class ActivityPresenter extends Presenter {
     }
 
     private void refreshProjects() {
+        view.getProjectsBox().getChildren().clear();
         view.getProjectsBox().getChildren().addAll(this.model.getProjects().stream().map(project -> {
             Button button = new Button(project);
             button.setOnAction(e -> {

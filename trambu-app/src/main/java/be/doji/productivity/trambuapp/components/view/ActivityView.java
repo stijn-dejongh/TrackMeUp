@@ -54,6 +54,7 @@ public class ActivityView extends TitledPane {
     private Button editButton;
     private Button deleteButton;
     private Button timingButton;
+    private Label deadLineHeader;
 
     public ActivityView(Activity activity) {
         super();
@@ -99,11 +100,16 @@ public class ActivityView extends TitledPane {
     }
 
     GridPane createActivityContent() {
+        createFieldHeaders();
         if (isEditable) {
             return createEditableContent();
         } else {
             return createStaticContent();
         }
+    }
+
+    private void createFieldHeaders() {
+        this.deadLineHeader = new Label("Deadline: ");
     }
 
     GridPane createStaticContent() {
@@ -116,7 +122,7 @@ public class ActivityView extends TitledPane {
         content.add(new Label("Priority: "), 0, rowIndex);
         content.add(createStaticPriority(), 1, rowIndex++);
 
-        content.add(new Label("Deadline: "), 0, rowIndex);
+        content.add(this.deadLineHeader, 0, rowIndex);
         content.add(createStaticDeadline(), 1, rowIndex++);
 
         content.add(new Label("Location :"), 0, rowIndex);
@@ -156,7 +162,6 @@ public class ActivityView extends TitledPane {
 
     private Node createStaticDeadline() {
         this.deadlineLabel = new Label();
-
         return deadlineLabel;
     }
 
@@ -197,7 +202,7 @@ public class ActivityView extends TitledPane {
         content.add(new Label("Priority: "), 0, rowIndex);
         content.add(createEditablePriority(), 1, rowIndex++);
 
-        content.add(new Label("Deadline: "), 0, rowIndex);
+        content.add(this.deadLineHeader, 0, rowIndex);
         content.add(createEditableDeadline(), 1, rowIndex++);
 
         content.add(new Label("Location :"), 0, rowIndex);
@@ -416,6 +421,14 @@ public class ActivityView extends TitledPane {
         });
         deleteButton.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_ACTIVITY_DELETE));
         return deleteButton;
+    }
+
+    public Label getDeadLineHeader() {
+        return deadLineHeader;
+    }
+
+    public void setDeadLineHeader(Label deadLineHeader) {
+        this.deadLineHeader = deadLineHeader;
     }
 
     public void makeEditable() {
