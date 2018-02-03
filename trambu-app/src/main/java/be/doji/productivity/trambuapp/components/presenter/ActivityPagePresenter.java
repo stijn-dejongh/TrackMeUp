@@ -13,10 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class ActivityPagePresenter extends Presenter {
 
@@ -36,7 +33,6 @@ public class ActivityPagePresenter extends Presenter {
 
     public void refresh() {
         populateActivities();
-        applyFilters();
         view.refreshAccordion();
     }
 
@@ -48,7 +44,7 @@ public class ActivityPagePresenter extends Presenter {
         view.getPanes().clear();
         Map<Date, List<Activity>> groupedActivities = model.getActivityManager().getActivitiesWithDateHeader();
         for (Map.Entry<Date, List<Activity>> activityGroupEntry : groupedActivities.entrySet()) {
-            List<Activity> activityGroup = activityGroupEntry.getValue();
+            List<Activity> activityGroup = applyFilters(activityGroupEntry.getValue());
             if (!activityGroup.isEmpty()) {
                 view.addPane(DisplayUtils
                         .createSeperatorPane(DisplayUtils.getDateSeperatorText(activityGroupEntry.getKey())));
@@ -59,26 +55,35 @@ public class ActivityPagePresenter extends Presenter {
         }
     }
 
-    public void applyFilters() {
-        if (!StringUtils.equalsIgnoreCase(this.getActiveFilter(), DisplayConstants.LABEL_TEXT_FILTER_NONE)) {
-            view.getHeadingPanes().forEach(pane -> pane.setVisible(false));
-        }
+    private List<Activity> applyFilters(List<Activity> activityPanes) {
 
-        List<ActivityView> acitivtyPanes = view.getActivityPanes();
-        for (ActivityView pane : acitivtyPanes) {
-            if (shouldBeFiltered(pane)) {
-                pane.setVisible(false);
+        List<Activity> filteredActivities = new ArrayList<>();
+        for (Activity activity : activityPanes) {
+            if (!shouldBeFiltered(activity)) {
+                filteredActivities.add(activity);
             }
-
         }
+        return filteredActivities;
     }
 
-    public boolean shouldBeFiltered(ActivityView pane) {
-        boolean shouldFilterBasedOnProject = pane.getPresenter().shouldBeFilteredOnProject(getProjectFilter());
-        boolean shouldFilterBasedOnTag = pane.getPresenter().shouldBeFilteredOnTag(getTagFilter());
-        boolean shouldFilterBasedOnCompletion = filterDone && pane.getPresenter().isActivityCompleted();
+    public boolean shouldBeFiltered(Activity activity) {
+        boolean shouldFilterBasedOnProject = shouldBeFilteredOnProject(activity);
+        boolean shouldFilterBasedOnTag = shouldBeFilteredOnTag(activity);
+        boolean shouldFilterBasedOnCompletion = filterDone && activity.isCompleted();
         return shouldFilterBasedOnProject || shouldFilterBasedOnTag || shouldFilterBasedOnCompletion;
     }
+
+    public boolean shouldBeFilteredOnProject(Activity activity) {
+        return StringUtils.isNotBlank(projectFilter) && !activity.getProjects().parallelStream()
+                .anyMatch(project -> StringUtils.equalsIgnoreCase(project, getProjectFilter()));
+    }
+
+    public boolean shouldBeFilteredOnTag(Activity activity) {
+        return StringUtils.isNotBlank(tagFilter) && !activity.getTags().parallelStream()
+                .anyMatch(tag -> StringUtils.equalsIgnoreCase(tag, getTagFilter()));
+    }
+
+
 
     private String getTagFilter() {
         return tagFilter;

@@ -499,18 +499,4 @@ public class ActivityPresenter extends Presenter {
         this.managerContainer = container;
     }
 
-    public boolean shouldBeFilteredOnProject(String projectFilter) {
-        return StringUtils.isNotBlank(projectFilter) && !this.model.getProjects().parallelStream()
-                .anyMatch(project -> StringUtils.equalsIgnoreCase(project, projectFilter));
-    }
-
-    public boolean shouldBeFilteredOnTag(String tagFilter) {
-        return StringUtils.isNotBlank(tagFilter) && !this.model.getTags().parallelStream()
-                .anyMatch(tag -> StringUtils.equalsIgnoreCase(tag, tagFilter));
-    }
-
-    public boolean isActivityCompleted() {
-        return this.model.isCompleted();
-    }
-
 }

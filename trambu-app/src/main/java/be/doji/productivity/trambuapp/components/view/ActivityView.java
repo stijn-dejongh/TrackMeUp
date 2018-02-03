@@ -32,6 +32,7 @@ public class ActivityView extends TitledPane {
     private static final Logger LOG = LoggerFactory.getLogger(ActivityView.class);
 
     private boolean isActive;
+    private GridPane activityContent;
 
     private Button titleLabel;
     private ActivityPresenter presenter;
@@ -57,6 +58,7 @@ public class ActivityView extends TitledPane {
     private Label deadLineHeader;
     private Label locationHeader;
 
+
     public ActivityView(Activity activity) {
         super();
         this.presenter = new ActivityPresenter(this, activity);
@@ -81,7 +83,7 @@ public class ActivityView extends TitledPane {
 
     @NotNull private StackPane createContentContainer() {
         StackPane contentContainer = new StackPane();
-        GridPane activityContent = createActivityContent();
+        this.activityContent = createActivityContent();
         contentContainer.getChildren().add(activityContent);
         contentContainer.getChildren().add(overlay);
         return contentContainer;
@@ -607,6 +609,13 @@ public class ActivityView extends TitledPane {
     }
 
     public void refresh() {
+        for(Node node : this.activityContent.getChildren()) {
+            if(node.isVisible()) {
+                node.setManaged(true);
+            } else {
+                node.setManaged(false);
+            }
+        }
         this.presenter.refresh();
     }
 
