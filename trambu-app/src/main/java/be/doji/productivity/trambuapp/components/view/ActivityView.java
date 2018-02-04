@@ -115,11 +115,12 @@ public class ActivityView extends TitledPane {
         this.locationField = EditableDataFieldFactory
                 .getEditableStringFieldWithAutocomplete(ActivityFieldNames.FIELD_LOCATION);
         this.projectsField = EditableDataFieldFactory
-                .getEditableStringListFieldWithAutocomplete(string -> this.presenter.setTagFilter(string),
+                .getEditableStringListFieldWithAutocomplete(string -> this.presenter.setProjectFilter(string),
                         ActivityFieldNames.FIELD_PROJECTS);
         this.tagsField = EditableDataFieldFactory
                 .getEditableStringListFieldWithAutocomplete(string -> this.presenter.setTagFilter(string),
                         ActivityFieldNames.FIELD_TAGS);
+        this.createSubActivities();
 
     }
 
@@ -165,7 +166,7 @@ public class ActivityView extends TitledPane {
             subActivityTitle.getStyleClass().clear();
             subActivityTitle.getStyleClass().add("separator-label");
             content.add(subActivityTitle, 0, rowIndex++);
-            content.add(createSubActivities(), 0, rowIndex, 2, 1);
+            content.add(this.subActivitiesAccordion, 0, rowIndex, 2, 1);
         }
 
         content.setVisible(true);

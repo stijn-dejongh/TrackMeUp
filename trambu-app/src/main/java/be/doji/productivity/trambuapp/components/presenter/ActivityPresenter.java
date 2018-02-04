@@ -450,7 +450,7 @@ public class ActivityPresenter extends Presenter {
         return this.editable;
     }
 
-    private void makeAllFieldsEditableAndRefresh() {
+    public void makeAllFieldsEditableAndRefresh() {
         this.editable = true;
         view.getNameField().makeEditable();
         view.getPriorityField().makeEditable();

@@ -3,6 +3,9 @@ package be.doji.productivity.trambuapp.components.view;
 import be.doji.productivity.trambuapp.components.TrambuAppTest;
 import be.doji.productivity.trambucore.model.tasks.Activity;
 import be.doji.productivity.trambucore.testutil.ActivityTestData;
+import javafx.collections.ObservableList;
+import javafx.scene.control.Accordion;
+import javafx.scene.control.TitledPane;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -13,8 +16,10 @@ import java.util.Optional;
 public class ActivityViewTest extends TrambuAppTest {
 
     private static final String ACTIVITY_ONE_ID = "283b6271-b513-4e89-b757-10e98c9078ea";
+    private static final String SUPER_ACTIVITY_ID = "283b6271-b513-4e89-b757-10e98c9078ea";
 
     private static final String DEFAULT_WARNING_TIME_STRING = "PT24H";
+    private static final String CHANGED_PROJECT_TEXT = "NewProject";
 
     @Test public void testFieldCreation() throws ParseException {
         getActivityManager().addActivity(ActivityTestData.ACTIVITY_DATA_LINE);
@@ -62,6 +67,56 @@ public class ActivityViewTest extends TrambuAppTest {
         Assert.assertFalse(projectData.isEmpty());
         Assert.assertEquals(1, projectData.size());
         Assert.assertEquals("OverarchingProject", projectData.get(0));
+    }
+
+    @Test public void testCreateSubactivities() throws ParseException {
+        getActivityManager().addActivity(ActivityTestData.SUPER_ACTIVITY);
+        getActivityManager().addActivity(ActivityTestData.SUB_ACTIVITY_WIITH_PROJECTS_ONE);
+        getActivityManager().addActivity(ActivityTestData.SUB_ACTIVITY_WIITH_PROJECTS_TWO);
+        Optional<Activity> activity = getActivityManager().getSavedActivityById(SUPER_ACTIVITY_ID);
+        Assert.assertTrue(activity.isPresent());
+
+        ActivityView view = new ActivityView(activity.get());
+        Assert.assertNotNull(view);
+        Accordion subActivitiesAccordion = view.getSubActivitiesAccordion();
+        Assert.assertNotNull(subActivitiesAccordion);
+        ObservableList<TitledPane> subPanes = subActivitiesAccordion.getPanes();
+        Assert.assertNotNull(subPanes);
+        Assert.assertFalse(subPanes.isEmpty());
+        Assert.assertEquals(2, subPanes.size());
+    }
+
+    @Test public void testUpdateProjectAndFilterBugIT() throws ParseException {
+        getActivityManager().addActivity(ActivityTestData.ACTIVITY_DATA_LINE);
+        Optional<Activity> activity = getActivityManager().getSavedActivityById(ACTIVITY_ONE_ID);
+        Assert.assertTrue(activity.isPresent());
+
+        ActivityView view = new ActivityView(activity.get());
+        Assert.assertNotNull(view);
+
+        Assert.assertTrue(view.getProjectsField().hasData());
+        List<String> projectData = view.getProjectsField().getData();
+        Assert.assertNotNull(projectData);
+        Assert.assertFalse(projectData.isEmpty());
+        Assert.assertEquals(1, projectData.size());
+        Assert.assertEquals("OverarchingProject", projectData.get(0));
+
+        view.getPresenter().makeAllFieldsEditableAndRefresh();
+        view.getProjectsField().getEditableField().getDataContainer().setText(CHANGED_PROJECT_TEXT);
+        Assert.assertEquals(1, view.getProjectsField().update().getData().size());
+        Assert.assertEquals(CHANGED_PROJECT_TEXT, view.getProjectsField().update().getData().get(0));
+
+        view.getPresenter().editButtonClicked();
+        Assert.assertEquals(1, view.getProjectsField().getData().size());
+        Assert.assertEquals(CHANGED_PROJECT_TEXT, view.getProjectsField().getData().get(0));
+        List<String> activityProjects = activity.get().getProjects();
+        Assert.assertEquals(1, activityProjects.size());
+        Assert.assertEquals(CHANGED_PROJECT_TEXT, activityProjects.get(0));
+
+        Optional<Activity> savedActivity = getActivityManager().getSavedActivityById(ACTIVITY_ONE_ID);
+        List<String> savedActivityProjects = savedActivity.get().getProjects();
+        Assert.assertEquals(1, savedActivityProjects.size());
+        Assert.assertEquals(CHANGED_PROJECT_TEXT, savedActivityProjects.get(0));
     }
 
 }

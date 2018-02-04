@@ -79,7 +79,7 @@ public class ActivityPagePresenter extends Presenter {
     }
 
     public boolean shouldBeFilteredOnTag(Activity activity) {
-        return StringUtils.isNotBlank(tagFilter) && !activity.getTags().parallelStream()
+        return StringUtils.isNotBlank(tagFilter) && !activity.getTags().isEmpty() && !activity.getTags().parallelStream()
                 .anyMatch(tag -> StringUtils.equalsIgnoreCase(tag, getTagFilter()));
     }
 
