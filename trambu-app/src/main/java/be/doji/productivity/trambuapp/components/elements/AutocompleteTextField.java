@@ -40,7 +40,6 @@ public class AutocompleteTextField extends TextField {
 
     private void addTextEntryListener() {
         this.textProperty().addListener((observable, oldVal, newVal) -> suggestionForTextListener());
-
     }
 
     private void suggestionForTextListener() {

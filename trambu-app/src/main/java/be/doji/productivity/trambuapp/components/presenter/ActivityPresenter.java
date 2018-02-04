@@ -136,28 +136,26 @@ public class ActivityPresenter extends Presenter {
     }
 
     private void updateModel() {
-        if (view.getNameField() != null) {
-            model.setName(view.getNameField().getData());
-        }
-        if (view.getLocationField() != null) {
-            model.setLocation(view.getLocationField().getData());
-        }
-        updateActivityProjects();
-        updateModelTags();
-        updateActivityWarningPeriod();
+        this.model.setName(view.getNameField().update().getData());
+        this.model.setPriority(view.getPriorityField().update().getData());
+        this.model.setLocation(view.getLocationField().update().getData());
+        parseWarningPeriod(view.getWarningPeriodField().update().getData())
+                .ifPresent(d -> this.model.setWarningTimeFrame(d));
+        this.model.setTags(view.getTagsField().update().getData());
+        this.model.setProjects(view.getProjectsField().update().getData());
     }
 
-    private void updateActivityWarningPeriod() {
-        if (warningFieldFilledInCorrectly()) {
-            String warningTimeframe = view.getWarningPeriodField().getData();
-            Duration timeFrame = Duration.ofHours(Long.parseLong(warningTimeframe));
-            model.setWarningTimeFrame(timeFrame);
+    private Optional<Duration> parseWarningPeriod(String warningPeriod) {
+        if (validateWarningPeriod(warningPeriod)) {
+            Duration timeFrame = Duration.ofHours(Long.parseLong(warningPeriod));
+            return Optional.of(timeFrame);
+        } else {
+            return Optional.empty();
         }
     }
 
-    private boolean warningFieldFilledInCorrectly() {
-        return view.getWarningPeriodField() != null && StringUtils.isNotBlank(view.getWarningPeriodField().getData())
-                && view.getWarningPeriodField().getData().matches(DisplayConstants.REGEX_WARNING_PERIOD);
+    private boolean validateWarningPeriod(String warningPeriod) {
+        return StringUtils.isNotBlank(warningPeriod) && warningPeriod.matches(DisplayConstants.REGEX_WARNING_PERIOD);
     }
 
     private void updateActivityProjects() {
@@ -345,8 +343,8 @@ public class ActivityPresenter extends Presenter {
     public void editButtonClicked() {
         try {
             if (this.isEditable()) {
-                this.makeAllFieldsStatic();
                 save();
+                this.makeAllFieldsStatic();
             } else {
                 this.makeAllFieldsEditable();
             }

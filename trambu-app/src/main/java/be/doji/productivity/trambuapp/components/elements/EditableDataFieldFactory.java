@@ -66,8 +66,9 @@ public final class EditableDataFieldFactory {
             return casted.getText();
         }).collect(Collectors.toList()));
 
+        AutocompleteTextField autocompleteTextField = new AutocompleteTextField();
         DataContainerDefinition<AutocompleteTextField, List<String>> editableDefinition = new DataContainerDefinition<>(
-                new AutocompleteTextField(), (textField, datalist) -> {
+                autocompleteTextField, (textField, datalist) -> {
             datalist.stream().reduce((s, s2) -> s + DisplayConstants.FIELD_SEPERATOR + " " + s2)
                     .ifPresent(s -> textField.setText(s));
         }, label -> DisplayUtils.splitTextFieldValueOnSeperator(label.getText(), DisplayConstants.FIELD_SEPERATOR));

@@ -115,6 +115,22 @@ public class EditableDataFieldTest extends TrambuAppTest {
         Assert.assertEquals(CHANGED_TEXT, dataField.getEditableField().getData());
     }
 
+
+    @Test public void testUpdateAutocompleteFieldBug() {
+        EditableDataField<Label, AutocompleteTextField, String> field = EditableDataFieldFactory
+                .getEditableStringFieldWithAutocomplete("fieldName");
+        field.setData(DEFAULT_TEXT);
+        Assert.assertEquals(DEFAULT_TEXT, field.getData());
+        Assert.assertEquals(DEFAULT_TEXT, field.getStaticField().getData());
+        Assert.assertEquals(DEFAULT_TEXT, field.getEditableField().getData());
+
+        field.getEditableField().getDataContainer().textProperty().setValue(CHANGED_TEXT);
+        Assert.assertEquals(DEFAULT_TEXT, field.getStaticField().getData());
+        Assert.assertEquals(CHANGED_TEXT, field.getEditableField().getData());
+        field.update();
+        Assert.assertEquals(field.getData(), CHANGED_TEXT);
+    }
+
     @Test public void testSetDataDifferentContentTypes() throws ParseException {
         /**
          *   Due to datepicker internal date representation, all time information is truncated.

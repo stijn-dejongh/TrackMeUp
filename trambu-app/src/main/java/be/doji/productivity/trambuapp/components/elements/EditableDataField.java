@@ -79,9 +79,10 @@ public class EditableDataField<S extends Region, E extends Region, D> {
         updateFields();
     }
 
-    public void update() {
+    public EditableDataField<S, E, D> update() {
         this.data = getEditableField().getData();
         updateFields();
+        return this;
     }
 
     private void updateFields() {
