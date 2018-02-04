@@ -344,9 +344,9 @@ public class ActivityPresenter extends Presenter {
         try {
             if (this.isEditable()) {
                 save();
-                this.makeAllFieldsStatic();
+                this.makeAllFieldsStaticAndRefresh();
             } else {
-                this.makeAllFieldsEditable();
+                this.makeAllFieldsEditableAndRefresh();
             }
             view.refreshContent();
             view.getEditButton().setText(getEditButonText());
@@ -450,7 +450,7 @@ public class ActivityPresenter extends Presenter {
         return this.editable;
     }
 
-    private void makeAllFieldsEditable() {
+    private void makeAllFieldsEditableAndRefresh() {
         this.editable = true;
         view.getNameField().makeEditable();
         view.getPriorityField().makeEditable();
@@ -460,7 +460,7 @@ public class ActivityPresenter extends Presenter {
         view.refresh();
     }
 
-    public void makeAllFieldsStatic() {
+    public void makeAllFieldsStaticAndRefresh() {
         this.editable = true;
         view.getNameField().makeStatic();
         view.getPriorityField().makeStatic();
