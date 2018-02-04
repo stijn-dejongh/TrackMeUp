@@ -1,23 +1,42 @@
 package be.doji.productivity.trambuapp.components.elements;
 
-import javafx.scene.control.Control;
+import javafx.scene.control.Label;
+import javafx.scene.layout.Region;
 
-public class EditableDataField<S extends Control, E extends Control, D> {
+public class EditableDataField<S extends Region, E extends Region, D> {
 
+    private String name;
     private D data;
     private boolean editable;
 
     private DataContainerDefinition<S, D> staticField;
     private DataContainerDefinition<E, D> editableField;
 
+    /*
+     * TODO: maybe convert this to a Builder pattern?
+     *
+     */
+
     public EditableDataField(DataContainerDefinition<S, D> staticFieldDefition,
-            DataContainerDefinition<E, D> editableFieldDefinition, D data) {
+            DataContainerDefinition<E, D> editableFieldDefinition) {
         this.staticField = staticFieldDefition;
         this.editableField = editableFieldDefinition;
+    }
+
+    public EditableDataField(DataContainerDefinition<S, D> staticFieldDefition,
+            DataContainerDefinition<E, D> editableFieldDefinition, String name) {
+        this.staticField = staticFieldDefition;
+        this.editableField = editableFieldDefinition;
+        this.name = name;
+    }
+
+    public EditableDataField(DataContainerDefinition<S, D> staticFieldDefition,
+            DataContainerDefinition<E, D> editableFieldDefinition, D data, String name) {
+        this(staticFieldDefition, editableFieldDefinition, name);
         this.setData(data);
     }
 
-    public Control get() {
+    public Region get() {
         return isEditable()?this.editableField.getDataContainer():this.staticField.getDataContainer();
     }
 
@@ -68,4 +87,15 @@ public class EditableDataField<S extends Control, E extends Control, D> {
         staticField.setData(data);
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Label getNameLabel() {
+        return new Label(this.name);
+    }
 }

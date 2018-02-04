@@ -1,9 +1,12 @@
 package be.doji.productivity.trambuapp.components.view;
 
 import be.doji.productivity.trambuapp.components.elements.AutocompleteTextField;
+import be.doji.productivity.trambuapp.components.elements.EditableDataField;
+import be.doji.productivity.trambuapp.components.elements.EditableDataFieldFactory;
 import be.doji.productivity.trambuapp.components.elements.OverlayPane;
 import be.doji.productivity.trambuapp.components.presenter.ActivityPagePresenter;
 import be.doji.productivity.trambuapp.components.presenter.ActivityPresenter;
+import be.doji.productivity.trambuapp.utils.ActivityFieldNames;
 import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
 import be.doji.productivity.trambuapp.utils.TooltipConstants;
@@ -34,33 +37,27 @@ public class ActivityView extends TitledPane {
     private boolean isActive;
     private GridPane activityContent;
 
+    private ActivityPresenter presenter;
+    private OverlayPane overlay;
+    private Accordion subActivitiesAccordion;
 
     private Button doneButton;
     private Button editButton;
     private Button deleteButton;
     private Button timingButton;
-
     private Button titleLabel;
-    private ActivityPresenter presenter;
-    private boolean isEditable = false;
-    private TextField nameField;
-    private AutocompleteTextField projectsField;
-    private AutocompleteTextField tagsField;
-    private TextField warningPeriodInHours;
-    private AutocompleteTextField locationField;
-    private OverlayPane overlay;
-    private Accordion subActivitiesAccordion;
+
+    private EditableDataField<Label, TextField, String> nameField;
+    private EditableDataField<Label, ComboBox<String>, String> priorityField;
+    private EditableDataField<Label, AutocompleteTextField, String> locationField;
+    private EditableDataField<Label, TextField, String> warningPeriodField;
+    private EditableDataField<HBox, AutocompleteTextField, List<String>> projectsField;
+    private EditableDataField<HBox, AutocompleteTextField, List<String>> tagsField;
+
     private DatePicker deadlineDatePicker;
-    private Label warningPeriod;
-    private Label priorityField;
-    private Label locationLabel;
-    private Label deadlineLabel;
-    private HBox tagsBox;
-    private HBox projectsBox;
 
     private Label deadLineHeader;
     private Label locationHeader;
-
 
     public ActivityView(Activity activity) {
         super();
@@ -107,14 +104,25 @@ public class ActivityView extends TitledPane {
 
     GridPane createActivityContent() {
         createFieldHeaders();
-        if (isEditable) {
-            return createEditableContent();
-        } else {
-            return createStaticContent();
-        }
+        createFields();
     }
 
-    private void createFieldHeaders() {
+    private void createFields() {
+        this.nameField = EditableDataFieldFactory.getEditableStringField(ActivityFieldNames.FIELD_NAME);
+        this.priorityField = EditableDataFieldFactory
+                .getEditableStringFieldDropdown(FXCollections.observableArrayList(TrackMeConstants.getPriorityList()),
+                        ActivityFieldNames.FIELD_PRIORITY);
+        this.warningPeriodField = EditableDataFieldFactory
+                .getEditableStringField(ActivityFieldNames.FIELD_WARNING_PERIOD);
+        this.locationField = EditableDataFieldFactory
+                .getEditableStringFieldWithAutocomplete(ActivityFieldNames.FIELD_LOCATION);
+        this.projectsField = EditableDataFieldFactory
+                .getEditableStringListFieldWithAutocomplete(string -> this.presenter.setTagFilter(string),
+                        ActivityFieldNames.FIELD_PROJECTS);
+
+    }
+
+    @Deprecated private void createFieldHeaders() {
         this.deadLineHeader = new Label("Deadline: ");
         this.locationHeader = new Label("Location :");
     }
@@ -281,8 +289,8 @@ public class ActivityView extends TitledPane {
 
     @NotNull private HBox createEditableWarningPeriod() {
         HBox hbox = new HBox();
-        warningPeriodInHours = new TextField();
-        hbox.getChildren().add(warningPeriodInHours);
+        warningPeriodField = new TextField();
+        hbox.getChildren().add(warningPeriodField);
         hbox.getChildren().add(new Label("hours"));
         return hbox;
     }
@@ -531,12 +539,12 @@ public class ActivityView extends TitledPane {
         this.tagsField = tagsField;
     }
 
-    public TextField getWarningPeriodInHours() {
-        return warningPeriodInHours;
+    public TextField getWarningPeriodField() {
+        return warningPeriodField;
     }
 
-    public void setWarningPeriodInHours(TextField warningPeriodInHours) {
-        this.warningPeriodInHours = warningPeriodInHours;
+    public void setWarningPeriodField(TextField warningPeriodField) {
+        this.warningPeriodField = warningPeriodField;
     }
 
     public AutocompleteTextField getLocationField() {
@@ -612,8 +620,8 @@ public class ActivityView extends TitledPane {
     }
 
     public void refresh() {
-        for(Node node : this.activityContent.getChildren()) {
-            if(node.isVisible()) {
+        for (Node node : this.activityContent.getChildren()) {
+            if (node.isVisible()) {
                 node.setManaged(true);
             } else {
                 node.setManaged(false);

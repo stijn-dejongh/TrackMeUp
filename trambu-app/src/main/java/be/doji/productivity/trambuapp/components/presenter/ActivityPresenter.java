@@ -161,7 +161,7 @@ public class ActivityPresenter extends Presenter {
 
     private void updateActivityWarningPeriod() {
         if (warningFieldFilledInCorrectly()) {
-            String warningTimeframe = view.getWarningPeriodInHours().getText();
+            String warningTimeframe = view.getWarningPeriodField().getText();
             Duration timeFrame = Duration.ofHours(Long.parseLong(warningTimeframe));
             model.setWarningTimeFrame(timeFrame);
         }
@@ -174,9 +174,8 @@ public class ActivityPresenter extends Presenter {
     }
 
     private boolean warningFieldFilledInCorrectly() {
-        return view.getWarningPeriodInHours() != null && StringUtils
-                .isNotBlank(view.getWarningPeriodInHours().getText()) && view.getWarningPeriodInHours().getText()
-                .matches(DisplayConstants.REGEX_WARNING_PERIOD);
+        return view.getWarningPeriodField() != null && StringUtils.isNotBlank(view.getWarningPeriodField().getText())
+                && view.getWarningPeriodField().getText().matches(DisplayConstants.REGEX_WARNING_PERIOD);
     }
 
     public void refreshViewStyle() {
@@ -423,13 +422,22 @@ public class ActivityPresenter extends Presenter {
     }
 
     private void refreshEditableProjectsField() {
+        getProjectsFieldData();
+        SortedSet<String> treeSetProjects = getProjectSuggestions();
+        view.getProjectsField().setSuggestions(treeSetProjects);
+    }
+
+    @NotNull public SortedSet<String> getProjectSuggestions() {
+        SortedSet<String> treeSetProjects = new TreeSet<>();
+        treeSetProjects.addAll(this.managerContainer.getActivityManager().getExistingProjects());
+        return treeSetProjects;
+    }
+
+    private void getProjectsFieldData() {
         Optional<String> reducedProjects = this.model.getProjects().stream()
                 .reduce((s, s2) -> s + DisplayConstants.FIELD_SEPERATOR + " " + s2);
 
         reducedProjects.ifPresent(s -> view.getProjectsField().setText(s));
-        SortedSet<String> treeSetProjects = new TreeSet<>();
-        treeSetProjects.addAll(this.managerContainer.getActivityManager().getExistingProjects());
-        view.getProjectsField().setSuggestions(treeSetProjects);
     }
 
     public String getEditButonText() {
@@ -499,4 +507,21 @@ public class ActivityPresenter extends Presenter {
         this.managerContainer = container;
     }
 
+    public ActivityPagePresenter getParent() {
+        return this.parent;
+    }
+
+    public void setTagFilter(String tag) {
+        if (parent != null) {
+            parent.setTagFilter(tag);
+            parent.refresh();
+        }
+    }
+
+    public void setProjectFilter(String project) {
+        if (parent != null) {
+            parent.setProjectFilter(project);
+            parent.refresh();
+        }
+    }
 }

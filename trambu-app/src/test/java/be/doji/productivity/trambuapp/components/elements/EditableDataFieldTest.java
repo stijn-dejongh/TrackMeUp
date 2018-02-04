@@ -1,18 +1,18 @@
 package be.doji.productivity.trambuapp.components.elements;
 
+import be.doji.productivity.trambuapp.components.TrambuAppTest;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import org.junit.Assert;
 import org.junit.Test;
-import org.testfx.framework.junit.ApplicationTest;
 
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class EditableDataFieldTest extends ApplicationTest {
+public class EditableDataFieldTest extends TrambuAppTest {
 
     private static final String CHANGED_TEXT = "ChangedData";
     private static final String DEFAULT_TEXT = "Test";
