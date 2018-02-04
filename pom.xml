@@ -9,7 +9,7 @@
     <packaging>pom</packaging>
 
     <name>TrackMeUp</name>
-    <description>Demo project for Spring Boot</description>
+    <description>Activity and ToDo tracking application</description>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
