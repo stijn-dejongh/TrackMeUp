@@ -28,7 +28,7 @@ public class EditableDataFieldTest extends TrambuAppTest {
                 Label::setText, Label::getText);
 
         EditableDataField<Label, TextField, String> dataField = new EditableDataField<>(staticDefinition,
-                editableDefinition, DEFAULT_TEXT);
+                editableDefinition, DEFAULT_TEXT, "FieldName");
         Assert.assertNotNull(dataField);
         Assert.assertNotNull(dataField.getEditableField());
         Assert.assertNotNull(dataField.getStaticField());
@@ -46,7 +46,7 @@ public class EditableDataFieldTest extends TrambuAppTest {
                 Label::setText, Label::getText);
 
         EditableDataField<Label, TextField, String> dataField = new EditableDataField<>(staticDefinition,
-                editableDefinition, DEFAULT_TEXT);
+                editableDefinition, DEFAULT_TEXT, "FieldName");
 
         dataField.makeStatic();
         Assert.assertEquals(Label.class, dataField.get().getClass());
@@ -101,7 +101,7 @@ public class EditableDataFieldTest extends TrambuAppTest {
                 Label::setText, Label::getText);
 
         EditableDataField<Label, TextField, String> dataField = new EditableDataField<>(staticDefinition,
-                editableDefinition, DEFAULT_TEXT);
+                editableDefinition, DEFAULT_TEXT, "FieldName");
 
         Assert.assertEquals(DEFAULT_TEXT, dataField.getData());
         Assert.assertEquals(DEFAULT_TEXT, dataField.getStaticField().getData());
@@ -140,7 +140,7 @@ public class EditableDataFieldTest extends TrambuAppTest {
         });
 
         EditableDataField<Label, DatePicker, Date> dataField = new EditableDataField<>(staticDefinition,
-                editableDefinition, dateFromString);
+                editableDefinition, dateFromString, "FieldName");
 
         Assert.assertNotNull(dataField);
         Assert.assertEquals(dateFromString, dataField.getData());

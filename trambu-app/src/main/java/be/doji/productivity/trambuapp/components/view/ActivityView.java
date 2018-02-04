@@ -33,9 +33,7 @@ import java.util.List;
 public class ActivityView extends TitledPane {
 
     private static final Logger LOG = LoggerFactory.getLogger(ActivityView.class);
-
     private boolean isActive;
-    private GridPane activityContent;
 
     private ActivityPresenter presenter;
     private OverlayPane overlay;
@@ -55,9 +53,7 @@ public class ActivityView extends TitledPane {
     private EditableDataField<HBox, AutocompleteTextField, List<String>> tagsField;
 
     private DatePicker deadlineDatePicker;
-
-    private Label deadLineHeader;
-    private Label locationHeader;
+    private GridPane activityContent;
 
     public ActivityView(Activity activity) {
         super();
@@ -69,7 +65,6 @@ public class ActivityView extends TitledPane {
         super();
         this.presenter = new ActivityPresenter(this, activity, parentPresenter);
         setUp();
-
     }
 
     public void setUp() {
@@ -103,11 +98,11 @@ public class ActivityView extends TitledPane {
     }
 
     GridPane createActivityContent() {
-        createFieldHeaders();
         createFields();
+        return buildContentGrid();
     }
 
-    private void createFields() {
+    void createFields() {
         this.nameField = EditableDataFieldFactory.getEditableStringField(ActivityFieldNames.FIELD_NAME);
         this.priorityField = EditableDataFieldFactory
                 .getEditableStringFieldDropdown(FXCollections.observableArrayList(TrackMeConstants.getPriorityList()),
@@ -119,38 +114,43 @@ public class ActivityView extends TitledPane {
         this.projectsField = EditableDataFieldFactory
                 .getEditableStringListFieldWithAutocomplete(string -> this.presenter.setTagFilter(string),
                         ActivityFieldNames.FIELD_PROJECTS);
+        this.tagsField = EditableDataFieldFactory
+                .getEditableStringListFieldWithAutocomplete(string -> this.presenter.setTagFilter(string),
+                        ActivityFieldNames.FIELD_TAGS);
 
     }
 
-    @Deprecated private void createFieldHeaders() {
-        this.deadLineHeader = new Label("Deadline: ");
-        this.locationHeader = new Label("Location :");
-    }
-
-    GridPane createStaticContent() {
+    GridPane buildContentGrid() {
         GridPane content = DisplayUtils.createDefaultGridPane();
         int rowIndex = 0;
         content.add(createActvityControls(), 0, rowIndex++, 2, 1);
         content.add(DisplayUtils.createHorizontalSpacer(), 0, rowIndex++, 2, 1);
         content.add(createTimingControls(), 0, rowIndex++, 2, 1);
 
-        content.add(new Label("Priority: "), 0, rowIndex);
-        content.add(createStaticPriority(), 1, rowIndex++);
+        if (this.priorityField.hasData()) {
+            content.add(this.priorityField.getNameLabel(), 0, rowIndex);
+            content.add(this.priorityField.get(), 0, rowIndex);
+        }
 
-        content.add(this.deadLineHeader, 0, rowIndex);
-        content.add(createStaticDeadline(), 1, rowIndex++);
+        if (this.locationField.hasData()) {
+            content.add(this.locationField.getNameLabel(), 0, rowIndex);
+            content.add(this.locationField.get(), 0, rowIndex++);
+        }
 
-        content.add(this.locationHeader, 0, rowIndex);
-        content.add(createStaticLocation(), 1, rowIndex++);
+        if (this.warningPeriodField.hasData()) {
+            content.add(this.warningPeriodField.getNameLabel(), 0, rowIndex);
+            content.add(this.warningPeriodField.get(), 1, rowIndex++);
+        }
 
-        content.add(new Label("Warning period: "), 0, rowIndex);
-        content.add(createStaticWarningPeriod(), 1, rowIndex++);
+        if (this.tagsField.hasData()) {
+            content.add(this.tagsField.getNameLabel(), 0, rowIndex);
+            content.add(this.tagsField.get(), 1, rowIndex++);
+        }
 
-        content.add(new Label("Tags: "), 0, rowIndex);
-        content.add(createStaticTags(), 1, rowIndex++);
-
-        content.add(new Label("Projects: "), 0, rowIndex);
-        content.add(createStaticProjects(), 1, rowIndex++);
+        if (this.projectsField.hasData()) {
+            content.add(this.projectsField.getNameLabel(), 0, rowIndex);
+            content.add(this.projectsField.get(), 0, rowIndex);
+        }
 
         content.add(createLogPoints(), 0, rowIndex++, 2, 1);
 
@@ -168,105 +168,6 @@ public class ActivityView extends TitledPane {
         content.setVisible(true);
         return content;
 
-    }
-
-    private Node createStaticPriority() {
-        this.priorityField = new Label("Priority");
-        return this.priorityField;
-    }
-
-    private Node createStaticDeadline() {
-        this.deadlineLabel = new Label();
-        return deadlineLabel;
-    }
-
-    @NotNull private HBox createStaticWarningPeriod() {
-        HBox hbox = new HBox();
-        this.warningPeriod = new Label();
-        hbox.getChildren().add(warningPeriod);
-        return hbox;
-    }
-
-    private HBox createStaticTags() {
-        this.tagsBox = new HBox(5);
-
-        return this.tagsBox;
-    }
-
-    private HBox createStaticProjects() {
-        this.projectsBox = new HBox();
-        return this.projectsBox;
-    }
-
-    private Node createStaticLocation() {
-        this.locationLabel = new Label("Location");
-        return this.locationLabel;
-    }
-
-    GridPane createEditableContent() {
-        GridPane content = DisplayUtils.createDefaultGridPane();
-
-        int rowIndex = 0;
-        content.add(createActvityControls(), 0, rowIndex++, 2, 1);
-        content.add(DisplayUtils.createHorizontalSpacer(), 0, rowIndex++, 2, 1);
-        content.add(createTimingControls(), 0, rowIndex++, 2, 1);
-
-        content.add(new Label("Change activity name:"), 0, rowIndex);
-        content.add(createEditableName(), 1, rowIndex++);
-
-        content.add(new Label("Priority: "), 0, rowIndex);
-        content.add(createEditablePriority(), 1, rowIndex++);
-
-        content.add(this.deadLineHeader, 0, rowIndex);
-        content.add(createEditableDeadline(), 1, rowIndex++);
-
-        content.add(this.locationHeader, 0, rowIndex);
-        content.add(createEditableLocation(), 1, rowIndex++);
-
-        content.add(new Label("Warning period: "), 0, rowIndex);
-        content.add(createEditableWarningPeriod(), 1, rowIndex++);
-
-        content.add(new Label("Tags: "), 0, rowIndex);
-        content.add(createEditableTags(), 1, rowIndex++);
-
-        content.add(new Label("Projects: "), 0, rowIndex);
-        content.add(createEditableProjects(), 1, rowIndex++);
-
-        content.add(createLogPoints(), 0, rowIndex++, 2, 1);
-
-        content.add(new Label("Notes: "), 0, rowIndex);
-        content.add(createNotes(), 1, rowIndex++);
-
-        if (presenter.hasSubActivities()) {
-            Label subActivityTitle = new Label("Subactivities: ");
-            subActivityTitle.getStyleClass().clear();
-            subActivityTitle.getStyleClass().add("separator-label");
-            content.add(subActivityTitle, 0, rowIndex++);
-            content.add(createSubActivities(), 0, rowIndex, 2, 1);
-        }
-
-        Label parentTitle = new Label("Select parent: ");
-        parentTitle.getStyleClass().clear();
-        parentTitle.getStyleClass().add("separator-label");
-        content.add(parentTitle, 0, rowIndex++);
-        content.add(createParentSelector(), 0, rowIndex++, 2, 1);
-
-        content.setVisible(true);
-        return content;
-    }
-
-    private Node createEditableName() {
-        nameField = new TextField();
-        nameField.setText(presenter.getActivityName());
-        return nameField;
-    }
-
-    Node createEditablePriority() {
-        ObservableList<String> options = FXCollections.observableArrayList(TrackMeConstants.getPriorityList());
-        final ComboBox<String> comboBox = new ComboBox<>(options);
-        comboBox.setValue(this.presenter.getActivityPriority());
-        comboBox.valueProperty().addListener((ov, t, t1) -> this.presenter.setActivityPriority(t1));
-        return comboBox;
     }
 
     private Node createEditableDeadline() {
@@ -275,34 +176,10 @@ public class ActivityView extends TitledPane {
         return deadlinePicker;
     }
 
-    private Node createEditableLocation() {
-        locationField = new AutocompleteTextField();
-
-        return locationField;
-    }
-
     private DatePicker createDatePicker() {
         this.deadlineDatePicker = new DatePicker();
         deadlineDatePicker.setOnAction(event -> this.presenter.deadlinePicked());
         return deadlineDatePicker;
-    }
-
-    @NotNull private HBox createEditableWarningPeriod() {
-        HBox hbox = new HBox();
-        warningPeriodField = new TextField();
-        hbox.getChildren().add(warningPeriodField);
-        hbox.getChildren().add(new Label("hours"));
-        return hbox;
-    }
-
-    Node createEditableTags() {
-        tagsField = new AutocompleteTextField();
-        return tagsField;
-    }
-
-    private Node createEditableProjects() {
-        projectsField = new AutocompleteTextField();
-        return projectsField;
     }
 
     private GridPane createLogPoints() {
@@ -369,9 +246,7 @@ public class ActivityView extends TitledPane {
     private Node createParentSelector() {
         ObservableList<String> options = FXCollections.observableArrayList(presenter.getPossibleParents());
         final ComboBox<String> parent = new ComboBox<>(options);
-        parent.valueProperty().addListener((ov, t, newParent) -> {
-            presenter.changeParent(newParent);
-        });
+        parent.valueProperty().addListener((ov, t, newParent) -> presenter.changeParent(newParent));
         return parent;
     }
 
@@ -438,33 +313,42 @@ public class ActivityView extends TitledPane {
         return deleteButton;
     }
 
-    public Label getDeadLineHeader() {
-        return deadLineHeader;
-    }
-
-    public void setDeadLineHeader(Label deadLineHeader) {
-        this.deadLineHeader = deadLineHeader;
-    }
-
-    public void makeEditable() {
-        this.isEditable = true;
-    }
-
-    public void makeUneditable() {
-        this.isEditable = false;
-    }
-
-    public boolean isEditable() {
-        return isEditable;
-    }
-
-    public boolean isActive() {
+    boolean isActive() {
         return isActive;
     }
 
-    public void setActive(boolean active) {
+    private void setActive(boolean active) {
         LOG.debug("Making pane active: " + this.presenter.getActivityName());
         this.isActive = active;
+    }
+
+    public void refresh() {
+        this.presenter.refresh();
+        this.activityContent = buildContentGrid();
+    }
+
+    public ActivityPresenter getPresenter() {
+        return presenter;
+    }
+
+    public void setPresenter(ActivityPresenter presenter) {
+        this.presenter = presenter;
+    }
+
+    public OverlayPane getOverlay() {
+        return overlay;
+    }
+
+    public void setOverlay(OverlayPane overlay) {
+        this.overlay = overlay;
+    }
+
+    public Accordion getSubActivitiesAccordion() {
+        return subActivitiesAccordion;
+    }
+
+    public void setSubActivitiesAccordion(Accordion subActivitiesAccordion) {
+        this.subActivitiesAccordion = subActivitiesAccordion;
     }
 
     public Button getDoneButton() {
@@ -483,126 +367,6 @@ public class ActivityView extends TitledPane {
         this.editButton = editButton;
     }
 
-    public HBox getTagsBox() {
-        return tagsBox;
-    }
-
-    public void setTagsBox(HBox tagsBox) {
-        this.tagsBox = tagsBox;
-    }
-
-    public HBox getProjectsBox() {
-        return this.projectsBox;
-    }
-
-    public void setProjectsBox(HBox projectsBox) {
-        this.projectsBox = projectsBox;
-    }
-
-    public Label getDeadlineLabel() {
-        return deadlineLabel;
-    }
-
-    public void setDeadlineLabel(Label deadlineLabel) {
-        this.deadlineLabel = deadlineLabel;
-    }
-
-    public Button getTitleLabel() {
-        return titleLabel;
-    }
-
-    public void setTitleLabel(Button titleLabel) {
-        this.titleLabel = titleLabel;
-    }
-
-    public TextField getNameField() {
-        return nameField;
-    }
-
-    public void setNameField(TextField nameField) {
-        this.nameField = nameField;
-    }
-
-    public AutocompleteTextField getProjectsField() {
-        return projectsField;
-    }
-
-    public void setProjectsField(AutocompleteTextField projectsField) {
-        this.projectsField = projectsField;
-    }
-
-    public AutocompleteTextField getTagsField() {
-        return tagsField;
-    }
-
-    public void setTagsField(AutocompleteTextField tagsField) {
-        this.tagsField = tagsField;
-    }
-
-    public TextField getWarningPeriodField() {
-        return warningPeriodField;
-    }
-
-    public void setWarningPeriodField(TextField warningPeriodField) {
-        this.warningPeriodField = warningPeriodField;
-    }
-
-    public AutocompleteTextField getLocationField() {
-        return locationField;
-    }
-
-    public void setLocationField(AutocompleteTextField locationField) {
-        this.locationField = locationField;
-    }
-
-    public OverlayPane getOverlay() {
-        return overlay;
-    }
-
-    public void setOverlay(OverlayPane overlay) {
-        this.overlay = overlay;
-    }
-
-    public DatePicker getDeadlineDatePicker() {
-        return deadlineDatePicker;
-    }
-
-    public void setDeadlineDatePicker(DatePicker deadlineDatePicker) {
-        this.deadlineDatePicker = deadlineDatePicker;
-    }
-
-    public Accordion getSubActivitiesAccordion() {
-        return subActivitiesAccordion;
-    }
-
-    public void setSubActivitiesAccordion(Accordion subActivitiesAccordion) {
-        this.subActivitiesAccordion = subActivitiesAccordion;
-    }
-
-    public Label getWarningPeriod() {
-        return warningPeriod;
-    }
-
-    public void setWarningPeriod(Label warningPeriod) {
-        this.warningPeriod = warningPeriod;
-    }
-
-    public Label getPriorityLabel() {
-        return priorityField;
-    }
-
-    public void setPriorityField(Label priorityField) {
-        this.priorityField = priorityField;
-    }
-
-    public Label getLocationLabel() {
-        return locationLabel;
-    }
-
-    public void setLocationLabel(Label locationLabel) {
-        this.locationLabel = locationLabel;
-    }
-
     public Button getDeleteButton() {
         return deleteButton;
     }
@@ -619,30 +383,67 @@ public class ActivityView extends TitledPane {
         this.timingButton = timingButton;
     }
 
-    public void refresh() {
-        for (Node node : this.activityContent.getChildren()) {
-            if (node.isVisible()) {
-                node.setManaged(true);
-            } else {
-                node.setManaged(false);
-            }
-        }
-        this.presenter.refresh();
+    public Button getTitleLabel() {
+        return titleLabel;
     }
 
-    public ActivityPresenter getPresenter() {
-        return this.presenter;
+    public void setTitleLabel(Button titleLabel) {
+        this.titleLabel = titleLabel;
     }
 
-    void setPresenter() {
-        this.presenter = presenter;
+    public EditableDataField<Label, TextField, String> getNameField() {
+        return nameField;
     }
 
-    public Label getLocationHeader() {
-        return locationHeader;
+    public void setNameField(EditableDataField<Label, TextField, String> nameField) {
+        this.nameField = nameField;
     }
 
-    public void setLocationHeader(Label locationHeader) {
-        this.locationHeader = locationHeader;
+    public EditableDataField<Label, ComboBox<String>, String> getPriorityField() {
+        return priorityField;
+    }
+
+    public void setPriorityField(EditableDataField<Label, ComboBox<String>, String> priorityField) {
+        this.priorityField = priorityField;
+    }
+
+    public EditableDataField<Label, AutocompleteTextField, String> getLocationField() {
+        return locationField;
+    }
+
+    public void setLocationField(EditableDataField<Label, AutocompleteTextField, String> locationField) {
+        this.locationField = locationField;
+    }
+
+    public EditableDataField<Label, TextField, String> getWarningPeriodField() {
+        return warningPeriodField;
+    }
+
+    public void setWarningPeriodField(EditableDataField<Label, TextField, String> warningPeriodField) {
+        this.warningPeriodField = warningPeriodField;
+    }
+
+    public EditableDataField<HBox, AutocompleteTextField, List<String>> getProjectsField() {
+        return projectsField;
+    }
+
+    public void setProjectsField(EditableDataField<HBox, AutocompleteTextField, List<String>> projectsField) {
+        this.projectsField = projectsField;
+    }
+
+    public EditableDataField<HBox, AutocompleteTextField, List<String>> getTagsField() {
+        return tagsField;
+    }
+
+    public void setTagsField(EditableDataField<HBox, AutocompleteTextField, List<String>> tagsField) {
+        this.tagsField = tagsField;
+    }
+
+    public DatePicker getDeadlineDatePicker() {
+        return deadlineDatePicker;
+    }
+
+    public void setDeadlineDatePicker(DatePicker deadlineDatePicker) {
+        this.deadlineDatePicker = deadlineDatePicker;
     }
 }

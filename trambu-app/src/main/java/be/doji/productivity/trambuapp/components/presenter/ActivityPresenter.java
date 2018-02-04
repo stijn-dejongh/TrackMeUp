@@ -19,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.time.Duration;
 import java.time.ZoneId;
@@ -36,6 +35,7 @@ public class ActivityPresenter extends Presenter {
     private ActivityView view;
     private ActivityPagePresenter parent;
     private boolean modelParentChanged;
+    private boolean editable;
 
     public ActivityPresenter(ActivityView view, Activity model, ActivityPagePresenter parent) {
         this(view, model);
@@ -69,8 +69,156 @@ public class ActivityPresenter extends Presenter {
         this.refresh();
     }
 
+    private void refreshHeader() {
+        view.setText(getActivityName());
+        view.getTitleLabel().setGraphic(getHeaderIcon());
+        view.getTitleLabel().setTooltip(getDoneTooltipText());
+    }
+
+    private void refreshViewStyle() {
+        view.getStyleClass()
+                .removeAll(DisplayConstants.STYLE_CLASS_ACTIVITY_DONE, DisplayConstants.STYLE_CLASS_ACTIVITY_TODO,
+                        DisplayConstants.STYLE_CLASS_ACTIVITY_ALERT);
+        view.getStyleClass().add(getActivityStyle());
+    }
+
     private void refreshControls() {
         refreshDoneButton();
+    }
+
+    private void refreshFields() {
+        refreshNameField();
+        refreshPriorityField();
+        refreshLocationField();
+        refreshWarningPerdiodField();
+        refreshTagsFields();
+        refreshProjectsField();
+        refreshSubActivitiesField();
+    }
+
+    private void refreshNameField() {
+        view.getNameField().setData(this.model.getName());
+    }
+
+    private void refreshPriorityField() {
+        view.getPriorityField().setData(this.model.getPriority());
+    }
+
+    private void refreshLocationField() {
+        view.getLocationField().setData(this.model.getLocation());
+        view.getLocationField().getEditableField().getDataContainer().setSuggestions(this.getLocationSuggestions());
+    }
+
+    private void refreshWarningPerdiodField() {
+        //TODO: should we actually convert this to a string here, or handle that in the EditableFactory?
+        view.getWarningPeriodField().setData(this.model.getWarningTimeFrame().toString());
+    }
+
+    private void refreshTagsFields() {
+        view.getTagsField().setData(this.model.getTags());
+        view.getTagsField().getEditableField().getDataContainer().setSuggestions(getTagSuggestions());
+    }
+
+    private void refreshProjectsField() {
+        view.getProjectsField().setData(this.model.getProjects());
+        view.getTagsField().getEditableField().getDataContainer().setSuggestions(getProjectSuggestions());
+    }
+
+    private void refreshSubActivitiesField() {
+        if (view.getSubActivitiesAccordion() != null) {
+            ObservableList<TitledPane> panes = view.getSubActivitiesAccordion().getPanes();
+            panes.clear();
+            for (Activity subActivity : this.model.getSubActivities()) {
+                panes.add(new ActivityView(subActivity));
+            }
+        }
+    }
+
+    private void updateModel() {
+        if (view.getNameField() != null) {
+            model.setName(view.getNameField().getData());
+        }
+        if (view.getLocationField() != null) {
+            model.setLocation(view.getLocationField().getData());
+        }
+        updateActivityProjects();
+        updateModelTags();
+        updateActivityWarningPeriod();
+    }
+
+    private void updateActivityWarningPeriod() {
+        if (warningFieldFilledInCorrectly()) {
+            String warningTimeframe = view.getWarningPeriodField().getData();
+            Duration timeFrame = Duration.ofHours(Long.parseLong(warningTimeframe));
+            model.setWarningTimeFrame(timeFrame);
+        }
+    }
+
+    private boolean warningFieldFilledInCorrectly() {
+        return view.getWarningPeriodField() != null && StringUtils.isNotBlank(view.getWarningPeriodField().getData())
+                && view.getWarningPeriodField().getData().matches(DisplayConstants.REGEX_WARNING_PERIOD);
+    }
+
+    private void updateActivityProjects() {
+        if (view.getProjectsField() != null && !view.getProjectsField().getData().isEmpty()) {
+            model.setProjects(view.getProjectsField().getData());
+        }
+    }
+
+    private FontAwesomeIconView getHeaderIcon() {
+        FontAwesomeIconView checkedCalendar = DisplayUtils.createStyledIcon(FontAwesomeIcon.CHECK_CIRCLE);
+        FontAwesomeIconView uncheckedCalendar = DisplayUtils.createStyledIcon(FontAwesomeIcon.CIRCLE_ALT);
+        FontAwesomeIconView editing = DisplayUtils.createStyledIcon(FontAwesomeIcon.EDIT);
+        if (this.isEditable()) {
+            return editing;
+        } else {
+            return model.isCompleted()?checkedCalendar:uncheckedCalendar;
+        }
+    }
+
+    private Tooltip getDoneTooltipText() {
+        return DisplayUtils.createTooltip(model.isCompleted()?
+                TooltipConstants.TOOLTIP_TEXT_ACTIVITY_NOT_DONE:
+                TooltipConstants.TOOLTIP_TEXT_ACTIVITY_DONE);
+    }
+
+    private void updateModelTags() {
+        if (view.getTagsField() != null && !view.getTagsField().getData().isEmpty()) {
+            model.setTags(view.getTagsField().getData());
+        }
+    }
+
+    public String getActivityName() {
+        return model.getName();
+    }
+
+    //    private void refreshDeadline() {
+    //        if (this.model.getDeadline() != null) {
+    //            view.getDeadlineLabel()
+    //                    .setText(DateFormat.getDateInstance(DateFormat.DEFAULT).format(this.model.getDeadline()));
+    //            if (this.model.isAlertActive()) {
+    //                view.getDeadlineLabel().getStyleClass().add("warningLabel");
+    //            }
+    //            view.getDeadLineHeader().setVisible(true);
+    //            view.getDeadlineLabel().setVisible(true);
+    //        } else {
+    //            view.getDeadLineHeader().setVisible(false);
+    //            view.getDeadlineLabel().setVisible(false);
+    //        }
+    //    }
+
+    public String getActivityStyle() {
+        if (this.model.isCompleted() && this.model.isAllSubActivitiesCompleted()) {
+            return DisplayConstants.STYLE_CLASS_ACTIVITY_DONE;
+        } else {
+            return this.model.isAlertActive()?
+                    DisplayConstants.STYLE_CLASS_ACTIVITY_ALERT:
+                    DisplayConstants.STYLE_CLASS_ACTIVITY_TODO;
+        }
+    }
+
+    public boolean hasSubActivities() {
+        return !this.model.getSubActivities().isEmpty();
     }
 
     private void save() throws IOException, ParseException {
@@ -92,14 +240,6 @@ public class ActivityPresenter extends Presenter {
 
     }
 
-    public void refreshFields() {
-        if (view.isEditable()) {
-            refreshEditableFields();
-        } else {
-            refreshStaticFields();
-        }
-    }
-
     @NotNull private Activity getRootActivity() {
         Activity activityToSave = this.model;
         while (StringUtils.isNotBlank(activityToSave.getParentActivity())) {
@@ -112,201 +252,7 @@ public class ActivityPresenter extends Presenter {
         return activityToSave;
     }
 
-    private void refreshStaticFields() {
-        refreshPriority();
-        refreshDeadline();
-        refreshLocation();
-        refreshWarningPeriod();
-        refreshProjects();
-        refreshTags();
-        refreshSubActivities();
-    }
-
-    private void refreshPriority() {
-        view.getPriorityLabel().setText(this.model.getPriority());
-    }
-
-    private void refreshLocation() {
-        if (StringUtils.isNotBlank(this.model.getLocation())) {
-            view.getLocationLabel().setText(this.model.getLocation());
-            view.getLocationHeader().setVisible(true);
-        } else {
-            view.getLocationLabel().setVisible(false);
-            view.getLocationHeader().setVisible(false);
-        }
-    }
-
-    private void refreshWarningPeriod() {
-        view.getWarningPeriod().setText(this.model.getWarningTimeFrame().toString());
-    }
-
-    private void updateModel() {
-        if (view.getNameField() != null) {
-            model.setName(view.getNameField().getText());
-        }
-        if (view.getLocationField() != null) {
-            model.setLocation(view.getLocationField().getText());
-        }
-        updateActivityProjects();
-        updateModelTags();
-        updateActivityWarningPeriod();
-    }
-
-    private void refreshEditableFields() {
-        refreshSubActivities();
-        refreshEditableTagsField();
-        refreshEditableProjectsField();
-        refreshEditableLocation();
-    }
-
-    private void updateActivityWarningPeriod() {
-        if (warningFieldFilledInCorrectly()) {
-            String warningTimeframe = view.getWarningPeriodField().getText();
-            Duration timeFrame = Duration.ofHours(Long.parseLong(warningTimeframe));
-            model.setWarningTimeFrame(timeFrame);
-        }
-    }
-
-    public void refreshHeader() {
-        view.setText(getActivityName());
-        view.getTitleLabel().setGraphic(getHeaderIcon());
-        view.getTitleLabel().setTooltip(getDoneTooltipText());
-    }
-
-    private boolean warningFieldFilledInCorrectly() {
-        return view.getWarningPeriodField() != null && StringUtils.isNotBlank(view.getWarningPeriodField().getText())
-                && view.getWarningPeriodField().getText().matches(DisplayConstants.REGEX_WARNING_PERIOD);
-    }
-
-    public void refreshViewStyle() {
-        view.getStyleClass()
-                .removeAll(DisplayConstants.STYLE_CLASS_ACTIVITY_DONE, DisplayConstants.STYLE_CLASS_ACTIVITY_TODO,
-                        DisplayConstants.STYLE_CLASS_ACTIVITY_ALERT);
-        view.getStyleClass().add(getActivityStyle());
-    }
-
-    private void updateActivityProjects() {
-        if (view.getProjectsField() != null && StringUtils.isNotBlank(view.getProjectsField().getText())) {
-            String conctatenatedProjects = view.getProjectsField().getText();
-            List<String> newProjects = splitTextFieldValueOnSeperator(conctatenatedProjects,
-                    DisplayConstants.FIELD_SEPERATOR);
-            model.setProjects(newProjects);
-        }
-    }
-
-    private FontAwesomeIconView getHeaderIcon() {
-        FontAwesomeIconView checkedCalendar = DisplayUtils.createStyledIcon(FontAwesomeIcon.CHECK_CIRCLE);
-        FontAwesomeIconView uncheckedCalendar = DisplayUtils.createStyledIcon(FontAwesomeIcon.CIRCLE_ALT);
-        FontAwesomeIconView editing = DisplayUtils.createStyledIcon(FontAwesomeIcon.EDIT);
-        if (view.isEditable()) {
-            return editing;
-        } else {
-            return model.isCompleted()?checkedCalendar:uncheckedCalendar;
-        }
-    }
-
-    private List<String> splitTextFieldValueOnSeperator(String conctatenatedProjects, String seperator) {
-        List<String> newTags = new ArrayList<>();
-        String[] split = conctatenatedProjects.split(seperator);
-        for (String aSplit : split) {
-            newTags.add(aSplit.trim());
-        }
-        return newTags;
-    }
-
-    private Tooltip getDoneTooltipText() {
-        return DisplayUtils.createTooltip(model.isCompleted()?
-                TooltipConstants.TOOLTIP_TEXT_ACTIVITY_NOT_DONE:
-                TooltipConstants.TOOLTIP_TEXT_ACTIVITY_DONE);
-    }
-
-    private void updateModelTags() {
-        if (view.getTagsField() != null && StringUtils.isNotBlank(view.getTagsField().getText())) {
-            String conctatenatedProjects = view.getTagsField().getText();
-            List<String> newTags = splitTextFieldValueOnSeperator(conctatenatedProjects,
-                    DisplayConstants.FIELD_SEPERATOR);
-            model.setTags(newTags);
-        }
-    }
-
-    public String getActivityName() {
-        return model.getName();
-    }
-
-    private void refreshDeadline() {
-        if (this.model.getDeadline() != null) {
-            view.getDeadlineLabel()
-                    .setText(DateFormat.getDateInstance(DateFormat.DEFAULT).format(this.model.getDeadline()));
-            if (this.model.isAlertActive()) {
-                view.getDeadlineLabel().getStyleClass().add("warningLabel");
-            }
-            view.getDeadLineHeader().setVisible(true);
-            view.getDeadlineLabel().setVisible(true);
-        } else {
-            view.getDeadLineHeader().setVisible(false);
-            view.getDeadlineLabel().setVisible(false);
-        }
-
-    }
-
-    private void refreshTags() {
-        view.getTagsBox().getChildren().clear();
-        view.getTagsBox().getChildren().addAll(this.model.getTags().stream().map(tag -> {
-            Button button = new Button(tag);
-            button.setOnAction(e -> {
-                if (parent != null) {
-                    parent.setTagFilter(tag);
-                    parent.refresh();
-                }
-            });
-            return button;
-        }).collect(Collectors.toList()));
-    }
-
-    public String getActivityStyle() {
-        if (this.model.isCompleted() && this.model.isAllSubActivitiesCompleted()) {
-            return DisplayConstants.STYLE_CLASS_ACTIVITY_DONE;
-        } else {
-            return this.model.isAlertActive()?
-                    DisplayConstants.STYLE_CLASS_ACTIVITY_ALERT:
-                    DisplayConstants.STYLE_CLASS_ACTIVITY_TODO;
-        }
-    }
-
-    private void refreshProjects() {
-        view.getProjectsBox().getChildren().clear();
-        view.getProjectsBox().getChildren().addAll(this.model.getProjects().stream().map(project -> {
-            Button button = new Button(project);
-            button.setOnAction(e -> {
-                if (parent != null) {
-                    parent.setProjectFilter(project);
-                    parent.refresh();
-                }
-
-            });
-            return button;
-        }).collect(Collectors.toList()));
-    }
-
-    public void refreshSubActivities() {
-        if (view.getSubActivitiesAccordion() != null) {
-            ObservableList<TitledPane> panes = view.getSubActivitiesAccordion().getPanes();
-            panes.clear();
-            for (Activity subActivity : this.model.getSubActivities()) {
-                panes.add(new ActivityView(subActivity));
-            }
-        }
-    }
-
-    public boolean hasSubActivities() {
-        return !this.model.getSubActivities().isEmpty();
-    }
-
-    public String getActivityPriority() {
-        return this.model.getPriority();
-    }
-
-    public void setActivityPriority(String priority) {
+    public void updateModelActivityPriority(String priority) {
         if (StringUtils.isNotBlank(priority)) {
             this.model.setPriority(priority);
         }
@@ -369,13 +315,12 @@ public class ActivityPresenter extends Presenter {
 
     public void changeParent(String newParent) {
         Optional<Activity> savedParent = this.managerContainer.getActivityManager().getSavedActivityByName(newParent);
-        if (savedParent.isPresent()) {
-            this.managerContainer.getActivityManager().addActivityAsSub(this.model, savedParent.get());
-        }
+        savedParent.ifPresent(
+                activity -> this.managerContainer.getActivityManager().addActivityAsSub(this.model, activity));
         this.modelParentChanged = true;
     }
 
-    public void refreshDoneButton() {
+    private void refreshDoneButton() {
         view.getDoneButton().setText(DisplayUtils.getDoneButtonText(this.model));
         view.getDoneButton().setTooltip(getDoneTooltipText());
     }
@@ -396,23 +341,13 @@ public class ActivityPresenter extends Presenter {
         }
     }
 
-    private void refreshEditableTagsField() {
-        Optional<String> reducedTags = this.model.getTags().stream()
-                .reduce((s, s2) -> s + DisplayConstants.FIELD_SEPERATOR + " " + s2);
-        reducedTags.ifPresent(s -> view.getTagsField().setText(s));
-
-        SortedSet<String> treeSetTags = new TreeSet<>();
-        treeSetTags.addAll(this.managerContainer.getActivityManager().getExistingTags());
-        view.getTagsField().setSuggestions(treeSetTags);
-    }
-
     public void editButtonClicked() {
         try {
-            if (view.isEditable()) {
-                view.makeUneditable();
+            if (this.isEditable()) {
+                this.makeAllFieldsStatic();
                 save();
             } else {
-                view.makeEditable();
+                this.makeAllFieldsEditable();
             }
             refresh();
             view.getEditButton().setText(getEditButonText());
@@ -421,39 +356,26 @@ public class ActivityPresenter extends Presenter {
         }
     }
 
-    private void refreshEditableProjectsField() {
-        getProjectsFieldData();
-        SortedSet<String> treeSetProjects = getProjectSuggestions();
-        view.getProjectsField().setSuggestions(treeSetProjects);
-    }
-
-    @NotNull public SortedSet<String> getProjectSuggestions() {
+    @NotNull private SortedSet<String> getProjectSuggestions() {
         SortedSet<String> treeSetProjects = new TreeSet<>();
         treeSetProjects.addAll(this.managerContainer.getActivityManager().getExistingProjects());
         return treeSetProjects;
     }
 
-    private void getProjectsFieldData() {
-        Optional<String> reducedProjects = this.model.getProjects().stream()
-                .reduce((s, s2) -> s + DisplayConstants.FIELD_SEPERATOR + " " + s2);
+    @NotNull private SortedSet<String> getTagSuggestions() {
+        SortedSet<String> treeSetProjects = new TreeSet<>();
+        treeSetProjects.addAll(this.managerContainer.getActivityManager().getExistingTags());
+        return treeSetProjects;
+    }
 
-        reducedProjects.ifPresent(s -> view.getProjectsField().setText(s));
+    @NotNull private SortedSet<String> getLocationSuggestions() {
+        SortedSet<String> treeSetProjects = new TreeSet<>();
+        treeSetProjects.addAll(this.managerContainer.getActivityManager().getExistingLocations());
+        return treeSetProjects;
     }
 
     public String getEditButonText() {
-        return view.isEditable()?DisplayConstants.BUTTON_TEXT_SAVE:DisplayConstants.BUTTON_TEXT_EDIT;
-    }
-
-    private void refreshEditableLocation() {
-        SortedSet<String> existingLocations = new TreeSet<>();
-        existingLocations.addAll(this.managerContainer.getActivityManager().getExistingLocations());
-        view.getLocationField().setSuggestions(existingLocations);
-
-        if (this.model.isSetLocation()) {
-            view.getLocationField().setText(this.model.getLocation());
-        } else {
-            view.getLocationField().setText("UNKNOWN");
-        }
+        return this.isEditable()?DisplayConstants.BUTTON_TEXT_SAVE:DisplayConstants.BUTTON_TEXT_EDIT;
     }
 
     public void deleteButtonClicked() {
@@ -523,5 +445,29 @@ public class ActivityPresenter extends Presenter {
             parent.setProjectFilter(project);
             parent.refresh();
         }
+    }
+
+    public boolean isEditable() {
+        return this.editable;
+    }
+
+    private void makeAllFieldsEditable() {
+        this.editable = true;
+        view.getNameField().makeEditable();
+        view.getPriorityField().makeEditable();
+        view.getLocationField().makeEditable();
+        view.getTagsField().makeEditable();
+        view.getProjectsField().makeEditable();
+        view.refresh();
+    }
+
+    public void makeAllFieldsStatic() {
+        this.editable = true;
+        view.getNameField().makeStatic();
+        view.getPriorityField().makeStatic();
+        view.getLocationField().makeStatic();
+        view.getTagsField().makeStatic();
+        view.getProjectsField().makeStatic();
+        view.refresh();
     }
 }

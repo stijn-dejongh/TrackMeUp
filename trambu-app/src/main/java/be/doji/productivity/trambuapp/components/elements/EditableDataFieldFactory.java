@@ -1,5 +1,7 @@
 package be.doji.productivity.trambuapp.components.elements;
 
+import be.doji.productivity.trambuapp.utils.DisplayConstants;
+import be.doji.productivity.trambuapp.utils.DisplayUtils;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -50,22 +52,24 @@ public final class EditableDataFieldFactory {
 
     public static EditableDataField<HBox, AutocompleteTextField, List<String>> getEditableStringListFieldWithAutocomplete(
             Consumer<String> buttonAction, String fieldName) {
-        HBox dataHbox = new HBox();
-
-        DataContainerDefinition<HBox, List<String>> staticDefinition = new DataContainerDefinition<>(dataHbox,
+        DataContainerDefinition<HBox, List<String>> staticDefinition = new DataContainerDefinition<>(new HBox(),
                 (hbox, datalist) -> datalist.stream().map(item -> {
                     Button button = new Button(item);
                     EventHandler<ActionEvent> action = e -> buttonAction.accept(item);
                     button.setOnAction(action);
                     return button;
-                }).collect(Collectors.toList()).stream().forEach(button -> dataHbox.getChildren().add(button)),
+                }).collect(Collectors.toList()).stream().forEach(button -> hbox.getChildren().add(button)),
                 hbox -> hbox.getChildren().stream().map(button -> {
                     Button casted = (Button) button;
                     return casted.getText();
                 }).collect(Collectors.toList()));
 
-        
+        DataContainerDefinition<AutocompleteTextField, List<String>> editableDefinition = new DataContainerDefinition<>(
+                new AutocompleteTextField(), (textField, datalist) -> {
+            datalist.stream().reduce((s, s2) -> s + DisplayConstants.FIELD_SEPERATOR + " " + s2)
+                    .ifPresent(s -> textField.setText(s));
+        }, label -> DisplayUtils.splitTextFieldValueOnSeperator(label.getText(), DisplayConstants.FIELD_SEPERATOR));
 
-        return null;
+        return new EditableDataField<>(staticDefinition, editableDefinition, fieldName);
     }
 }

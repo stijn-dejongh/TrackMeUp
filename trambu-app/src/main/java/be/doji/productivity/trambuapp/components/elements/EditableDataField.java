@@ -3,6 +3,8 @@ package be.doji.productivity.trambuapp.components.elements;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 
+import java.util.Objects;
+
 public class EditableDataField<S extends Region, E extends Region, D> {
 
     private String name;
@@ -97,5 +99,9 @@ public class EditableDataField<S extends Region, E extends Region, D> {
 
     public Label getNameLabel() {
         return new Label(this.name);
+    }
+
+    public boolean hasData() {
+        return !Objects.isNull(data);
     }
 }

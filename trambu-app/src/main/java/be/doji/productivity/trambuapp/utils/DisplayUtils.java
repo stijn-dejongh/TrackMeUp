@@ -11,9 +11,7 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
 
 import java.text.DateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.util.*;
 
 public final class DisplayUtils {
 
@@ -78,6 +76,15 @@ public final class DisplayUtils {
         headerPane.setCollapsible(false);
         headerPane.setStyle("-fx-start-margin: 15px;");
         return headerPane;
+    }
+
+    public static List<String> splitTextFieldValueOnSeperator(String concatValues, String separator) {
+        List<String> newTags = new ArrayList<>();
+        String[] split = concatValues.split(separator);
+        for (String aSplit : split) {
+            newTags.add(aSplit.trim());
+        }
+        return newTags;
     }
 
 }
