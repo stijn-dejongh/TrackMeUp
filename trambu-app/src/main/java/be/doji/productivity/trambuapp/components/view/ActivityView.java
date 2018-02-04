@@ -58,33 +58,35 @@ public class ActivityView extends TitledPane {
     public ActivityView(Activity activity) {
         super();
         this.presenter = new ActivityPresenter(this, activity);
-        setUp();
+        init();
     }
 
     public ActivityView(Activity activity, ActivityPagePresenter parentPresenter) {
         super();
         this.presenter = new ActivityPresenter(this, activity, parentPresenter);
-        setUp();
+        init();
     }
 
-    public void setUp() {
+    public void init() {
         overlay = new OverlayPane();
-        this.createHeader();
-        this.setContent(createContentContainer());
+        this.initHeader();
+        this.initControls();
+        this.initFields();
         this.setVisible(true);
         this.setOnMouseClicked(event -> this.setActive(!this.isActive));
         presenter.populate();
+        this.setContent(createContentContainer());
     }
 
     @NotNull private StackPane createContentContainer() {
         StackPane contentContainer = new StackPane();
-        this.activityContent = createActivityContent();
-        contentContainer.getChildren().add(activityContent);
+        this.activityContent = new GridPane();
+        contentContainer.getChildren().add(buildContentGrid());
         contentContainer.getChildren().add(overlay);
         return contentContainer;
     }
 
-    private void createHeader() {
+    private void initHeader() {
         this.setText(presenter.getActivityName());
         this.setGraphic(createTitleLabel());
     }
@@ -97,12 +99,13 @@ public class ActivityView extends TitledPane {
         return this.titleLabel;
     }
 
-    GridPane createActivityContent() {
-        createFields();
-        return buildContentGrid();
+    private void initControls() {
+        initDoneButton();
+        initEditButton();
+        initDeleteButton();
     }
 
-    void createFields() {
+    void initFields() {
         this.nameField = EditableDataFieldFactory.getEditableStringField(ActivityFieldNames.FIELD_NAME);
         this.priorityField = EditableDataFieldFactory
                 .getEditableStringFieldDropdown(FXCollections.observableArrayList(TrackMeConstants.getPriorityList()),
@@ -123,18 +126,18 @@ public class ActivityView extends TitledPane {
     GridPane buildContentGrid() {
         GridPane content = DisplayUtils.createDefaultGridPane();
         int rowIndex = 0;
-        content.add(createActvityControls(), 0, rowIndex++, 2, 1);
+        content.add(createActvityControlsGrid(), 0, rowIndex++, 2, 1);
         content.add(DisplayUtils.createHorizontalSpacer(), 0, rowIndex++, 2, 1);
         content.add(createTimingControls(), 0, rowIndex++, 2, 1);
 
         if (this.priorityField.hasData()) {
             content.add(this.priorityField.getNameLabel(), 0, rowIndex);
-            content.add(this.priorityField.get(), 0, rowIndex);
+            content.add(this.priorityField.get(), 1, rowIndex++);
         }
 
         if (this.locationField.hasData()) {
             content.add(this.locationField.getNameLabel(), 0, rowIndex);
-            content.add(this.locationField.get(), 0, rowIndex++);
+            content.add(this.locationField.get(), 1, rowIndex++);
         }
 
         if (this.warningPeriodField.hasData()) {
@@ -149,7 +152,7 @@ public class ActivityView extends TitledPane {
 
         if (this.projectsField.hasData()) {
             content.add(this.projectsField.getNameLabel(), 0, rowIndex);
-            content.add(this.projectsField.get(), 0, rowIndex);
+            content.add(this.projectsField.get(), 1, rowIndex++);
         }
 
         content.add(createLogPoints(), 0, rowIndex++, 2, 1);
@@ -255,14 +258,14 @@ public class ActivityView extends TitledPane {
         return this.subActivitiesAccordion;
     }
 
-    GridPane createActvityControls() {
+    GridPane createActvityControlsGrid() {
         GridPane content = new GridPane();
         content.setVgap(4);
         content.setHgap(4);
         content.setPadding(new Insets(5, 5, 5, 5));
-        content.add(createDoneButton(), 0, 0);
-        content.add(createEditButton(), 1, 0);
-        content.add(createDeleteButton(), 2, 0);
+        content.add(this.doneButton, 0, 0);
+        content.add(this.editButton, 1, 0);
+        content.add(this.deleteButton, 2, 0);
         return content;
     }
 
@@ -283,7 +286,7 @@ public class ActivityView extends TitledPane {
         return timingControls;
     }
 
-    private Button createDoneButton() {
+    private Button initDoneButton() {
         this.doneButton = new Button();
         FontAwesomeIconView doneIcon = DisplayUtils.createStyledIcon(FontAwesomeIcon.REFRESH);
         this.doneButton.setGraphic(doneIcon);
@@ -293,7 +296,7 @@ public class ActivityView extends TitledPane {
         return this.doneButton;
     }
 
-    private Button createEditButton() {
+    private Button initEditButton() {
         this.editButton = new Button(presenter.getEditButonText());
         FontAwesomeIconView editIcon = DisplayUtils.createStyledIcon(FontAwesomeIcon.EDIT);
         editButton.setGraphic(editIcon);
@@ -302,7 +305,7 @@ public class ActivityView extends TitledPane {
         return editButton;
     }
 
-    private Node createDeleteButton() {
+    private Node initDeleteButton() {
         this.deleteButton = new Button(DisplayConstants.BUTTON_TEXT_DELETE);
         FontAwesomeIconView removeIcon = DisplayUtils.createStyledIcon(FontAwesomeIcon.REMOVE);
         deleteButton.setGraphic(removeIcon);
