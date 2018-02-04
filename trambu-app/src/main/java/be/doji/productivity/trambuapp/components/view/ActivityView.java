@@ -126,7 +126,7 @@ public class ActivityView extends TitledPane {
     GridPane buildContentGrid() {
         GridPane content = DisplayUtils.createDefaultGridPane();
         int rowIndex = 0;
-        content.add(createActvityControlsGrid(), 0, rowIndex++, 2, 1);
+        content.add(buildControlsGrid(), 0, rowIndex++, 2, 1);
         content.add(DisplayUtils.createHorizontalSpacer(), 0, rowIndex++, 2, 1);
         content.add(createTimingControls(), 0, rowIndex++, 2, 1);
 
@@ -258,7 +258,7 @@ public class ActivityView extends TitledPane {
         return this.subActivitiesAccordion;
     }
 
-    GridPane createActvityControlsGrid() {
+    GridPane buildControlsGrid() {
         GridPane content = new GridPane();
         content.setVgap(4);
         content.setHgap(4);
@@ -327,7 +327,11 @@ public class ActivityView extends TitledPane {
 
     public void refresh() {
         this.presenter.refresh();
+    }
+
+    public void refreshContent() {
         this.activityContent = buildContentGrid();
+        this.setContent(this.activityContent);
     }
 
     public ActivityPresenter getPresenter() {

@@ -63,6 +63,7 @@ public class ActivityPresenter extends Presenter {
         refreshViewStyle();
         refreshControls();
         refreshFields();
+        view.refreshContent();
     }
 
     public void populate() {
@@ -349,7 +350,7 @@ public class ActivityPresenter extends Presenter {
             } else {
                 this.makeAllFieldsEditable();
             }
-            refresh();
+            view.refreshContent();
             view.getEditButton().setText(getEditButonText());
         } catch (IOException | ParseException e) {
             LOG.error(DisplayConstants.ERROR_MESSAGE_ACTIVITY_SAVING + ": " + e.getMessage());

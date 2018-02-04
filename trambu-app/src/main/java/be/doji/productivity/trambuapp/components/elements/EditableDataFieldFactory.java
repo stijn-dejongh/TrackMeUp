@@ -53,16 +53,18 @@ public final class EditableDataFieldFactory {
     public static EditableDataField<HBox, AutocompleteTextField, List<String>> getEditableStringListFieldWithAutocomplete(
             Consumer<String> buttonAction, String fieldName) {
         DataContainerDefinition<HBox, List<String>> staticDefinition = new DataContainerDefinition<>(new HBox(),
-                (hbox, datalist) -> datalist.stream().map(item -> {
-                    Button button = new Button(item);
-                    EventHandler<ActionEvent> action = e -> buttonAction.accept(item);
-                    button.setOnAction(action);
-                    return button;
-                }).collect(Collectors.toList()).stream().forEach(button -> hbox.getChildren().add(button)),
-                hbox -> hbox.getChildren().stream().map(button -> {
-                    Button casted = (Button) button;
-                    return casted.getText();
-                }).collect(Collectors.toList()));
+                (hbox, datalist) -> {
+                    hbox.getChildren().clear();
+                    datalist.stream().map(item -> {
+                        Button button = new Button(item);
+                        EventHandler<ActionEvent> action = e -> buttonAction.accept(item);
+                        button.setOnAction(action);
+                        return button;
+                    }).collect(Collectors.toList()).stream().forEach(button -> hbox.getChildren().add(button));
+                }, hbox -> hbox.getChildren().stream().map(button -> {
+            Button casted = (Button) button;
+            return casted.getText();
+        }).collect(Collectors.toList()));
 
         DataContainerDefinition<AutocompleteTextField, List<String>> editableDefinition = new DataContainerDefinition<>(
                 new AutocompleteTextField(), (textField, datalist) -> {
