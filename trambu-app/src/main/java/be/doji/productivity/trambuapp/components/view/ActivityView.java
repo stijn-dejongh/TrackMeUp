@@ -274,9 +274,7 @@ public class ActivityView extends TitledPane {
         HBox timingControls = new HBox();
 
         this.timingButton = new Button(presenter.getTimingButtonText());
-        timingButton.setOnAction(event -> {
-            presenter.timingButtonPressed();
-        });
+        timingButton.setOnAction(event -> presenter.timingButtonPressed());
 
         FontAwesomeIconView iconView = presenter.getTimingButtonIcon();
         timingButton.setGraphic(iconView);
@@ -308,9 +306,7 @@ public class ActivityView extends TitledPane {
         this.deleteButton = new Button(DisplayConstants.BUTTON_TEXT_DELETE);
         FontAwesomeIconView removeIcon = DisplayUtils.createStyledIcon(FontAwesomeIcon.REMOVE);
         deleteButton.setGraphic(removeIcon);
-        deleteButton.setOnAction(event -> {
-            presenter.deleteButtonClicked();
-        });
+        deleteButton.setOnAction(event -> presenter.deleteButtonClicked());
         deleteButton.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_ACTIVITY_DELETE));
     }
 

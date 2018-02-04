@@ -9,6 +9,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -91,11 +92,8 @@ public final class EditableDataFieldFactory {
         DataContainerDefinition<HBox, List<String>> staticDefinition = new DataContainerDefinition<>(new HBox(),
                 (hbox, datalist) -> {
                     hbox.getChildren().clear();
-                    datalist.stream().map(item -> {
-                        Button button = new Button(item);
-                        button.setOnAction(e -> buttonAction.accept(item));
-                        return button;
-                    }).collect(Collectors.toList()).forEach(button -> hbox.getChildren().add(button));
+                    datalist.stream().map(item -> createItemButton(item, buttonAction)).collect(Collectors.toList())
+                            .forEach(button -> hbox.getChildren().add(button));
                 }, hbox -> hbox.getChildren().stream().map(button -> ((Button) button).getText())
                 .collect(Collectors.toList()));
 
@@ -107,5 +105,11 @@ public final class EditableDataFieldFactory {
                         .splitTextFieldValueOnSeperator(label.getText(), DisplayConstants.FIELD_SEPERATOR));
 
         return new EditableDataField<>(staticDefinition, editableDefinition, fieldName);
+    }
+
+    @NotNull public static Button createItemButton(String item, Consumer<String> buttonAction) {
+        Button itemButton = new Button(item);
+        itemButton.setOnAction(e -> buttonAction.accept(item));
+        return itemButton;
     }
 }

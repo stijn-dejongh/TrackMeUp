@@ -113,7 +113,6 @@ public class ActivityPresenter extends Presenter {
     }
 
     private void refreshWarningPerdiodField() {
-        //TODO: should we actually convert this to a string here, or handle that in the EditableFactory?
         view.getWarningPeriodField().setData(this.model.getWarningTimeFrame().toString());
     }
 
@@ -183,7 +182,6 @@ public class ActivityPresenter extends Presenter {
                 TooltipConstants.TOOLTIP_TEXT_ACTIVITY_NOT_DONE:
                 TooltipConstants.TOOLTIP_TEXT_ACTIVITY_DONE);
     }
-
 
     public String getActivityName() {
         return model.getName();

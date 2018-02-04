@@ -15,11 +15,6 @@ public class EditableDataField<S extends Region, E extends Region, D> {
     private DataContainerDefinition<S, D> staticField;
     private DataContainerDefinition<E, D> editableField;
 
-    /*
-     * TODO: maybe convert this to a Builder pattern?
-     *
-     */
-
     public EditableDataField(DataContainerDefinition<S, D> staticFieldDefition,
             DataContainerDefinition<E, D> editableFieldDefinition) {
         this.staticField = staticFieldDefition;
