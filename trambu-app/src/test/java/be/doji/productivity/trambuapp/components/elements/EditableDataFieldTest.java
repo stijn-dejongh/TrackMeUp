@@ -128,11 +128,11 @@ public class EditableDataFieldTest extends TrambuAppTest {
         Assert.assertEquals(DEFAULT_TEXT, field.getStaticField().getData());
         Assert.assertEquals(CHANGED_TEXT, field.getEditableField().getData());
         field.update();
-        Assert.assertEquals(field.getData(), CHANGED_TEXT);
+        Assert.assertEquals(CHANGED_TEXT, field.getData());
     }
 
     @Test public void testSetDataDifferentContentTypes() throws ParseException {
-        /**
+        /*
          *   Due to datepicker internal date representation, all time information is truncated.
          *  To test the validity of working with containers that have different internal representations,
          *  we changed the date format to the SHORT type.

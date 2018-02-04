@@ -68,7 +68,7 @@ public class ActivityView extends TitledPane {
         init();
     }
 
-    public void init() {
+    private void init() {
         overlay = new OverlayPane();
         this.initHeader();
         this.initControls();
@@ -106,7 +106,7 @@ public class ActivityView extends TitledPane {
         initDeleteButton();
     }
 
-    void initFields() {
+    private void initFields() {
         this.nameField = EditableDataFieldFactory.getEditableStringField(ActivityFieldNames.FIELD_NAME);
         this.priorityField = EditableDataFieldFactory
                 .getEditableStringFieldDropdown(FXCollections.observableArrayList(TrackMeConstants.getPriorityList()),
@@ -127,7 +127,7 @@ public class ActivityView extends TitledPane {
 
     }
 
-    GridPane buildContentGrid() {
+    private GridPane buildContentGrid() {
         GridPane content = DisplayUtils.createDefaultGridPane();
         int rowIndex = 0;
         content.add(buildControlsGrid(), 0, rowIndex++, 2, 1);
@@ -174,7 +174,12 @@ public class ActivityView extends TitledPane {
             subActivityTitle.getStyleClass().clear();
             subActivityTitle.getStyleClass().add("separator-label");
             content.add(subActivityTitle, 0, rowIndex++);
-            content.add(this.subActivitiesAccordion, 0, rowIndex, 2, 1);
+            content.add(this.subActivitiesAccordion, 0, rowIndex++, 2, 1);
+        }
+
+        if (this.getPresenter().isEditable()) {
+            content.add(new Label("Select parent: "), 0, rowIndex++);
+            content.add(createParentSelector(), 0, rowIndex, 2, 1);
         }
 
         content.setVisible(true);
@@ -250,12 +255,11 @@ public class ActivityView extends TitledPane {
         return parent;
     }
 
-    private Node createSubActivities() {
+    private void createSubActivities() {
         this.subActivitiesAccordion = new Accordion();
-        return this.subActivitiesAccordion;
     }
 
-    GridPane buildControlsGrid() {
+    private GridPane buildControlsGrid() {
         GridPane content = new GridPane();
         content.setVgap(4);
         content.setHgap(4);
@@ -266,7 +270,7 @@ public class ActivityView extends TitledPane {
         return content;
     }
 
-    HBox createTimingControls() {
+    private HBox createTimingControls() {
         HBox timingControls = new HBox();
 
         this.timingButton = new Button(presenter.getTimingButtonText());
@@ -283,26 +287,24 @@ public class ActivityView extends TitledPane {
         return timingControls;
     }
 
-    private Button initDoneButton() {
+    private void initDoneButton() {
         this.doneButton = new Button();
         FontAwesomeIconView doneIcon = DisplayUtils.createStyledIcon(FontAwesomeIcon.REFRESH);
         this.doneButton.setGraphic(doneIcon);
 
         this.doneButton.setOnAction(event -> presenter.doneClicked());
 
-        return this.doneButton;
     }
 
-    private Button initEditButton() {
+    private void initEditButton() {
         this.editButton = new Button(presenter.getEditButonText());
         FontAwesomeIconView editIcon = DisplayUtils.createStyledIcon(FontAwesomeIcon.EDIT);
         editButton.setGraphic(editIcon);
         editButton.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_ACTIVITY_EDIT));
         editButton.setOnAction(event -> presenter.editButtonClicked());
-        return editButton;
     }
 
-    private Node initDeleteButton() {
+    private void initDeleteButton() {
         this.deleteButton = new Button(DisplayConstants.BUTTON_TEXT_DELETE);
         FontAwesomeIconView removeIcon = DisplayUtils.createStyledIcon(FontAwesomeIcon.REMOVE);
         deleteButton.setGraphic(removeIcon);
@@ -310,7 +312,6 @@ public class ActivityView extends TitledPane {
             presenter.deleteButtonClicked();
         });
         deleteButton.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_ACTIVITY_DELETE));
-        return deleteButton;
     }
 
     boolean isActive() {

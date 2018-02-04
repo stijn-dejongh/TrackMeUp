@@ -13,13 +13,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.GridPane;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ActivityControls extends TitledPane {
-
-    private static final Logger LOG = LoggerFactory.getLogger(ActivityControls.class);
-
     private ActivityPagePresenter presenter;
 
     private Label activeFilter;

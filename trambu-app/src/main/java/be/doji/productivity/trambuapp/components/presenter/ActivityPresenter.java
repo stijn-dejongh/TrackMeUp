@@ -167,12 +167,6 @@ public class ActivityPresenter extends Presenter {
         return StringUtils.isNotBlank(warningPeriod) && warningPeriod.matches(DisplayConstants.REGEX_WARNING_PERIOD);
     }
 
-    private void updateActivityProjects() {
-        if (view.getProjectsField() != null && !view.getProjectsField().getData().isEmpty()) {
-            model.setProjects(view.getProjectsField().getData());
-        }
-    }
-
     private FontAwesomeIconView getHeaderIcon() {
         FontAwesomeIconView checkedCalendar = DisplayUtils.createStyledIcon(FontAwesomeIcon.CHECK_CIRCLE);
         FontAwesomeIconView uncheckedCalendar = DisplayUtils.createStyledIcon(FontAwesomeIcon.CIRCLE_ALT);
@@ -190,32 +184,12 @@ public class ActivityPresenter extends Presenter {
                 TooltipConstants.TOOLTIP_TEXT_ACTIVITY_DONE);
     }
 
-    private void updateModelTags() {
-        if (view.getTagsField() != null && !view.getTagsField().getData().isEmpty()) {
-            model.setTags(view.getTagsField().getData());
-        }
-    }
 
     public String getActivityName() {
         return model.getName();
     }
 
-    //    private void refreshDeadline() {
-    //        if (this.model.getDeadline() != null) {
-    //            view.getDeadlineLabel()
-    //                    .setText(DateFormat.getDateInstance(DateFormat.DEFAULT).format(this.model.getDeadline()));
-    //            if (this.model.isAlertActive()) {
-    //                view.getDeadlineLabel().getStyleClass().add("warningLabel");
-    //            }
-    //            view.getDeadLineHeader().setVisible(true);
-    //            view.getDeadlineLabel().setVisible(true);
-    //        } else {
-    //            view.getDeadLineHeader().setVisible(false);
-    //            view.getDeadlineLabel().setVisible(false);
-    //        }
-    //    }
-
-    public String getActivityStyle() {
+    private String getActivityStyle() {
         if (this.model.isCompleted() && this.model.isAllSubActivitiesCompleted()) {
             return DisplayConstants.STYLE_CLASS_ACTIVITY_DONE;
         } else {
@@ -258,12 +232,6 @@ public class ActivityPresenter extends Presenter {
             }
         }
         return activityToSave;
-    }
-
-    public void updateModelActivityPriority(String priority) {
-        if (StringUtils.isNotBlank(priority)) {
-            this.model.setPriority(priority);
-        }
     }
 
     public void openNotes() {
@@ -425,14 +393,6 @@ public class ActivityPresenter extends Presenter {
         return DisplayUtils.createTooltip(getActiveLog().isPresent()?
                 TooltipConstants.TOOLTIP_TEXT_ACTIVITY_TIMING_CONTROL_STOP:
                 TooltipConstants.TOOLTIP_TEXT_ACTIVITY_TIMING_CONTROL_START);
-    }
-
-    void setManagerContainer(ActivityManagerContainer container) {
-        this.managerContainer = container;
-    }
-
-    public ActivityPagePresenter getParent() {
-        return this.parent;
     }
 
     public void setTagFilter(String tag) {

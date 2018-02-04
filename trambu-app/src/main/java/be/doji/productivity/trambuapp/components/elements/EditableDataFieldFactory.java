@@ -93,21 +93,18 @@ public final class EditableDataFieldFactory {
                     hbox.getChildren().clear();
                     datalist.stream().map(item -> {
                         Button button = new Button(item);
-                        EventHandler<ActionEvent> action = e -> buttonAction.accept(item);
-                        button.setOnAction(action);
+                        button.setOnAction(e -> buttonAction.accept(item));
                         return button;
-                    }).collect(Collectors.toList()).stream().forEach(button -> hbox.getChildren().add(button));
-                }, hbox -> hbox.getChildren().stream().map(button -> {
-            Button casted = (Button) button;
-            return casted.getText();
-        }).collect(Collectors.toList()));
+                    }).collect(Collectors.toList()).forEach(button -> hbox.getChildren().add(button));
+                }, hbox -> hbox.getChildren().stream().map(button -> ((Button) button).getText())
+                .collect(Collectors.toList()));
 
         AutocompleteTextField autocompleteTextField = new AutocompleteTextField();
         DataContainerDefinition<AutocompleteTextField, List<String>> editableDefinition = new DataContainerDefinition<>(
-                autocompleteTextField, (textField, datalist) -> {
-            datalist.stream().reduce((s, s2) -> s + DisplayConstants.FIELD_SEPERATOR + " " + s2)
-                    .ifPresent(s -> textField.setText(s));
-        }, label -> DisplayUtils.splitTextFieldValueOnSeperator(label.getText(), DisplayConstants.FIELD_SEPERATOR));
+                autocompleteTextField, (textField, datalist) -> datalist.stream()
+                .reduce((s, s2) -> s + DisplayConstants.FIELD_SEPERATOR + " " + s2).ifPresent(textField::setText),
+                label -> DisplayUtils
+                        .splitTextFieldValueOnSeperator(label.getText(), DisplayConstants.FIELD_SEPERATOR));
 
         return new EditableDataField<>(staticDefinition, editableDefinition, fieldName);
     }
