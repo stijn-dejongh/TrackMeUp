@@ -2,6 +2,7 @@ package be.doji.productivity.trambuapp.components.elements;
 
 import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.Objects;
 
@@ -103,6 +104,10 @@ public class EditableDataField<S extends Region, E extends Region, D> {
     }
 
     public boolean hasData() {
-        return !Objects.isNull(data);
+        if (data instanceof String) {
+            return StringUtils.isNotBlank((String) data);
+        } else {
+            return !Objects.isNull(data);
+        }
     }
 }

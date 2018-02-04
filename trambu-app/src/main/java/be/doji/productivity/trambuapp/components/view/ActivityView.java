@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class ActivityView extends TitledPane {
@@ -51,8 +52,8 @@ public class ActivityView extends TitledPane {
     private EditableDataField<Label, TextField, String> warningPeriodField;
     private EditableDataField<HBox, AutocompleteTextField, List<String>> projectsField;
     private EditableDataField<HBox, AutocompleteTextField, List<String>> tagsField;
+    private EditableDataField<Label, DatePicker, Date> deadlineField;
 
-    private DatePicker deadlineDatePicker;
     private GridPane activityContent;
 
     public ActivityView(Activity activity) {
@@ -120,6 +121,8 @@ public class ActivityView extends TitledPane {
         this.tagsField = EditableDataFieldFactory
                 .getEditableStringListFieldWithAutocomplete(string -> this.presenter.setTagFilter(string),
                         ActivityFieldNames.FIELD_TAGS);
+        this.deadlineField = EditableDataFieldFactory.getEditableDateField(event -> {
+        }, ActivityFieldNames.FIELD_DEADLINE);
         this.createSubActivities();
 
     }
@@ -131,27 +134,32 @@ public class ActivityView extends TitledPane {
         content.add(DisplayUtils.createHorizontalSpacer(), 0, rowIndex++, 2, 1);
         content.add(createTimingControls(), 0, rowIndex++, 2, 1);
 
-        if (this.priorityField.hasData()) {
+        if (this.priorityField.hasData() || this.priorityField.isEditable()) {
             content.add(this.priorityField.getNameLabel(), 0, rowIndex);
             content.add(this.priorityField.get(), 1, rowIndex++);
         }
 
-        if (this.locationField.hasData()) {
+        if (this.locationField.hasData() || this.locationField.isEditable()) {
             content.add(this.locationField.getNameLabel(), 0, rowIndex);
             content.add(this.locationField.get(), 1, rowIndex++);
         }
 
-        if (this.warningPeriodField.hasData()) {
+        if (this.deadlineField.hasData() || this.deadlineField.isEditable()) {
+            content.add(this.deadlineField.getNameLabel(), 0, rowIndex);
+            content.add(this.deadlineField.get(), 1, rowIndex++);
+        }
+
+        if (this.warningPeriodField.hasData() || this.warningPeriodField.isEditable()) {
             content.add(this.warningPeriodField.getNameLabel(), 0, rowIndex);
             content.add(this.warningPeriodField.get(), 1, rowIndex++);
         }
 
-        if (this.tagsField.hasData()) {
+        if (this.tagsField.hasData() || this.tagsField.isEditable()) {
             content.add(this.tagsField.getNameLabel(), 0, rowIndex);
             content.add(this.tagsField.get(), 1, rowIndex++);
         }
 
-        if (this.projectsField.hasData()) {
+        if (this.projectsField.hasData() || this.projectsField.isEditable()) {
             content.add(this.projectsField.getNameLabel(), 0, rowIndex);
             content.add(this.projectsField.get(), 1, rowIndex++);
         }
@@ -172,18 +180,6 @@ public class ActivityView extends TitledPane {
         content.setVisible(true);
         return content;
 
-    }
-
-    private Node createEditableDeadline() {
-        HBox deadlinePicker = new HBox();
-        deadlinePicker.getChildren().add(createDatePicker());
-        return deadlinePicker;
-    }
-
-    private DatePicker createDatePicker() {
-        this.deadlineDatePicker = new DatePicker();
-        deadlineDatePicker.setOnAction(event -> this.presenter.deadlinePicked());
-        return deadlineDatePicker;
     }
 
     private GridPane createLogPoints() {
@@ -447,11 +443,11 @@ public class ActivityView extends TitledPane {
         this.tagsField = tagsField;
     }
 
-    public DatePicker getDeadlineDatePicker() {
-        return deadlineDatePicker;
+    public EditableDataField<Label, DatePicker, Date> getDeadlineField() {
+        return deadlineField;
     }
 
-    public void setDeadlineDatePicker(DatePicker deadlineDatePicker) {
-        this.deadlineDatePicker = deadlineDatePicker;
+    public void setDeadlineField(EditableDataField<Label, DatePicker, Date> deadlineField) {
+        this.deadlineField = deadlineField;
     }
 }

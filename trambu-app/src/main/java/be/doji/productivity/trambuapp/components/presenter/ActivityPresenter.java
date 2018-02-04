@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.text.ParseException;
 import java.time.Duration;
-import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -95,6 +94,7 @@ public class ActivityPresenter extends Presenter {
         refreshTagsFields();
         refreshProjectsField();
         refreshSubActivitiesField();
+        refreshDeadlineField();
     }
 
     private void refreshNameField() {
@@ -106,7 +106,9 @@ public class ActivityPresenter extends Presenter {
     }
 
     private void refreshLocationField() {
-        view.getLocationField().setData(this.model.getLocation());
+        if (this.model.isSetLocation()) {
+            view.getLocationField().setData(this.model.getLocation());
+        }
         view.getLocationField().getEditableField().getDataContainer().setSuggestions(this.getLocationSuggestions());
     }
 
@@ -135,6 +137,12 @@ public class ActivityPresenter extends Presenter {
         }
     }
 
+    private void refreshDeadlineField() {
+        if (this.model.isSetDeadline()) {
+            view.getDeadlineField().setData(this.model.getDeadline());
+        }
+    }
+
     private void updateModel() {
         this.model.setName(view.getNameField().update().getData());
         this.model.setPriority(view.getPriorityField().update().getData());
@@ -143,6 +151,7 @@ public class ActivityPresenter extends Presenter {
                 .ifPresent(d -> this.model.setWarningTimeFrame(d));
         this.model.setTags(view.getTagsField().update().getData());
         this.model.setProjects(view.getProjectsField().update().getData());
+        this.model.setDeadline(view.getDeadlineField().update().getData());
     }
 
     private Optional<Duration> parseWarningPeriod(String warningPeriod) {
@@ -255,12 +264,6 @@ public class ActivityPresenter extends Presenter {
         if (StringUtils.isNotBlank(priority)) {
             this.model.setPriority(priority);
         }
-    }
-
-    public void deadlinePicked() {
-        view.getDeadlineDatePicker().getValue();
-        this.model.setDeadline(
-                Date.from(view.getDeadlineDatePicker().getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()));
     }
 
     public void openNotes() {
@@ -457,6 +460,7 @@ public class ActivityPresenter extends Presenter {
         view.getLocationField().makeEditable();
         view.getTagsField().makeEditable();
         view.getProjectsField().makeEditable();
+        view.getDeadlineField().makeEditable();
         view.refresh();
     }
 
@@ -467,6 +471,7 @@ public class ActivityPresenter extends Presenter {
         view.getLocationField().makeStatic();
         view.getTagsField().makeStatic();
         view.getProjectsField().makeStatic();
+        view.getDeadlineField().makeStatic();
         view.refresh();
     }
 }

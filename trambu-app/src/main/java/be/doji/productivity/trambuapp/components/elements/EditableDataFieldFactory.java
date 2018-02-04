@@ -2,22 +2,58 @@ package be.doji.productivity.trambuapp.components.elements;
 
 import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
+import be.doji.productivity.trambucore.TrackMeConstants;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
+import org.apache.commons.lang3.StringUtils;
 
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public final class EditableDataFieldFactory {
 
     private EditableDataFieldFactory() {
+    }
+
+    public static EditableDataField<Label, DatePicker, Date> getEditableDateField(
+            EventHandler<ActionEvent> datepickAction, String fieldName) {
+        DatePicker picker = new DatePicker();
+        picker.setOnAction(datepickAction);
+        DataContainerDefinition<DatePicker, Date> editableDefinition = new DataContainerDefinition<>(picker,
+                (datePicker, date) -> {
+                    if (Objects.isNull(date)) {
+                        datePicker.setValue(null);
+                    } else {
+                        datePicker.setValue(new java.sql.Date(date.getTime()).toLocalDate());
+                    }
+                }, datePicker -> datePicker.getValue() == null?null:java.sql.Date.valueOf(datePicker.getValue()));
+        DataContainerDefinition<Label, Date> staticDefinition = new DataContainerDefinition<>(new Label(),
+                (label, date) -> {
+                    if (Objects.isNull(date)) {
+                        label.setText("");
+                    } else {
+                        label.setText(TrackMeConstants.getDateFormat().format(date));
+                    }
+                }, label -> {
+            if (StringUtils.isBlank(label.getText())) {
+                return null;
+            }
+            try {
+                return TrackMeConstants.getDateFormat().parse(label.getText());
+            } catch (ParseException e) {
+                return null;
+            }
+        });
+
+        return new EditableDataField<>(staticDefinition, editableDefinition, fieldName);
+
     }
 
     public static EditableDataField<Label, TextField, String> getEditableStringField(String fieldName) {
