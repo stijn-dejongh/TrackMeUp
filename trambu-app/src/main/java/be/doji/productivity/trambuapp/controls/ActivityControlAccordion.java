@@ -5,17 +5,17 @@ import javafx.scene.control.Accordion;
 
 public class ActivityControlAccordion extends Accordion {
 
-    private final ActivityControls generalControls;
+  private final ActivityControls generalControls;
 
-    public ActivityControlAccordion(ActivityPagePresenter parent) {
-        super();
-        this.generalControls = new ActivityControls(parent);
-        this.getPanes().add(generalControls);
+  public ActivityControlAccordion(ActivityPagePresenter parent) {
+    super();
+    this.generalControls = new ActivityControls(parent);
+    this.getPanes().add(generalControls);
 
-        this.setExpandedPane(generalControls);
-    }
+    this.setExpandedPane(generalControls);
+  }
 
-    public void updateFilterLabel() {
-        this.generalControls.updateFilterLabel();
-    }
+  public void updateFilterLabel() {
+    this.generalControls.updateFilterLabel();
+  }
 }
