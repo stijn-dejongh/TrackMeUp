@@ -29,9 +29,9 @@ public final class DisplayUtils {
     calendarOfHeader.setTime(key);
     GregorianCalendar calendarOfToday = new GregorianCalendar();
     calendarOfToday.setTime(new Date());
-    return isWithinYearRange(calendarOfHeader, calendarOfToday) ?
-        DateFormat.getDateInstance(DateFormat.DEFAULT).format(key) :
-        "No deadline in sight";
+    return isWithinYearRange(calendarOfHeader, calendarOfToday)
+        ? DateFormat.getDateInstance(DateFormat.DEFAULT).format(key)
+        : "No deadline in sight";
   }
 
   private static boolean isWithinYearRange(GregorianCalendar calendarOfHeader,

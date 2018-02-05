@@ -5,7 +5,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Region;
 import org.apache.commons.lang3.StringUtils;
 
-public class EditableDataField<S extends Region, E extends Region, D> {
+public class Switchable<S extends Region, E extends Region, D> {
 
   private String name;
   private D data;
@@ -14,28 +14,28 @@ public class EditableDataField<S extends Region, E extends Region, D> {
   private DataContainerDefinition<S, D> staticField;
   private DataContainerDefinition<E, D> editableField;
 
-  public EditableDataField(DataContainerDefinition<S, D> staticFieldDefition,
+  public Switchable(DataContainerDefinition<S, D> staticFieldDefition,
       DataContainerDefinition<E, D> editableFieldDefinition) {
     this.staticField = staticFieldDefition;
     this.editableField = editableFieldDefinition;
   }
 
-  public EditableDataField(DataContainerDefinition<S, D> staticFieldDefition,
+  public Switchable(DataContainerDefinition<S, D> staticFieldDefition,
       DataContainerDefinition<E, D> editableFieldDefinition, String name) {
     this.staticField = staticFieldDefition;
     this.editableField = editableFieldDefinition;
     this.name = name;
   }
 
-  public EditableDataField(DataContainerDefinition<S, D> staticFieldDefition,
+  public Switchable(DataContainerDefinition<S, D> staticFieldDefition,
       DataContainerDefinition<E, D> editableFieldDefinition, D data, String name) {
     this(staticFieldDefition, editableFieldDefinition, name);
     this.setData(data);
   }
 
   public Region get() {
-    return isEditable() ? this.editableField.getDataContainer()
-        : this.staticField.getDataContainer();
+    return isEditable() ? this.editableField.getDisplayItem()
+        : this.staticField.getDisplayItem();
   }
 
   public void makeEditable() {
@@ -50,7 +50,7 @@ public class EditableDataField<S extends Region, E extends Region, D> {
     return this.editable;
   }
 
-  public DataContainerDefinition<S, D> getStaticField() {
+  public DataContainerDefinition<S, D> getStatic() {
     return staticField;
   }
 
@@ -75,7 +75,7 @@ public class EditableDataField<S extends Region, E extends Region, D> {
     updateFields();
   }
 
-  public EditableDataField<S, E, D> update() {
+  public Switchable<S, E, D> update() {
     this.data = getEditableField().getData();
     updateFields();
     return this;

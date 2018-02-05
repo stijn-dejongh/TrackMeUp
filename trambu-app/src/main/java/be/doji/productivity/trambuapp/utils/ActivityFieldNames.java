@@ -9,6 +9,7 @@ public final class ActivityFieldNames {
   public static final String FIELD_DEADLINE = "Deadline";
   public static final String FIELD_TAGS = "Tags";
   public static final String FIELD_PROJECTS = "Projects";
+
   private ActivityFieldNames() {
   }
 

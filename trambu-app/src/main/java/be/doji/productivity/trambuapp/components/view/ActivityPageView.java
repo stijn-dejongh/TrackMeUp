@@ -68,14 +68,14 @@ public class ActivityPageView extends View {
     splitPane.setOrientation(Orientation.HORIZONTAL);
     splitPane.setDividerPosition(0, 0.65);
 
-    splitPane.getItems().add(createActivityPane());
+    splitPane.getItems().add(createActivitiesPane());
     splitPane.getItems().add(createControlsPane());
 
     this.setContent(splitPane);
   }
 
   @NotNull
-  private ScrollPane createActivityPane() {
+  private ScrollPane createActivitiesPane() {
     ScrollPane activityPane = new ScrollPane();
     this.activityAccordion = new Accordion();
     activityPane.setContent(activityAccordion);
@@ -84,15 +84,17 @@ public class ActivityPageView extends View {
   }
 
   @NotNull
+  private ActivityView createActivitiesPane(Activity activity) {
+    return new ActivityView(activity);
+  }
+
+  @NotNull
   private ActivityControlAccordion createControlsPane() {
     this.controlAccordion = new ActivityControlAccordion(this.presenter);
     return controlAccordion;
   }
 
-  @NotNull
-  private ActivityView createActivityPane(Activity activity) {
-    return new ActivityView(activity);
-  }
+
 
   public void refreshAccordion() {
     this.activityAccordion.getPanes().clear();

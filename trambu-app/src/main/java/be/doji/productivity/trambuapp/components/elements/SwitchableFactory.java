@@ -21,12 +21,12 @@ import javafx.scene.layout.HBox;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-public final class EditableDataFieldFactory {
+public final class SwitchableFactory {
 
-  private EditableDataFieldFactory() {
+  private SwitchableFactory() {
   }
 
-  public static EditableDataField<Label, DatePicker, Date> getEditableDateField(
+  public static Switchable<Label, DatePicker, Date> dateSwitchable(
       EventHandler<ActionEvent> datepickAction, String fieldName) {
     DatePicker picker = new DatePicker();
     picker.setOnAction(datepickAction);
@@ -59,11 +59,11 @@ public final class EditableDataFieldFactory {
       }
     });
 
-    return new EditableDataField<>(staticDefinition, editableDefinition, fieldName);
+    return new Switchable<>(staticDefinition, editableDefinition, fieldName);
 
   }
 
-  public static EditableDataField<Label, TextField, String> getEditableStringField(
+  public static Switchable<Label, TextField, String> textSwitchable(
       String fieldName) {
     DataContainerDefinition<TextField, String> editableDefinition = new DataContainerDefinition<>(
         new TextField(),
@@ -72,10 +72,10 @@ public final class EditableDataFieldFactory {
         new Label(),
         Label::setText, Label::getText);
 
-    return new EditableDataField<>(staticDefinition, editableDefinition, fieldName);
+    return new Switchable<>(staticDefinition, editableDefinition, fieldName);
   }
 
-  public static EditableDataField<Label, AutocompleteTextField, String> getEditableStringFieldWithAutocomplete(
+  public static Switchable<Label, AutocompleteTextField, String> autocompleTextSwitchable(
       String fieldName) {
     DataContainerDefinition<AutocompleteTextField, String> editableDefinition = new DataContainerDefinition<>(
         new AutocompleteTextField(), AutocompleteTextField::setText,
@@ -84,10 +84,10 @@ public final class EditableDataFieldFactory {
         new Label(),
         Label::setText, Label::getText);
 
-    return new EditableDataField<>(staticDefinition, editableDefinition, fieldName);
+    return new Switchable<>(staticDefinition, editableDefinition, fieldName);
   }
 
-  public static EditableDataField<Label, ComboBox<String>, String> getEditableStringFieldDropdown(
+  public static Switchable<Label, ComboBox<String>, String> textDropdownSwitchable(
       ObservableList<String> options, String fieldName) {
     ComboBox<String> comboBox = new ComboBox<>(options);
     DataContainerDefinition<ComboBox<String>, String> editableDefinition = new DataContainerDefinition<>(
@@ -97,18 +97,20 @@ public final class EditableDataFieldFactory {
         new Label(),
         Label::setText, Label::getText);
 
-    return new EditableDataField<>(staticDefinition, editableDefinition, fieldName);
+    return new Switchable<>(staticDefinition, editableDefinition, fieldName);
   }
 
-  public static EditableDataField<HBox, AutocompleteTextField, List<String>> getEditableStringListFieldWithAutocomplete(
+  public static Switchable<HBox, AutocompleteTextField, List<String>> textGroupAutocompleteSwitchable(
       Consumer<String> buttonAction, String fieldName) {
     DataContainerDefinition<HBox, List<String>> staticDefinition = new DataContainerDefinition<>(
         new HBox(),
         (hbox, datalist) -> {
           hbox.getChildren().clear();
-          datalist.stream().map(item -> createItemButton(item, buttonAction))
-              .collect(Collectors.toList())
-              .forEach(button -> hbox.getChildren().add(button));
+          hbox.getChildren().addAll(
+              datalist.stream().filter(string -> StringUtils.isNotBlank(string)).map(Button::new)
+                  .collect(Collectors.toList()));
+          hbox.getChildren().stream().map(Button.class::cast).forEach(
+              button -> button.setOnAction(e -> buttonAction.accept(button.getText())));
         }, hbox -> hbox.getChildren().stream().map(button -> ((Button) button).getText())
         .collect(Collectors.toList()));
 
@@ -120,11 +122,11 @@ public final class EditableDataFieldFactory {
         label -> DisplayUtils
             .splitTextFieldValueOnSeperator(label.getText(), DisplayConstants.FIELD_SEPERATOR));
 
-    return new EditableDataField<>(staticDefinition, editableDefinition, fieldName);
+    return new Switchable<>(staticDefinition, editableDefinition, fieldName);
   }
 
   @NotNull
-  public static Button createItemButton(String item, Consumer<String> buttonAction) {
+  private static Button createItemButton(String item, Consumer<String> buttonAction) {
     Button itemButton = new Button(item);
     itemButton.setOnAction(e -> buttonAction.accept(item));
     return itemButton;

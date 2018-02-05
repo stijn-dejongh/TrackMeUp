@@ -1,8 +1,8 @@
 package be.doji.productivity.trambuapp.components.view;
 
 import be.doji.productivity.trambuapp.components.elements.AutocompleteTextField;
-import be.doji.productivity.trambuapp.components.elements.EditableDataField;
-import be.doji.productivity.trambuapp.components.elements.EditableDataFieldFactory;
+import be.doji.productivity.trambuapp.components.elements.Switchable;
+import be.doji.productivity.trambuapp.components.elements.SwitchableFactory;
 import be.doji.productivity.trambuapp.components.elements.OverlayPane;
 import be.doji.productivity.trambuapp.components.presenter.ActivityPagePresenter;
 import be.doji.productivity.trambuapp.components.presenter.ActivityPresenter;
@@ -51,13 +51,13 @@ public class ActivityView extends TitledPane {
   private Button timingButton;
   private Button titleLabel;
 
-  private EditableDataField<Label, TextField, String> nameField;
-  private EditableDataField<Label, ComboBox<String>, String> priorityField;
-  private EditableDataField<Label, AutocompleteTextField, String> locationField;
-  private EditableDataField<Label, TextField, String> warningPeriodField;
-  private EditableDataField<HBox, AutocompleteTextField, List<String>> projectsField;
-  private EditableDataField<HBox, AutocompleteTextField, List<String>> tagsField;
-  private EditableDataField<Label, DatePicker, Date> deadlineField;
+  private Switchable<Label, TextField, String> nameField;
+  private Switchable<Label, ComboBox<String>, String> priorityField;
+  private Switchable<Label, AutocompleteTextField, String> locationField;
+  private Switchable<Label, TextField, String> warningPeriodField;
+  private Switchable<HBox, AutocompleteTextField, List<String>> projectsField;
+  private Switchable<HBox, AutocompleteTextField, List<String>> tagsField;
+  private Switchable<Label, DatePicker, Date> deadlineField;
 
   private GridPane activityContent;
 
@@ -113,23 +113,23 @@ public class ActivityView extends TitledPane {
   }
 
   private void initFields() {
-    this.nameField = EditableDataFieldFactory.getEditableStringField(ActivityFieldNames.FIELD_NAME);
-    this.priorityField = EditableDataFieldFactory
-        .getEditableStringFieldDropdown(
+    this.nameField = SwitchableFactory.textSwitchable(ActivityFieldNames.FIELD_NAME);
+    this.priorityField = SwitchableFactory
+        .textDropdownSwitchable(
             FXCollections.observableArrayList(TrackMeConstants.getPriorityList()),
             ActivityFieldNames.FIELD_PRIORITY);
-    this.warningPeriodField = EditableDataFieldFactory
-        .getEditableStringField(ActivityFieldNames.FIELD_WARNING_PERIOD);
-    this.locationField = EditableDataFieldFactory
-        .getEditableStringFieldWithAutocomplete(ActivityFieldNames.FIELD_LOCATION);
-    this.projectsField = EditableDataFieldFactory
-        .getEditableStringListFieldWithAutocomplete(
+    this.warningPeriodField = SwitchableFactory
+        .textSwitchable(ActivityFieldNames.FIELD_WARNING_PERIOD);
+    this.locationField = SwitchableFactory
+        .autocompleTextSwitchable(ActivityFieldNames.FIELD_LOCATION);
+    this.projectsField = SwitchableFactory
+        .textGroupAutocompleteSwitchable(
             string -> this.presenter.setProjectFilter(string),
             ActivityFieldNames.FIELD_PROJECTS);
-    this.tagsField = EditableDataFieldFactory
-        .getEditableStringListFieldWithAutocomplete(string -> this.presenter.setTagFilter(string),
+    this.tagsField = SwitchableFactory
+        .textGroupAutocompleteSwitchable(string -> this.presenter.setTagFilter(string),
             ActivityFieldNames.FIELD_TAGS);
-    this.deadlineField = EditableDataFieldFactory.getEditableDateField(event -> {
+    this.deadlineField = SwitchableFactory.dateSwitchable(event -> {
     }, ActivityFieldNames.FIELD_DEADLINE);
     this.createSubActivities();
 
@@ -241,9 +241,9 @@ public class ActivityView extends TitledPane {
       logpointGrid.add(new Label("Logpoints: "), 0, logRowIndex++);
       for (TimeLog log : logpoints) {
         logpointGrid.add(
-            new Label("from " + dateFormat.format(log.getStartTime()) + (log.getEndTime() == null ?
-                "" :
-                (" to " + dateFormat.format(log.getEndTime())))), 1, logRowIndex++);
+            new Label("from " + dateFormat.format(log.getStartTime()) + (log.getEndTime() == null
+                ? ""
+                : (" to " + dateFormat.format(log.getEndTime())))), 1, logRowIndex++);
       }
     } else {
       logpointGrid.add(new Label("No timelogs available for this activity"), 0, logRowIndex);
@@ -285,7 +285,6 @@ public class ActivityView extends TitledPane {
   }
 
   private HBox createTimingControls() {
-    HBox timingControls = new HBox();
 
     this.timingButton = new Button(presenter.getTimingButtonText());
     timingButton.setOnAction(event -> presenter.timingButtonPressed());
@@ -294,6 +293,7 @@ public class ActivityView extends TitledPane {
     timingButton.setGraphic(iconView);
     timingButton.setTooltip(presenter.getTimingButtonTooltipText());
 
+    HBox timingControls = new HBox();
     timingControls.getChildren().add(timingButton);
 
     return timingControls;
@@ -407,62 +407,62 @@ public class ActivityView extends TitledPane {
     this.titleLabel = titleLabel;
   }
 
-  public EditableDataField<Label, TextField, String> getNameField() {
+  public Switchable<Label, TextField, String> getNameField() {
     return nameField;
   }
 
-  public void setNameField(EditableDataField<Label, TextField, String> nameField) {
+  public void setNameField(Switchable<Label, TextField, String> nameField) {
     this.nameField = nameField;
   }
 
-  public EditableDataField<Label, ComboBox<String>, String> getPriorityField() {
+  public Switchable<Label, ComboBox<String>, String> getPriorityField() {
     return priorityField;
   }
 
-  public void setPriorityField(EditableDataField<Label, ComboBox<String>, String> priorityField) {
+  public void setPriorityField(Switchable<Label, ComboBox<String>, String> priorityField) {
     this.priorityField = priorityField;
   }
 
-  public EditableDataField<Label, AutocompleteTextField, String> getLocationField() {
+  public Switchable<Label, AutocompleteTextField, String> getLocationField() {
     return locationField;
   }
 
   public void setLocationField(
-      EditableDataField<Label, AutocompleteTextField, String> locationField) {
+      Switchable<Label, AutocompleteTextField, String> locationField) {
     this.locationField = locationField;
   }
 
-  public EditableDataField<Label, TextField, String> getWarningPeriodField() {
+  public Switchable<Label, TextField, String> getWarningPeriodField() {
     return warningPeriodField;
   }
 
   public void setWarningPeriodField(
-      EditableDataField<Label, TextField, String> warningPeriodField) {
+      Switchable<Label, TextField, String> warningPeriodField) {
     this.warningPeriodField = warningPeriodField;
   }
 
-  public EditableDataField<HBox, AutocompleteTextField, List<String>> getProjectsField() {
+  public Switchable<HBox, AutocompleteTextField, List<String>> getProjectsField() {
     return projectsField;
   }
 
   public void setProjectsField(
-      EditableDataField<HBox, AutocompleteTextField, List<String>> projectsField) {
+      Switchable<HBox, AutocompleteTextField, List<String>> projectsField) {
     this.projectsField = projectsField;
   }
 
-  public EditableDataField<HBox, AutocompleteTextField, List<String>> getTagsField() {
+  public Switchable<HBox, AutocompleteTextField, List<String>> getTagsField() {
     return tagsField;
   }
 
-  public void setTagsField(EditableDataField<HBox, AutocompleteTextField, List<String>> tagsField) {
+  public void setTagsField(Switchable<HBox, AutocompleteTextField, List<String>> tagsField) {
     this.tagsField = tagsField;
   }
 
-  public EditableDataField<Label, DatePicker, Date> getDeadlineField() {
+  public Switchable<Label, DatePicker, Date> getDeadlineField() {
     return deadlineField;
   }
 
-  public void setDeadlineField(EditableDataField<Label, DatePicker, Date> deadlineField) {
+  public void setDeadlineField(Switchable<Label, DatePicker, Date> deadlineField) {
     this.deadlineField = deadlineField;
   }
 }

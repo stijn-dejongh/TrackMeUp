@@ -118,7 +118,7 @@ public class ActivityPresenter extends Presenter {
     if (this.model.isSetLocation()) {
       view.getLocationField().setData(this.model.getLocation());
     }
-    view.getLocationField().getEditableField().getDataContainer()
+    view.getLocationField().getEditableField().getDisplayItem()
         .setSuggestions(this.getLocationSuggestions());
   }
 
@@ -128,12 +128,12 @@ public class ActivityPresenter extends Presenter {
 
   private void refreshTagsFields() {
     view.getTagsField().setData(this.model.getTags());
-    view.getTagsField().getEditableField().getDataContainer().setSuggestions(getTagSuggestions());
+    view.getTagsField().getEditableField().getDisplayItem().setSuggestions(getTagSuggestions());
   }
 
   private void refreshProjectsField() {
     view.getProjectsField().setData(this.model.getProjects());
-    view.getTagsField().getEditableField().getDataContainer()
+    view.getTagsField().getEditableField().getDisplayItem()
         .setSuggestions(getProjectSuggestions());
   }
 
@@ -275,7 +275,7 @@ public class ActivityPresenter extends Presenter {
   }
 
   private List<Button> createNoteControlButtons(Note noteToSave, TextArea textField) {
-    List<Button> controls = new ArrayList<>();
+
     Button saveButton = new Button("Save changes");
     saveButton.setGraphic(DisplayUtils.createStyledIcon(FontAwesomeIcon.SAVE));
     saveButton
@@ -288,6 +288,7 @@ public class ActivityPresenter extends Presenter {
         LOG.error("Error saving note to file: " + e.getMessage());
       }
     });
+    List<Button> controls = new ArrayList<>();
     controls.add(saveButton);
     return controls;
   }

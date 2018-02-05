@@ -16,7 +16,7 @@ public class DataContainerDefinition<S, D> {
     this.getDataFromField = dataGetter;
   }
 
-  public S getDataContainer() {
+  public S getDisplayItem() {
     return dataContainer;
   }
 
