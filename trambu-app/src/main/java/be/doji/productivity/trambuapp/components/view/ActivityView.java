@@ -1,9 +1,9 @@
 package be.doji.productivity.trambuapp.components.view;
 
 import be.doji.productivity.trambuapp.components.elements.AutocompleteTextField;
+import be.doji.productivity.trambuapp.components.elements.OverlayPane;
 import be.doji.productivity.trambuapp.components.elements.Switchable;
 import be.doji.productivity.trambuapp.components.elements.SwitchableFactory;
-import be.doji.productivity.trambuapp.components.elements.OverlayPane;
 import be.doji.productivity.trambuapp.components.presenter.ActivityPagePresenter;
 import be.doji.productivity.trambuapp.components.presenter.ActivityPresenter;
 import be.doji.productivity.trambuapp.utils.ActivityFieldNames;
@@ -141,6 +141,11 @@ public class ActivityView extends TitledPane {
     content.add(buildControlsGrid(), 0, rowIndex++, 2, 1);
     content.add(DisplayUtils.createHorizontalSpacer(), 0, rowIndex++, 2, 1);
     content.add(createTimingControls(), 0, rowIndex++, 2, 1);
+
+    if (this.nameField.isEditable()) {
+      content.add(this.nameField.getNameLabel(), 0, rowIndex);
+      content.add(this.nameField.get(), 1, rowIndex++);
+    }
 
     if (this.priorityField.hasData() || this.priorityField.isEditable()) {
       content.add(this.priorityField.getNameLabel(), 0, rowIndex);
