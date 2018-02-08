@@ -6,45 +6,25 @@ import java.util.function.Function;
 public class DataContainerDefinition<S, D> {
 
   private S dataContainer;
-  private BiConsumer<S, D> setDataToField;
-  private Function<S, D> getDataFromField;
+  private BiConsumer<S, D> dataSetter;
+  private Function<S, D> dataGetter;
 
   public DataContainerDefinition(S dataContainer, BiConsumer<S, D> dataSetter,
       Function<S, D> dataGetter) {
     this.dataContainer = dataContainer;
-    this.setDataToField = dataSetter;
-    this.getDataFromField = dataGetter;
+    this.dataSetter = dataSetter;
+    this.dataGetter = dataGetter;
   }
 
   public S getDisplayItem() {
     return dataContainer;
   }
 
-  public void setDataContainer(S dataContainer) {
-    this.dataContainer = dataContainer;
-  }
-
-  public BiConsumer<S, D> getSetDataToField() {
-    return setDataToField;
-  }
-
-  public void setSetDataToField(BiConsumer<S, D> setDataToField) {
-    this.setDataToField = setDataToField;
-  }
-
-  public Function<S, D> getGetDataFromField() {
-    return getDataFromField;
-  }
-
-  public void setGetDataFromField(Function<S, D> getDataFromField) {
-    this.getDataFromField = getDataFromField;
-  }
-
   public D getData() {
-    return getDataFromField.apply(dataContainer);
+    return dataGetter.apply(dataContainer);
   }
 
   public void setData(D data) {
-    setDataToField.accept(this.dataContainer, data);
+    dataSetter.accept(this.dataContainer, data);
   }
 }

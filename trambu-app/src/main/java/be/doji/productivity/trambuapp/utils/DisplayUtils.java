@@ -15,6 +15,7 @@ import javafx.scene.control.Separator;
 import javafx.scene.control.TitledPane;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
+import org.apache.commons.lang3.StringUtils;
 
 public final class DisplayUtils {
 
@@ -90,6 +91,11 @@ public final class DisplayUtils {
       newTags.add(aSplit.trim());
     }
     return newTags;
+  }
+
+  public static boolean isValidWarningPeriodInput(String warningPeriod) {
+    return StringUtils.isNotBlank(warningPeriod) && warningPeriod
+        .matches(DisplayConstants.REGEX_WARNING_PERIOD);
   }
 
 }

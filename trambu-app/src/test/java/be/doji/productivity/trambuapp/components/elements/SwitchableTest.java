@@ -33,7 +33,7 @@ public class SwitchableTest extends TrambuAppTest {
         staticDefinition,
         editableDefinition, DEFAULT_TEXT, "FieldName");
     Assert.assertNotNull(dataField);
-    Assert.assertNotNull(dataField.getEditableField());
+    Assert.assertNotNull(dataField.getEditable());
     Assert.assertNotNull(dataField.getStatic());
     Assert.assertNotNull(dataField.get());
     Assert.assertEquals(DEFAULT_TEXT, dataField.getData());
@@ -102,9 +102,9 @@ public class SwitchableTest extends TrambuAppTest {
     Assert.assertEquals(CHANGED_TEXT, dataField.getStatic().getData());
     Assert.assertEquals(CHANGED_TEXT, dataField.getStatic().getDisplayItem().getText());
 
-    Assert.assertEquals(CHANGED_TEXT, dataField.getEditableField().getData());
+    Assert.assertEquals(CHANGED_TEXT, dataField.getEditable().getData());
     Assert
-        .assertEquals(CHANGED_TEXT, dataField.getEditableField().getDisplayItem().getText());
+        .assertEquals(CHANGED_TEXT, dataField.getEditable().getDisplayItem().getText());
   }
 
   @Test
@@ -125,14 +125,14 @@ public class SwitchableTest extends TrambuAppTest {
 
     Assert.assertEquals(DEFAULT_TEXT, dataField.getData());
     Assert.assertEquals(DEFAULT_TEXT, dataField.getStatic().getData());
-    Assert.assertEquals(DEFAULT_TEXT, dataField.getEditableField().getData());
+    Assert.assertEquals(DEFAULT_TEXT, dataField.getEditable().getData());
 
     editableField.setText(CHANGED_TEXT);
     dataField.update();
 
     Assert.assertEquals(CHANGED_TEXT, dataField.getData());
     Assert.assertEquals(CHANGED_TEXT, dataField.getStatic().getData());
-    Assert.assertEquals(CHANGED_TEXT, dataField.getEditableField().getData());
+    Assert.assertEquals(CHANGED_TEXT, dataField.getEditable().getData());
   }
 
 
@@ -143,11 +143,11 @@ public class SwitchableTest extends TrambuAppTest {
     field.setData(DEFAULT_TEXT);
     Assert.assertEquals(DEFAULT_TEXT, field.getData());
     Assert.assertEquals(DEFAULT_TEXT, field.getStatic().getData());
-    Assert.assertEquals(DEFAULT_TEXT, field.getEditableField().getData());
+    Assert.assertEquals(DEFAULT_TEXT, field.getEditable().getData());
 
-    field.getEditableField().getDisplayItem().textProperty().setValue(CHANGED_TEXT);
+    field.getEditable().getDisplayItem().textProperty().setValue(CHANGED_TEXT);
     Assert.assertEquals(DEFAULT_TEXT, field.getStatic().getData());
-    Assert.assertEquals(CHANGED_TEXT, field.getEditableField().getData());
+    Assert.assertEquals(CHANGED_TEXT, field.getEditable().getData());
     field.update();
     Assert.assertEquals(CHANGED_TEXT, field.getData());
   }
@@ -184,7 +184,7 @@ public class SwitchableTest extends TrambuAppTest {
     Assert.assertNotNull(dataField);
     Assert.assertEquals(dateFromString, dataField.getData());
     Assert.assertEquals(dateFromString, dataField.getStatic().getData());
-    Assert.assertEquals(dateFromString, dataField.getEditableField().getData());
+    Assert.assertEquals(dateFromString, dataField.getEditable().getData());
 
   }
 }

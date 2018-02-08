@@ -1,8 +1,11 @@
 package be.doji.productivity.trambuapp.components.view;
 
 import be.doji.productivity.trambuapp.components.TrambuAppTest;
+import be.doji.productivity.trambuapp.components.elements.Switchable;
+import be.doji.productivity.trambuapp.utils.DisplayUtils;
 import be.doji.productivity.trambucore.model.tasks.Activity;
 import be.doji.productivity.trambucore.testutil.ActivityTestData;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
@@ -11,11 +14,15 @@ import java.util.List;
 import java.util.Optional;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Accordion;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import org.junit.Assert;
-import org.junit.Rule;
 import org.junit.Test;
 
+/**
+ * Tests for the ActivityView MVP model. Testing both ActivityView and ActvitiyPresenter classes
+ */
 public class ActivityViewTest extends TrambuAppTest {
 
   private static final String ACTIVITY_ONE_ID = "283b6271-b513-4e89-b757-10e98c9078ea";
@@ -23,6 +30,8 @@ public class ActivityViewTest extends TrambuAppTest {
 
   private static final String DEFAULT_WARNING_TIME_STRING = "PT24H";
   private static final String CHANGED_PROJECT_TEXT = "NewProject";
+  private static final String TEST_LOCATION = "TestLocation";
+  private static final String ACTIVITY_WITH_LOCATION_ID = "283b6298-b513-4e89-b757-10e98c9078ea";
 
   @Test
   public void testFieldCreation() throws ParseException {
@@ -118,7 +127,7 @@ public class ActivityViewTest extends TrambuAppTest {
     Assert.assertEquals("OverarchingProject", projectData.get(0));
 
     view.getPresenter().makeAllFieldsEditableAndRefresh();
-    view.getProjectsField().getEditableField().getDisplayItem().setText(CHANGED_PROJECT_TEXT);
+    view.getProjectsField().getEditable().getDisplayItem().setText(CHANGED_PROJECT_TEXT);
     Assert.assertEquals(1, view.getProjectsField().update().getData().size());
     Assert.assertEquals(CHANGED_PROJECT_TEXT, view.getProjectsField().update().getData().get(0));
 
@@ -140,14 +149,76 @@ public class ActivityViewTest extends TrambuAppTest {
     getActivityManager().addActivity(ActivityTestData.DATA_LINE_NO_DEADLINE);
     Optional<Activity> activity = getActivityManager().getSavedActivityById(ACTIVITY_ONE_ID);
     Assert.assertTrue(activity.isPresent());
-
     ActivityView view = new ActivityView(activity.get());
     Assert.assertNotNull(view);
+
     view.getPresenter().makeAllFieldsEditableAndRefresh();
     view.getPresenter().editButtonClicked();
 
     Assert.assertTrue(true);
     Assert.assertFalse(view.getDeadlineField().hasData());
   }
+
+  @Test
+  public void failIfActivityStatusNotUpdated() throws ParseException {
+    getActivityManager().addActivity(ActivityTestData.DATA_LINE_NO_DEADLINE);
+    Optional<Activity> activity = getActivityManager().getSavedActivityById(ACTIVITY_ONE_ID);
+    Assert.assertTrue(activity.isPresent());
+    ActivityView view = new ActivityView(activity.get());
+    Assert.assertNotNull(view);
+
+    view.getPresenter().headerButtonClicked();
+
+    Optional<Activity> activityAfterUpdate = getActivityManager()
+        .getSavedActivityById(ACTIVITY_ONE_ID);
+    Assert.assertTrue("The activity was no longer found after the update",
+        activityAfterUpdate.isPresent());
+    Activity activityToCheck = activityAfterUpdate.get();
+    Assert.assertNotNull(activityToCheck);
+    Assert
+        .assertTrue("The activity should be completed after update", activityToCheck.isCompleted());
+
+  }
+
+  @Test
+  public void failIfLocationNotSet() throws ParseException, IOException {
+    getActivityManager().addActivity(ActivityTestData.ACTIVITY_NO_PREFIX_LOCATION_LINE);
+    Optional<Activity> activity = getActivityManager()
+        .getSavedActivityById(ACTIVITY_WITH_LOCATION_ID);
+    Assert.assertTrue(activity.isPresent());
+    Assert.assertEquals(TEST_LOCATION, activity.get().getLocation());
+    ActivityView view = new ActivityView(activity.get());
+    Assert.assertNotNull(view);
+
+    view.getPresenter().refresh();
+
+    Assert.assertNotNull(view.getLocationField());
+    Assert.assertTrue("LocationField has data", view.getLocationField().hasData());
+    Assert.assertEquals(TEST_LOCATION, view.getLocationField().getData());
+  }
+
+  @Test
+  public void failIfWarningPeriodNotUpdated() throws ParseException {
+    getActivityManager().addActivity(ActivityTestData.DATA_LINE_NO_DEADLINE);
+    Optional<Activity> activity = getActivityManager().getSavedActivityById(ACTIVITY_ONE_ID);
+    Assert.assertTrue(activity.isPresent());
+    ActivityView view = new ActivityView(activity.get());
+    Assert.assertNotNull(view);
+
+    view.getPresenter().makeAllFieldsEditableAndRefresh();
+    Switchable<Label, TextField, String> editableWarningField = view.getWarningPeriodField();
+    Assert.assertTrue("Test period not valid", DisplayUtils.isValidWarningPeriodInput("14"));
+    editableWarningField.getEditable().setData("14");
+    view.getPresenter().editButtonClicked();
+
+    Optional<Activity> activityAfterSave = getActivityManager()
+        .getSavedActivityById(ACTIVITY_ONE_ID);
+    Assert.assertTrue(activity.isPresent());
+    Activity activityToCheck = activityAfterSave.get();
+    Assert.assertNotNull(activityToCheck.getWarningTimeFrame());
+    Assert.assertEquals("PT14H", activityToCheck.getWarningTimeFrame().toString());
+
+  }
+
 
 }

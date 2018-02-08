@@ -22,8 +22,7 @@ public class Switchable<S extends Region, E extends Region, D> {
 
   public Switchable(DataContainerDefinition<S, D> staticFieldDefition,
       DataContainerDefinition<E, D> editableFieldDefinition, String name) {
-    this.staticField = staticFieldDefition;
-    this.editableField = editableFieldDefinition;
+    this(staticFieldDefition, editableFieldDefinition);
     this.name = name;
   }
 
@@ -58,7 +57,7 @@ public class Switchable<S extends Region, E extends Region, D> {
     this.staticField = staticField;
   }
 
-  public DataContainerDefinition<E, D> getEditableField() {
+  public DataContainerDefinition<E, D> getEditable() {
     return editableField;
   }
 
@@ -76,7 +75,7 @@ public class Switchable<S extends Region, E extends Region, D> {
   }
 
   public Switchable<S, E, D> update() {
-    this.data = getEditableField().getData();
+    this.data = getEditable().getData();
     updateFields();
     return this;
   }

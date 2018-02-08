@@ -118,7 +118,7 @@ public class ActivityPresenter extends Presenter {
     if (this.model.isSetLocation()) {
       view.getLocationField().setData(this.model.getLocation());
     }
-    view.getLocationField().getEditableField().getDisplayItem()
+    view.getLocationField().getEditable().getDisplayItem()
         .setSuggestions(this.getLocationSuggestions());
   }
 
@@ -128,12 +128,12 @@ public class ActivityPresenter extends Presenter {
 
   private void refreshTagsFields() {
     view.getTagsField().setData(this.model.getTags());
-    view.getTagsField().getEditableField().getDisplayItem().setSuggestions(getTagSuggestions());
+    view.getTagsField().getEditable().getDisplayItem().setSuggestions(getTagSuggestions());
   }
 
   private void refreshProjectsField() {
     view.getProjectsField().setData(this.model.getProjects());
-    view.getTagsField().getEditableField().getDisplayItem()
+    view.getTagsField().getEditable().getDisplayItem()
         .setSuggestions(getProjectSuggestions());
   }
 
@@ -165,7 +165,7 @@ public class ActivityPresenter extends Presenter {
   }
 
   private Optional<Duration> parseWarningPeriod(String warningPeriod) {
-    if (validateWarningPeriod(warningPeriod)) {
+    if (DisplayUtils.isValidWarningPeriodInput(warningPeriod)) {
       Duration timeFrame = Duration.ofHours(Long.parseLong(warningPeriod));
       return Optional.of(timeFrame);
     } else {
@@ -173,10 +173,7 @@ public class ActivityPresenter extends Presenter {
     }
   }
 
-  private boolean validateWarningPeriod(String warningPeriod) {
-    return StringUtils.isNotBlank(warningPeriod) && warningPeriod
-        .matches(DisplayConstants.REGEX_WARNING_PERIOD);
-  }
+
 
   private FontAwesomeIconView getHeaderIcon() {
     FontAwesomeIconView checkedCalendar = DisplayUtils

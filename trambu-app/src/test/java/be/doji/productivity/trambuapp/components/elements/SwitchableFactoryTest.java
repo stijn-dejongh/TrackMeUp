@@ -26,20 +26,20 @@ public class SwitchableFactoryTest extends TrambuAppTest {
     Assert.assertEquals(2, field.getData().size());
     Assert.assertEquals(2, field.getStatic().getDisplayItem().getChildren().size());
     Assert
-        .assertEquals(2, field.getEditableField().getDisplayItem().getText().split(",").length);
+        .assertEquals(2, field.getEditable().getDisplayItem().getText().split(",").length);
 
     field.makeEditable();
     Assert.assertEquals(2, field.getData().size());
     Assert.assertEquals(2, field.getStatic().getDisplayItem().getChildren().size());
     Assert
-        .assertEquals(2, field.getEditableField().getDisplayItem().getText().split(",").length);
+        .assertEquals(2, field.getEditable().getDisplayItem().getText().split(",").length);
 
     List<String> newData = Arrays.asList("ItemThree", "ItemFour");
     field.setData(newData);
     Assert.assertEquals(2, field.getData().size());
     Assert.assertEquals(2, field.getStatic().getDisplayItem().getChildren().size());
     Assert
-        .assertEquals(2, field.getEditableField().getDisplayItem().getText().split(",").length);
+        .assertEquals(2, field.getEditable().getDisplayItem().getText().split(",").length);
   }
 
   @Test
@@ -54,7 +54,7 @@ public class SwitchableFactoryTest extends TrambuAppTest {
 
     // If the test gets here, no NullPointer was thrown
     Assert.assertNull(field.getData());
-    Assert.assertNull(field.getEditableField().getData());
+    Assert.assertNull(field.getEditable().getData());
     Assert.assertNull(field.getStatic().getData());
   }
 
