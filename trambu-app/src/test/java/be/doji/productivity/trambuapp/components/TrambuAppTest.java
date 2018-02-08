@@ -2,6 +2,7 @@ package be.doji.productivity.trambuapp.components;
 
 import be.doji.productivity.trambuapp.components.presenter.ActivityManagerContainer;
 import be.doji.productivity.trambuapp.components.presenter.ActivityPagePresenter;
+import be.doji.productivity.trambuapp.userconfiguration.UserConfigurationManager;
 import be.doji.productivity.trambucore.managers.ActivityManager;
 import be.doji.productivity.trambucore.managers.TimeTrackingManager;
 import be.doji.productivity.trambucore.testutil.FileUtils;
@@ -33,6 +34,7 @@ public abstract class TrambuAppTest extends ApplicationTest {
 
   private Path activityTestFile;
   private Path timeTrackingTestFile;
+  private UserConfigurationManager userConfigManager;
 
   @Before
   public void setUp() throws Exception {
@@ -40,10 +42,13 @@ public abstract class TrambuAppTest extends ApplicationTest {
     timeTrackingTestFile = createTempFile();
     this.activityManager = new ActivityManager(activityTestFile.toString());
     this.timeTrackingManager = new TimeTrackingManager(timeTrackingTestFile.toString());
+    this.userConfigManager = new UserConfigurationManager("rommel.txt");
     MockitoAnnotations.initMocks(this);
     Mockito.when(mockPagePresenter.getActivityController()).thenReturn(mockActController);
     Mockito.when(mockActController.getActivityManager()).thenReturn(activityManager);
     Mockito.when(mockActController.getTimeTrackingManager()).thenReturn(timeTrackingManager);
+    Mockito.when(mockActController.getConfigManager()).thenReturn(userConfigManager);
+
   }
 
   @After

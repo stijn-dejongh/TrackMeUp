@@ -2,6 +2,7 @@ package be.doji.productivity.trambuapp.components.view;
 
 import be.doji.productivity.trambuapp.components.TrambuAppTest;
 import be.doji.productivity.trambuapp.components.elements.Switchable;
+import be.doji.productivity.trambuapp.components.presenter.ActivityPagePresenter;
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
 import be.doji.productivity.trambucore.model.tasks.Activity;
 import be.doji.productivity.trambucore.testutil.ActivityTestData;
@@ -19,6 +20,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import org.junit.Assert;
 import org.junit.Test;
+import org.mockito.Mock;
 
 /**
  * Tests for the ActivityView MVP model. Testing both ActivityView and ActvitiyPresenter classes
@@ -33,13 +35,16 @@ public class ActivityViewTest extends TrambuAppTest {
   private static final String TEST_LOCATION = "TestLocation";
   private static final String ACTIVITY_WITH_LOCATION_ID = "283b6298-b513-4e89-b757-10e98c9078ea";
 
+  @Mock
+  private ActivityPagePresenter mockPagePresenter;
+
   @Test
   public void testFieldCreation() throws ParseException {
     getActivityManager().addActivity(ActivityTestData.ACTIVITY_DATA_LINE);
     Optional<Activity> activity = getActivityManager().getSavedActivityById(ACTIVITY_ONE_ID);
     Assert.assertTrue(activity.isPresent());
 
-    ActivityView view = new ActivityView(activity.get());
+    ActivityView view = new ActivityView(activity.get(), getMockActController());
     Assert.assertNotNull(view);
     Assert.assertNotNull(view.getNameField());
     Assert.assertNotNull(view.getPriorityField());
@@ -56,7 +61,7 @@ public class ActivityViewTest extends TrambuAppTest {
     Optional<Activity> activity = getActivityManager().getSavedActivityById(ACTIVITY_ONE_ID);
     Assert.assertTrue(activity.isPresent());
 
-    ActivityView view = new ActivityView(activity.get());
+    ActivityView view = new ActivityView(activity.get(), getMockActController());
     Assert.assertNotNull(view);
 
     Assert.assertTrue(view.getNameField().hasData());
@@ -100,7 +105,7 @@ public class ActivityViewTest extends TrambuAppTest {
     Optional<Activity> activity = getActivityManager().getSavedActivityById(SUPER_ACTIVITY_ID);
     Assert.assertTrue(activity.isPresent());
 
-    ActivityView view = new ActivityView(activity.get());
+    ActivityView view = new ActivityView(activity.get(), getMockActController());
     Assert.assertNotNull(view);
     Accordion subActivitiesAccordion = view.getSubActivitiesAccordion();
     Assert.assertNotNull(subActivitiesAccordion);
@@ -116,7 +121,7 @@ public class ActivityViewTest extends TrambuAppTest {
     Optional<Activity> activity = getActivityManager().getSavedActivityById(ACTIVITY_ONE_ID);
     Assert.assertTrue(activity.isPresent());
 
-    ActivityView view = new ActivityView(activity.get());
+    ActivityView view = new ActivityView(activity.get(), getMockActController());
     Assert.assertNotNull(view);
 
     Assert.assertTrue(view.getProjectsField().hasData());
@@ -149,7 +154,7 @@ public class ActivityViewTest extends TrambuAppTest {
     getActivityManager().addActivity(ActivityTestData.DATA_LINE_NO_DEADLINE);
     Optional<Activity> activity = getActivityManager().getSavedActivityById(ACTIVITY_ONE_ID);
     Assert.assertTrue(activity.isPresent());
-    ActivityView view = new ActivityView(activity.get());
+    ActivityView view = new ActivityView(activity.get(), getMockActController());
     Assert.assertNotNull(view);
 
     view.getPresenter().makeAllFieldsEditableAndRefresh();
@@ -164,7 +169,7 @@ public class ActivityViewTest extends TrambuAppTest {
     getActivityManager().addActivity(ActivityTestData.DATA_LINE_NO_DEADLINE);
     Optional<Activity> activity = getActivityManager().getSavedActivityById(ACTIVITY_ONE_ID);
     Assert.assertTrue(activity.isPresent());
-    ActivityView view = new ActivityView(activity.get());
+    ActivityView view = new ActivityView(activity.get(), getMockActController());
     Assert.assertNotNull(view);
 
     view.getPresenter().headerButtonClicked();
@@ -187,7 +192,7 @@ public class ActivityViewTest extends TrambuAppTest {
         .getSavedActivityById(ACTIVITY_WITH_LOCATION_ID);
     Assert.assertTrue(activity.isPresent());
     Assert.assertEquals(TEST_LOCATION, activity.get().getLocation());
-    ActivityView view = new ActivityView(activity.get());
+    ActivityView view = new ActivityView(activity.get(), getMockActController());
     Assert.assertNotNull(view);
 
     view.getPresenter().refresh();
@@ -202,7 +207,7 @@ public class ActivityViewTest extends TrambuAppTest {
     getActivityManager().addActivity(ActivityTestData.DATA_LINE_NO_DEADLINE);
     Optional<Activity> activity = getActivityManager().getSavedActivityById(ACTIVITY_ONE_ID);
     Assert.assertTrue(activity.isPresent());
-    ActivityView view = new ActivityView(activity.get());
+    ActivityView view = new ActivityView(activity.get(), getMockActController());
     Assert.assertNotNull(view);
 
     view.getPresenter().makeAllFieldsEditableAndRefresh();
@@ -217,6 +222,35 @@ public class ActivityViewTest extends TrambuAppTest {
     Activity activityToCheck = activityAfterSave.get();
     Assert.assertNotNull(activityToCheck.getWarningTimeFrame());
     Assert.assertEquals("PT14H", activityToCheck.getWarningTimeFrame().toString());
+  }
+
+  @Test
+  public void failIfParentChangeFailed() throws ParseException {
+    getActivityManager().addActivity(ActivityTestData.DATA_LINE_NO_DEADLINE);
+    Optional<Activity> activity = getActivityManager().getSavedActivityById(ACTIVITY_ONE_ID);
+    Assert.assertTrue(activity.isPresent());
+    getActivityManager().addActivity(ActivityTestData.ACTIVITY_NO_PREFIX_LOCATION_LINE);
+    Optional<Activity> activityChildToBe = getActivityManager()
+        .getSavedActivityById(ACTIVITY_WITH_LOCATION_ID);
+    Assert.assertTrue(activityChildToBe.isPresent());
+    Assert.assertEquals(2, getActivityManager().getAllActivityNames().size());
+    ActivityView view = new ActivityView(activityChildToBe.get(), mockPagePresenter,
+        getMockActController());
+    Assert.assertNotNull(view);
+
+    view.getPresenter().changeParent(activity.get().getName());
+
+    activity = getActivityManager().getSavedActivityById(ACTIVITY_ONE_ID);
+    Assert.assertTrue(activity.isPresent());
+    Assert.assertFalse("Parent activity should have children",
+        activity.get().getSubActivities().isEmpty());
+    Assert.assertEquals(1, activity.get().getSubActivities().size());
+
+    activityChildToBe = getActivityManager()
+        .getSavedActivityById(ACTIVITY_WITH_LOCATION_ID);
+    Assert.assertTrue(activityChildToBe.isPresent());
+    Assert.assertEquals(ACTIVITY_ONE_ID, activityChildToBe.get().getParentActivity());
+
 
   }
 

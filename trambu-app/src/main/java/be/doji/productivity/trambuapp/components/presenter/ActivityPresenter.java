@@ -44,15 +44,16 @@ public class ActivityPresenter extends Presenter {
   private boolean modelParentChanged;
   private boolean editable;
 
-  public ActivityPresenter(ActivityView view, Activity model, ActivityPagePresenter parent) {
-    this(view, model);
+  public ActivityPresenter(ActivityView view, Activity model, ActivityPagePresenter parent,
+      ActivityManagerContainer managers) {
+    this(view, model, managers);
     this.parent = parent;
   }
 
-  public ActivityPresenter(ActivityView view, Activity model) {
+  public ActivityPresenter(ActivityView view, Activity model, ActivityManagerContainer managers) {
     this.view = view;
     this.model = model;
-    this.managerContainer = find(ActivityManagerContainer.class);
+    this.managerContainer = managers;
     this.activityLog = getActivityLog();
   }
 
@@ -142,7 +143,7 @@ public class ActivityPresenter extends Presenter {
       ObservableList<TitledPane> panes = view.getSubActivitiesAccordion().getPanes();
       panes.clear();
       for (Activity subActivity : this.model.getSubActivities()) {
-        panes.add(new ActivityView(subActivity));
+        panes.add(new ActivityView(subActivity, this.managerContainer));
       }
     }
   }
@@ -172,7 +173,6 @@ public class ActivityPresenter extends Presenter {
       return Optional.empty();
     }
   }
-
 
 
   private FontAwesomeIconView getHeaderIcon() {

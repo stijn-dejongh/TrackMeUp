@@ -4,6 +4,7 @@ import be.doji.productivity.trambuapp.components.elements.AutocompleteTextField;
 import be.doji.productivity.trambuapp.components.elements.OverlayPane;
 import be.doji.productivity.trambuapp.components.elements.Switchable;
 import be.doji.productivity.trambuapp.components.elements.SwitchableFactory;
+import be.doji.productivity.trambuapp.components.presenter.ActivityManagerContainer;
 import be.doji.productivity.trambuapp.components.presenter.ActivityPagePresenter;
 import be.doji.productivity.trambuapp.components.presenter.ActivityPresenter;
 import be.doji.productivity.trambuapp.utils.ActivityFieldNames;
@@ -61,15 +62,16 @@ public class ActivityView extends TitledPane {
 
   private GridPane activityContent;
 
-  public ActivityView(Activity activity) {
+  public ActivityView(Activity activity, ActivityManagerContainer managers) {
     super();
-    this.presenter = new ActivityPresenter(this, activity);
+    this.presenter = new ActivityPresenter(this, activity, managers);
     init();
   }
 
-  public ActivityView(Activity activity, ActivityPagePresenter parentPresenter) {
+  public ActivityView(Activity activity, ActivityPagePresenter parentPresenter,
+      ActivityManagerContainer managers) {
     super();
-    this.presenter = new ActivityPresenter(this, activity, parentPresenter);
+    this.presenter = new ActivityPresenter(this, activity, parentPresenter, managers);
     init();
   }
 

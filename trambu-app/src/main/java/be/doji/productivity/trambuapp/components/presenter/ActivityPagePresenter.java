@@ -29,9 +29,9 @@ public class ActivityPagePresenter extends Presenter {
   private String projectFilter;
   private boolean filterDone = false;
 
-  public ActivityPagePresenter(ActivityPageView view) {
+  public ActivityPagePresenter(ActivityPageView view, ActivityManagerContainer managers) {
     this.view = view;
-    this.model = find(ActivityManagerContainer.class);
+    this.model = managers;
   }
 
   public void refresh() {
@@ -53,7 +53,7 @@ public class ActivityPagePresenter extends Presenter {
         view.addPane(DisplayUtils
             .createSeperatorPane(DisplayUtils.getDateSeperatorText(activityGroupEntry.getKey())));
         for (Activity activity : activityGroup) {
-          view.addPane(new ActivityView(activity, this));
+          view.addPane(new ActivityView(activity, this, this.model));
         }
       }
     }

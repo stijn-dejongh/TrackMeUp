@@ -1,5 +1,6 @@
 package be.doji.productivity.trambuapp.components.view;
 
+import be.doji.productivity.trambuapp.components.presenter.ActivityManagerContainer;
 import be.doji.productivity.trambuapp.components.presenter.ActivityPagePresenter;
 import be.doji.productivity.trambuapp.controls.ActivityControlAccordion;
 import be.doji.productivity.trambuapp.controls.MainMenuBar;
@@ -36,7 +37,19 @@ public class ActivityPageView extends View {
   public ActivityPageView() {
     super();
     this.setTitle(DisplayConstants.TITLE_APPLICATION + " - " + DisplayConstants.TITLE_ACTIVITY);
-    this.presenter = new ActivityPagePresenter(this);
+    this.presenter = new ActivityPagePresenter(this, new ActivityManagerContainer());
+
+    root = new BorderPane();
+    root.setPrefHeight(DisplayConstants.UI_DEFAULT_WINDOW_HEIGHT);
+    root.setPrefWidth(DisplayConstants.UI_DEFAULT_WINDOW_WIDTH);
+    root.setBottom(new MainMenuBar(this).getRoot());
+    this.populate();
+  }
+
+  public ActivityPageView(ActivityManagerContainer managers) {
+    super();
+    this.setTitle(DisplayConstants.TITLE_APPLICATION + " - " + DisplayConstants.TITLE_ACTIVITY);
+    this.presenter = new ActivityPagePresenter(this, managers);
 
     root = new BorderPane();
     root.setPrefHeight(DisplayConstants.UI_DEFAULT_WINDOW_HEIGHT);
@@ -85,7 +98,7 @@ public class ActivityPageView extends View {
 
   @NotNull
   private ActivityView createActivitiesPane(Activity activity) {
-    return new ActivityView(activity);
+    return new ActivityView(activity, this.presenter.getActivityController());
   }
 
   @NotNull
@@ -93,7 +106,6 @@ public class ActivityPageView extends View {
     this.controlAccordion = new ActivityControlAccordion(this.presenter);
     return controlAccordion;
   }
-
 
 
   public void refreshAccordion() {

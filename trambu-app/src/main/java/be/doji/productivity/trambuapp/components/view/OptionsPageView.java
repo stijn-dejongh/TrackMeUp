@@ -34,12 +34,12 @@ public class OptionsPageView extends View {
   private String configuredTimeLocation;
   private String configuredNoteLocation;
 
-  public OptionsPageView() {
+  public OptionsPageView(ActivityManagerContainer managers) {
     super();
     this.setTitle(DisplayConstants.TITLE_APPLICATION + " - " + DisplayConstants.TITLE_OPTIONS);
 
     this.root = new BorderPane();
-    this.activityController = find(ActivityManagerContainer.class);
+    this.activityController = managers;
     root.setPrefHeight(DisplayConstants.UI_DEFAULT_WINDOW_HEIGHT);
     root.setPrefWidth(DisplayConstants.UI_DEFAULT_WINDOW_WIDTH);
 
