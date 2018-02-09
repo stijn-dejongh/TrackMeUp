@@ -202,7 +202,7 @@ public class ActivityView extends TitledPane {
 
   }
 
-  private GridPane createLogPoints() {
+    GridPane createLogPoints() {
     List<TimeLog> logpoints = presenter.getActivityLog().getLogpoints();
 
     GridPane logpointGrid = new GridPane();
@@ -212,7 +212,7 @@ public class ActivityView extends TitledPane {
     Label logpointInfo = new Label("There are " + logpoints.size() + " timelogs available.  ");
     logpointGrid.add(logpointInfo, 0, logRowIndex);
     if (!logpoints.isEmpty()) {
-      logpointGrid.add(createOpenLogsButton(logpoints), 1, logRowIndex++);
+      logpointGrid.add(createOpenLogsButton(), 1, logRowIndex++);
     } else {
       logRowIndex++;
     }
@@ -224,20 +224,18 @@ public class ActivityView extends TitledPane {
   }
 
   @NotNull
-  private Button createOpenLogsButton(List<TimeLog> logpoints) {
+  Button createOpenLogsButton() {
     Button showLogs = new Button("Show timelogs");
     showLogs.setGraphic(DisplayUtils.createStyledIcon(FontAwesomeIcon.INFO_CIRCLE));
     showLogs.setTooltip(
         DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_ACTIVITY_LOGPOINT_EXPAND));
     showLogs.setOnAction(event -> {
-      this.overlay.setContent(createLogPointGrid(logpoints));
-      this.overlay.refreshContent();
-      this.overlay.setVisible(true);
+      presenter.openLog();
     });
     return showLogs;
   }
 
-  private GridPane createLogPointGrid(List<TimeLog> logpoints) {
+  public GridPane createLogPointGrid(List<TimeLog> logpoints) {
     GridPane logpointGrid = new GridPane();
     logpointGrid.setVgap(4);
     logpointGrid.setPadding(new Insets(5, 5, 5, 5));

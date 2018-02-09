@@ -454,4 +454,10 @@ public class ActivityPresenter extends Presenter {
     view.getDeadlineField().makeStatic();
     view.refresh();
   }
+
+  public void openLog() {
+    view.getOverlay().setContent(view.createLogPointGrid(getActivityLog().getLogpoints()));
+    view.getOverlay().refreshContent();
+    view.getOverlay().setVisible(true);
+  }
 }

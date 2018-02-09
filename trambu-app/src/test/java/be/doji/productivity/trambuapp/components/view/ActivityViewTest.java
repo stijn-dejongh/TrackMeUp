@@ -1,10 +1,13 @@
 package be.doji.productivity.trambuapp.components.view;
 
 import be.doji.productivity.trambuapp.components.TrambuAppTest;
+import be.doji.productivity.trambuapp.components.elements.OverlayPane;
 import be.doji.productivity.trambuapp.components.elements.Switchable;
 import be.doji.productivity.trambuapp.components.presenter.ActivityPagePresenter;
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
+import be.doji.productivity.trambucore.managers.TimeTrackingManager;
 import be.doji.productivity.trambucore.model.tasks.Activity;
+import be.doji.productivity.trambucore.model.tracker.ActivityLog;
 import be.doji.productivity.trambucore.testutil.ActivityTestData;
 import java.io.IOException;
 import java.text.ParseException;
@@ -13,11 +16,14 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import javafx.collections.ObservableList;
+import javafx.scene.Node;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
+import javafx.scene.layout.GridPane;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -251,7 +257,60 @@ public class ActivityViewTest extends TrambuAppTest {
     Assert.assertTrue(activityChildToBe.isPresent());
     Assert.assertEquals(ACTIVITY_ONE_ID, activityChildToBe.get().getParentActivity());
 
+  }
 
+  @Test
+  public void failIfLogpointMissmatch() throws ParseException {
+    getActivityManager().addActivity(ActivityTestData.DATA_LINE_NO_DEADLINE);
+    Optional<Activity> activity = getActivityManager().getSavedActivityById(ACTIVITY_ONE_ID);
+    Assert.assertTrue(activity.isPresent());
+    TimeTrackingManager tm = getMockActController().getTimeTrackingManager();
+    ActivityLog testLogActiveOne = new ActivityLog(UUID.fromString(ACTIVITY_ONE_ID));
+    testLogActiveOne.startLog();
+    testLogActiveOne.stopActiveLog();
+    testLogActiveOne.startLog();
+    testLogActiveOne.stopActiveLog();
+    testLogActiveOne.startLog();
+    testLogActiveOne.stopActiveLog();
+    Assert.assertEquals(3, testLogActiveOne.getLogpoints().size());
+    tm.save(testLogActiveOne);
+
+    ActivityView view = new ActivityView(activity.get(), getMockActController());
+    GridPane logPoints = view.createLogPoints();
+
+    Assert.assertFalse("Expected log point display items to be created",
+        logPoints.getChildren().isEmpty());
+    // 3 logpoints and the information header line => 4 children
+    Assert.assertEquals(4, logPoints.getChildren().size());
+  }
+
+  @Test
+  public void failIfLogpointNotInOverlay() throws ParseException {
+    getActivityManager().addActivity(ActivityTestData.DATA_LINE_NO_DEADLINE);
+    Optional<Activity> activity = getActivityManager().getSavedActivityById(ACTIVITY_ONE_ID);
+    Assert.assertTrue(activity.isPresent());
+    TimeTrackingManager tm = getMockActController().getTimeTrackingManager();
+    ActivityLog testLogActiveOne = new ActivityLog(UUID.fromString(ACTIVITY_ONE_ID));
+    testLogActiveOne.startLog();
+    testLogActiveOne.stopActiveLog();
+    testLogActiveOne.startLog();
+    testLogActiveOne.stopActiveLog();
+    testLogActiveOne.startLog();
+    testLogActiveOne.stopActiveLog();
+    Assert.assertEquals(3, testLogActiveOne.getLogpoints().size());
+    tm.save(testLogActiveOne);
+
+    ActivityView view = new ActivityView(activity.get(), getMockActController());
+    view.getPresenter().openLog();
+
+    OverlayPane overlay = view.getOverlay();
+    Node shouldBeLogGrid = overlay.getContent();
+    Assert.assertTrue(shouldBeLogGrid instanceof GridPane);
+    GridPane castedGrid = (GridPane) shouldBeLogGrid;
+    Assert.assertFalse("Expected log point display items to be created",
+        castedGrid.getChildren().isEmpty());
+    // 3 logpoints and the information header line => 4 children
+    Assert.assertEquals(4, castedGrid.getChildren().size());
   }
 
 
