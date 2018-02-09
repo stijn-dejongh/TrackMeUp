@@ -411,5 +411,5 @@ public class ActivityView extends TitledPane {
   public Switchable<Label, DatePicker, Date> getDeadlineField() {
     return deadlineField;
   }
-  
+
 }

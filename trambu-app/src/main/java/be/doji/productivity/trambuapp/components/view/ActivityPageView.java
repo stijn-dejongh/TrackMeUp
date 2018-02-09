@@ -97,11 +97,6 @@ public class ActivityPageView extends View {
   }
 
   @NotNull
-  private ActivityView createActivitiesPane(Activity activity) {
-    return new ActivityView(activity, this.presenter.getActivityController());
-  }
-
-  @NotNull
   private ActivityControlAccordion createControlsPane() {
     this.controlAccordion = new ActivityControlAccordion(this.presenter);
     return controlAccordion;
