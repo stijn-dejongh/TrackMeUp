@@ -202,7 +202,7 @@ public class ActivityView extends TitledPane {
 
   }
 
-    GridPane createLogPoints() {
+  GridPane createLogPoints() {
     List<TimeLog> logpoints = presenter.getActivityLog().getLogpoints();
 
     GridPane logpointGrid = new GridPane();
@@ -360,114 +360,56 @@ public class ActivityView extends TitledPane {
     return overlay;
   }
 
-  public void setOverlay(OverlayPane overlay) {
-    this.overlay = overlay;
-  }
-
   public Accordion getSubActivitiesAccordion() {
     return subActivitiesAccordion;
-  }
-
-  public void setSubActivitiesAccordion(Accordion subActivitiesAccordion) {
-    this.subActivitiesAccordion = subActivitiesAccordion;
   }
 
   public Button getDoneButton() {
     return doneButton;
   }
 
-  public void setDoneButton(Button doneButton) {
-    this.doneButton = doneButton;
-  }
-
   public Button getEditButton() {
     return editButton;
-  }
-
-  public void setEditButton(Button editButton) {
-    this.editButton = editButton;
   }
 
   public Button getDeleteButton() {
     return deleteButton;
   }
 
-  public void setDeleteButton(Button deleteButton) {
-    this.deleteButton = deleteButton;
-  }
-
   public Button getTimingButton() {
     return timingButton;
-  }
-
-  public void setTimingButton(Button timingButton) {
-    this.timingButton = timingButton;
   }
 
   public Button getTitleLabel() {
     return titleLabel;
   }
 
-  public void setTitleLabel(Button titleLabel) {
-    this.titleLabel = titleLabel;
-  }
-
   public Switchable<Label, TextField, String> getNameField() {
     return nameField;
-  }
-
-  public void setNameField(Switchable<Label, TextField, String> nameField) {
-    this.nameField = nameField;
   }
 
   public Switchable<Label, ComboBox<String>, String> getPriorityField() {
     return priorityField;
   }
 
-  public void setPriorityField(Switchable<Label, ComboBox<String>, String> priorityField) {
-    this.priorityField = priorityField;
-  }
-
   public Switchable<Label, AutocompleteTextField, String> getLocationField() {
     return locationField;
-  }
-
-  public void setLocationField(
-      Switchable<Label, AutocompleteTextField, String> locationField) {
-    this.locationField = locationField;
   }
 
   public Switchable<Label, TextField, String> getWarningPeriodField() {
     return warningPeriodField;
   }
 
-  public void setWarningPeriodField(
-      Switchable<Label, TextField, String> warningPeriodField) {
-    this.warningPeriodField = warningPeriodField;
-  }
-
   public Switchable<HBox, AutocompleteTextField, List<String>> getProjectsField() {
     return projectsField;
-  }
-
-  public void setProjectsField(
-      Switchable<HBox, AutocompleteTextField, List<String>> projectsField) {
-    this.projectsField = projectsField;
   }
 
   public Switchable<HBox, AutocompleteTextField, List<String>> getTagsField() {
     return tagsField;
   }
 
-  public void setTagsField(Switchable<HBox, AutocompleteTextField, List<String>> tagsField) {
-    this.tagsField = tagsField;
-  }
-
   public Switchable<Label, DatePicker, Date> getDeadlineField() {
     return deadlineField;
   }
-
-  public void setDeadlineField(Switchable<Label, DatePicker, Date> deadlineField) {
-    this.deadlineField = deadlineField;
-  }
+  
 }
