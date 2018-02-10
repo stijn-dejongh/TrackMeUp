@@ -1,6 +1,7 @@
 package be.doji.productivity.trambuapp.components.view;
 
 import be.doji.productivity.trambuapp.components.TrambuAppTest;
+import be.doji.productivity.trambuapp.controls.ActivityControlAccordion;
 import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import be.doji.productivity.trambucore.testutil.ActivityTestData;
 import java.text.ParseException;
@@ -82,6 +83,18 @@ public class ActivityPageViewTest extends TrambuAppTest {
     List<ActivityView> activityPanes = pageView.getActivityPanes();
     Assert.assertFalse("Expect there to be acitvity panes", activityPanes.isEmpty());
     Assert.assertEquals(2, activityPanes.size());
+  }
+
+  @Test
+  public void failIfControlAccordeonIsFaulty() {
+    ActivityPageView pageView = new ActivityPageView();
+    Assert.assertNotNull(pageView);
+
+    ActivityControlAccordion controlAccordion = pageView.getControlAccordion();
+    Assert.assertNotNull("Expect there to be a control accordeon after creation", controlAccordion);
+    ObservableList<TitledPane> controlPanes = controlAccordion.getPanes();
+    Assert.assertFalse("Expect the control accordeon to have content", controlPanes.isEmpty());
+    Assert.assertEquals("The should currently be one control pane", 1, controlPanes.size());
   }
 
 
