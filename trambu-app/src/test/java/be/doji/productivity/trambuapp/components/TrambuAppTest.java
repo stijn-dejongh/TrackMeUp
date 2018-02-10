@@ -1,7 +1,7 @@
 package be.doji.productivity.trambuapp.components;
 
-import be.doji.productivity.trambuapp.components.presenter.ActivityManagerContainer;
-import be.doji.productivity.trambuapp.components.presenter.ActivityManagerContainer.Factory;
+import be.doji.productivity.trambuapp.components.presenter.ManagerContainer;
+import be.doji.productivity.trambuapp.components.presenter.ManagerContainer.Factory;
 import be.doji.productivity.trambuapp.components.presenter.ActivityPagePresenter;
 import be.doji.productivity.trambuapp.userconfiguration.UserConfigurationManager;
 import be.doji.productivity.trambucore.managers.ActivityManager;
@@ -27,7 +27,7 @@ public abstract class TrambuAppTest extends ApplicationTest {
   @Mock
   private ActivityPagePresenter mockPagePresenter;
   @Mock
-  private ActivityManagerContainer mockActController;
+  private ManagerContainer mockActController;
 
   private ActivityManager activityManager;
 
@@ -96,11 +96,11 @@ public abstract class TrambuAppTest extends ApplicationTest {
     this.mockPagePresenter = mockPagePresenter;
   }
 
-  public ActivityManagerContainer getMockActController() {
+  public ManagerContainer getMockActController() {
     return mockActController;
   }
 
-  public void setMockActController(ActivityManagerContainer mockActController) {
+  public void setMockActController(ManagerContainer mockActController) {
     this.mockActController = mockActController;
   }
 }

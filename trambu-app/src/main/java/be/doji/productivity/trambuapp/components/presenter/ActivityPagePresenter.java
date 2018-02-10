@@ -19,7 +19,7 @@ public class ActivityPagePresenter extends Presenter {
 
   private static final Logger LOG = LoggerFactory.getLogger(ActivityPagePresenter.class);
 
-  private ActivityManagerContainer model;
+  private ManagerContainer model;
   private ActivityPageView view;
 
   private String tagFilter;
@@ -28,7 +28,7 @@ public class ActivityPagePresenter extends Presenter {
 
   public ActivityPagePresenter(ActivityPageView view) {
     this.view = view;
-    this.model = ActivityManagerContainer.Factory.getInstance();
+    this.model = ManagerContainer.Factory.getInstance();
   }
 
   public void refresh() {
@@ -156,7 +156,7 @@ public class ActivityPagePresenter extends Presenter {
 
   }
 
-  public ActivityManagerContainer getActivityController() {
+  public ManagerContainer getActivityController() {
     return this.model;
   }
 }

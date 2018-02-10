@@ -1,6 +1,6 @@
 package be.doji.productivity.trambuapp.components.view;
 
-import be.doji.productivity.trambuapp.components.presenter.ActivityManagerContainer;
+import be.doji.productivity.trambuapp.components.presenter.ManagerContainer;
 import be.doji.productivity.trambuapp.controls.MainMenuBar;
 import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
@@ -27,7 +27,7 @@ public class OptionsPageView extends View {
 
   private static final Logger LOG = LoggerFactory.getLogger(OptionsPageView.class);
 
-  private final ActivityManagerContainer activityController;
+  private final ManagerContainer activityController;
   private BorderPane root;
 
   private String configuredTodoLocation;
@@ -39,7 +39,7 @@ public class OptionsPageView extends View {
     this.setTitle(DisplayConstants.TITLE_APPLICATION + " - " + DisplayConstants.TITLE_OPTIONS);
 
     this.root = new BorderPane();
-    this.activityController = ActivityManagerContainer.Factory.getInstance();
+    this.activityController = ManagerContainer.Factory.getInstance();
     root.setPrefHeight(DisplayConstants.UI_DEFAULT_WINDOW_HEIGHT);
     root.setPrefWidth(DisplayConstants.UI_DEFAULT_WINDOW_WIDTH);
 
@@ -184,7 +184,7 @@ public class OptionsPageView extends View {
     return button;
   }
 
-  private ActivityManagerContainer getActivityController() {
+  private ManagerContainer getActivityController() {
     return activityController;
   }
 

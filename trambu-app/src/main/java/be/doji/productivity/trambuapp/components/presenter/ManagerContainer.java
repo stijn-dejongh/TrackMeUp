@@ -13,16 +13,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tornadofx.Controller;
 
-public class ActivityManagerContainer extends Controller {
+public class ManagerContainer extends Controller {
 
-  private static final Logger LOG = LoggerFactory.getLogger(ActivityManagerContainer.class);
+  private static final Logger LOG = LoggerFactory.getLogger(ManagerContainer.class);
 
   private ActivityManager activityManager;
   private TimeTrackingManager timeTrackingManager;
   private UserConfigurationManager configManager;
   private NoteManager noteManager;
 
-  protected ActivityManagerContainer() {
+  ManagerContainer() {
     super();
     try {
       this.configManager = new UserConfigurationManager(DisplayConstants.NAME_CONFIGURATION_FILE);
@@ -95,18 +95,38 @@ public class ActivityManagerContainer extends Controller {
   }
 
 
+  /**
+   * Factory class for the Singleton ManagerContainer object
+   */
   public static final class Factory {
 
-    private static ActivityManagerContainer singleton;
+    private static ManagerContainer singleton;
 
-    public static ActivityManagerContainer getInstance() {
+    /*
+     * Utility classes should not have public or default constructors
+     */
+    private Factory() {
+    }
+
+    /**
+     * Returns the singleton ManagerContainer, which can be used to access the data manager
+     * classes.
+     *
+     * @return the current ManagerContainer singleton
+     */
+    public static ManagerContainer getInstance() {
       if (singleton == null) {
-        singleton = new ActivityManagerContainer();
+        singleton = new ManagerContainer();
       }
       return singleton;
     }
 
-    public static void setInstance(ActivityManagerContainer toShare) {
+    /**
+     * Method to allow setting the shared ManagerContainer.
+     *
+     * @param toShare the new container to share between classes
+     */
+    public static void setInstance(ManagerContainer toShare) {
       singleton = toShare;
     }
 

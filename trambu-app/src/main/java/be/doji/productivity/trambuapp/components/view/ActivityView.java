@@ -4,7 +4,6 @@ import be.doji.productivity.trambuapp.components.elements.AutocompleteTextField;
 import be.doji.productivity.trambuapp.components.elements.OverlayPane;
 import be.doji.productivity.trambuapp.components.elements.Switchable;
 import be.doji.productivity.trambuapp.components.elements.SwitchableFactory;
-import be.doji.productivity.trambuapp.components.presenter.ActivityManagerContainer;
 import be.doji.productivity.trambuapp.components.presenter.ActivityPagePresenter;
 import be.doji.productivity.trambuapp.components.presenter.ActivityPresenter;
 import be.doji.productivity.trambuapp.utils.ActivityFieldNames;

@@ -36,7 +36,7 @@ public class ActivityPresenter extends Presenter {
 
   private static final Logger LOG = LoggerFactory.getLogger(ActivityPresenter.class);
 
-  private ActivityManagerContainer managerContainer;
+  private ManagerContainer managerContainer;
   private ActivityLog activityLog;
   private Activity model;
   private ActivityView view;
@@ -52,7 +52,7 @@ public class ActivityPresenter extends Presenter {
   public ActivityPresenter(ActivityView view, Activity model) {
     this.view = view;
     this.model = model;
-    this.managerContainer = ActivityManagerContainer.Factory.getInstance();
+    this.managerContainer = ManagerContainer.Factory.getInstance();
     this.activityLog = getActivityLog();
   }
 
