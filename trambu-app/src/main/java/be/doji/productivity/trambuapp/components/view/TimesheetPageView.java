@@ -44,10 +44,10 @@ public class TimesheetPageView extends View {
   private Date startDate;
   private Date endDate;
 
-  public TimesheetPageView(ActivityManagerContainer managers) {
+  public TimesheetPageView() {
     super();
     this.setTitle(DisplayConstants.TITLE_APPLICATION + " - " + DisplayConstants.TITLE_TIMESHEET);
-    this.activityController = managers;
+    this.activityController = ActivityManagerContainer.Factory.getInstance();
 
     endDate = new Date();
     startDate = DateUtils.addDays(endDate, -7);

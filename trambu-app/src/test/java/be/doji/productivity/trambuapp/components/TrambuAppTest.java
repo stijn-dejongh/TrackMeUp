@@ -1,6 +1,7 @@
 package be.doji.productivity.trambuapp.components;
 
 import be.doji.productivity.trambuapp.components.presenter.ActivityManagerContainer;
+import be.doji.productivity.trambuapp.components.presenter.ActivityManagerContainer.Factory;
 import be.doji.productivity.trambuapp.components.presenter.ActivityPagePresenter;
 import be.doji.productivity.trambuapp.userconfiguration.UserConfigurationManager;
 import be.doji.productivity.trambucore.managers.ActivityManager;
@@ -48,6 +49,8 @@ public abstract class TrambuAppTest extends ApplicationTest {
     Mockito.when(mockActController.getActivityManager()).thenReturn(activityManager);
     Mockito.when(mockActController.getTimeTrackingManager()).thenReturn(timeTrackingManager);
     Mockito.when(mockActController.getConfigManager()).thenReturn(userConfigManager);
+
+    Factory.setInstance(mockActController);
 
   }
 

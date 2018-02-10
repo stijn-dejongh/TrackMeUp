@@ -22,7 +22,7 @@ public class ActivityManagerContainer extends Controller {
   private UserConfigurationManager configManager;
   private NoteManager noteManager;
 
-  public ActivityManagerContainer() {
+  protected ActivityManagerContainer() {
     super();
     try {
       this.configManager = new UserConfigurationManager(DisplayConstants.NAME_CONFIGURATION_FILE);
@@ -92,5 +92,23 @@ public class ActivityManagerContainer extends Controller {
 
   public NoteManager getNoteManager() {
     return noteManager;
+  }
+
+
+  public static final class Factory {
+
+    private static ActivityManagerContainer singleton;
+
+    public static ActivityManagerContainer getInstance() {
+      if (singleton == null) {
+        singleton = new ActivityManagerContainer();
+      }
+      return singleton;
+    }
+
+    public static void setInstance(ActivityManagerContainer toShare) {
+      singleton = toShare;
+    }
+
   }
 }

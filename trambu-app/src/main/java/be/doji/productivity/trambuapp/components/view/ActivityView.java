@@ -62,16 +62,15 @@ public class ActivityView extends TitledPane {
 
   private GridPane activityContent;
 
-  public ActivityView(Activity activity, ActivityManagerContainer managers) {
+  public ActivityView(Activity activity) {
     super();
-    this.presenter = new ActivityPresenter(this, activity, managers);
+    this.presenter = new ActivityPresenter(this, activity);
     init();
   }
 
-  public ActivityView(Activity activity, ActivityPagePresenter parentPresenter,
-      ActivityManagerContainer managers) {
+  public ActivityView(Activity activity, ActivityPagePresenter parentPresenter) {
     super();
-    this.presenter = new ActivityPresenter(this, activity, parentPresenter, managers);
+    this.presenter = new ActivityPresenter(this, activity, parentPresenter);
     init();
   }
 

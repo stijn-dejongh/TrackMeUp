@@ -1,11 +1,9 @@
 package be.doji.productivity.trambuapp.components.view;
 
-import be.doji.productivity.trambuapp.components.presenter.ActivityManagerContainer;
 import be.doji.productivity.trambuapp.components.presenter.ActivityPagePresenter;
 import be.doji.productivity.trambuapp.controls.ActivityControlAccordion;
 import be.doji.productivity.trambuapp.controls.MainMenuBar;
 import be.doji.productivity.trambuapp.utils.DisplayConstants;
-import be.doji.productivity.trambucore.model.tasks.Activity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -37,19 +35,7 @@ public class ActivityPageView extends View {
   public ActivityPageView() {
     super();
     this.setTitle(DisplayConstants.TITLE_APPLICATION + " - " + DisplayConstants.TITLE_ACTIVITY);
-    this.presenter = new ActivityPagePresenter(this, new ActivityManagerContainer());
-
-    root = new BorderPane();
-    root.setPrefHeight(DisplayConstants.UI_DEFAULT_WINDOW_HEIGHT);
-    root.setPrefWidth(DisplayConstants.UI_DEFAULT_WINDOW_WIDTH);
-    root.setBottom(new MainMenuBar(this).getRoot());
-    this.populate();
-  }
-
-  public ActivityPageView(ActivityManagerContainer managers) {
-    super();
-    this.setTitle(DisplayConstants.TITLE_APPLICATION + " - " + DisplayConstants.TITLE_ACTIVITY);
-    this.presenter = new ActivityPagePresenter(this, managers);
+    this.presenter = new ActivityPagePresenter(this);
 
     root = new BorderPane();
     root.setPrefHeight(DisplayConstants.UI_DEFAULT_WINDOW_HEIGHT);

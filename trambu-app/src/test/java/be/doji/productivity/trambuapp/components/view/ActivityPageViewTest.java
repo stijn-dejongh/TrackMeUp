@@ -14,7 +14,7 @@ public class ActivityPageViewTest extends TrambuAppTest {
 
   @Test
   public void failOnBadTitle() {
-    ActivityPageView pageView = new ActivityPageView(getMockActController());
+    ActivityPageView pageView = new ActivityPageView();
 
     Assert.assertNotNull(pageView);
     Assert.assertFalse("Expect title to not be empty", StringUtils.isBlank(pageView.getTitle()));
@@ -24,7 +24,7 @@ public class ActivityPageViewTest extends TrambuAppTest {
 
   @Test
   public void failIfNoContentCreated() {
-    ActivityPageView pageView = new ActivityPageView(getMockActController());
+    ActivityPageView pageView = new ActivityPageView();
 
     Assert.assertNotNull(pageView);
     Assert.assertNotNull(pageView.getControlAccordion());
