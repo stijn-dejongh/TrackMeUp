@@ -4,6 +4,7 @@ import be.doji.productivity.trambuapp.components.TrambuAppTest;
 import be.doji.productivity.trambuapp.components.elements.OverlayPane;
 import be.doji.productivity.trambuapp.components.elements.Switchable;
 import be.doji.productivity.trambuapp.components.presenter.ActivityPagePresenter;
+import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
 import be.doji.productivity.trambucore.managers.NoteManager;
 import be.doji.productivity.trambucore.managers.TimeTrackingManager;
@@ -22,6 +23,7 @@ import java.util.UUID;
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Accordion;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -363,6 +365,23 @@ public class ActivityViewTest extends TrambuAppTest {
     Assert.assertNotNull("Expect the overlay to be populated", overlayContent);
     castedOverlayContent = (TextArea) overlayContent;
     Assert.assertEquals(TEST_NOTE_STRING, castedOverlayContent.getText());
+  }
+
+  @Test
+  public void failIfDoneButtonTextNotUpdated() throws ParseException {
+    getActivityManager().addActivity(ActivityTestData.DATA_LINE_NO_DEADLINE);
+    Optional<Activity> activity = getActivityManager().getSavedActivityById(ACTIVITY_ONE_ID);
+    Assert.assertTrue(activity.isPresent());
+    ActivityView view = new ActivityView(activity.get());
+    Button doneButton = view.getDoneButton();
+    Assert.assertNotNull(doneButton);
+    Assert.assertEquals(DisplayConstants.BUTTON_TEXT_IS_DONE, doneButton.getText());
+
+    view.getPresenter().doneClicked();
+
+    doneButton = view.getDoneButton();
+    Assert.assertNotNull(doneButton);
+    Assert.assertEquals(DisplayConstants.BUTTON_TEXT_IS_NOT_DONE, doneButton.getText());
   }
 
 

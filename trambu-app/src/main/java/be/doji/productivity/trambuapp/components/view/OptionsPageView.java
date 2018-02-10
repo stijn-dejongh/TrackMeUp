@@ -53,18 +53,20 @@ public class OptionsPageView extends View {
     grid.getStyleClass().add(DisplayConstants.STYLE_CLASS_DEFAULT);
     grid.setVgap(4);
     grid.setPadding(new Insets(5, 5, 5, 5));
-    grid.add(new Label("Todo file: "), 0, 0);
-    grid.add(createTodoFileSelectButton(), 1, 0);
 
-    grid.add(new Label("Timetracking file: "), 0, 1);
-    grid.add(createTimeFileSelectButton(), 1, 1);
+    int rowCounter = 0;
+    grid.add(new Label("Todo file: "), 0, rowCounter);
+    grid.add(createTodoFileSelectButton(), 1, rowCounter++);
 
-    grid.add(new Label("Notes directory: "), 0, 2);
-    grid.add(createNotesSelectButton(), 1, 2);
+    grid.add(new Label("Timetracking file: "), 0, rowCounter);
+    grid.add(createTimeFileSelectButton(), 1, rowCounter++);
 
-    grid.add(DisplayUtils.createHorizontalSpacer(), 0, 3, 2, 1);
+    grid.add(new Label("Notes directory: "), 0, rowCounter);
+    grid.add(createNotesSelectButton(), 1, rowCounter++);
 
-    grid.add(createSavePreferencesButton(), 0, 3);
+    grid.add(DisplayUtils.createHorizontalSpacer(), 0, rowCounter++, 2, 1);
+
+    grid.add(createSavePreferencesButton(), 0, rowCounter);
     return grid;
   }
 

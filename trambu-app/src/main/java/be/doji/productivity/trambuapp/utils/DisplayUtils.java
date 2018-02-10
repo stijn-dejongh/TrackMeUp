@@ -40,10 +40,7 @@ public final class DisplayUtils {
     return calendarOfHeader.get(Calendar.YEAR) - calendarOfToday.get(Calendar.YEAR) < 25;
   }
 
-  public static String getDoneButtonText(Activity activity) {
-    return activity.isCompleted() ? DisplayConstants.BUTTON_TEXT_IS_NOT_DONE
-        : DisplayConstants.BUTTON_TEXT_IS_DONE;
-  }
+
 
   public static Separator createHorizontalSpacer() {
     Separator sep = new Separator();

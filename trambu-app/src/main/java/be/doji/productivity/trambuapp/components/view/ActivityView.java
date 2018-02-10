@@ -301,16 +301,14 @@ public class ActivityView extends TitledPane {
   }
 
   private void initDoneButton() {
-    this.doneButton = new Button();
-    FontAwesomeIconView doneIcon = DisplayUtils.createStyledIcon(FontAwesomeIcon.REFRESH);
-    this.doneButton.setGraphic(doneIcon);
-
+    this.doneButton = new Button(presenter.getDoneButtonText());
     this.doneButton.setOnAction(event -> presenter.doneClicked());
-
   }
 
   private void initEditButton() {
-    this.editButton = new Button(presenter.getEditButonText());
+    if (this.editButton == null) {
+      this.editButton = new Button(presenter.getEditButonText());
+    }
     FontAwesomeIconView editIcon = DisplayUtils.createStyledIcon(FontAwesomeIcon.EDIT);
     editButton.setGraphic(editIcon);
     editButton.setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_ACTIVITY_EDIT));

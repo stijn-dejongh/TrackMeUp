@@ -68,9 +68,9 @@ public class ActivityPresenter extends Presenter {
     this.activityLog = getActivityLog();
     refreshHeader();
     refreshViewStyle();
-    refreshControls();
     refreshFields();
     view.refreshContent();
+
   }
 
   public void populate() {
@@ -89,10 +89,6 @@ public class ActivityPresenter extends Presenter {
             DisplayConstants.STYLE_CLASS_ACTIVITY_TODO,
             DisplayConstants.STYLE_CLASS_ACTIVITY_ALERT);
     view.getStyleClass().add(getActivityStyle());
-  }
-
-  private void refreshControls() {
-    refreshDoneButton();
   }
 
   private void refreshFields() {
@@ -222,7 +218,7 @@ public class ActivityPresenter extends Presenter {
   }
 
   private Activity getActivityToSave() {
-    if (!this.modelParentChanged) {
+    if (StringUtils.isBlank(this.model.getParentActivity())) {
       return this.model;
     } else {
       return getRootActivity();
@@ -308,11 +304,6 @@ public class ActivityPresenter extends Presenter {
     this.modelParentChanged = true;
   }
 
-  private void refreshDoneButton() {
-    view.getDoneButton().setText(DisplayUtils.getDoneButtonText(this.model));
-    view.getDoneButton().setTooltip(getDoneTooltipText());
-  }
-
   public void doneClicked() {
     try {
       if (!this.model.isCompleted() && !this.model.isAllSubActivitiesCompleted()) {
@@ -320,13 +311,17 @@ public class ActivityPresenter extends Presenter {
       }
 
       this.model.setCompleted(!model.isCompleted());
-      view.getDoneButton().setText(DisplayUtils.getDoneButtonText(this.model));
-      view.getDoneButton().setTooltip(getDoneTooltipText());
+      view.refreshContent();
       save();
-      refreshHeader();
+      view.getDoneButton().setText(getDoneButtonText());
     } catch (IOException | ParseException e) {
       LOG.error(DisplayConstants.ERROR_MESSAGE_ACTIVITY_SAVING + ": " + e.getMessage());
     }
+  }
+
+  public String getDoneButtonText() {
+    return this.model.isCompleted() ? DisplayConstants.BUTTON_TEXT_IS_NOT_DONE
+        : DisplayConstants.BUTTON_TEXT_IS_DONE;
   }
 
   public void editButtonClicked() {
@@ -412,6 +407,10 @@ public class ActivityPresenter extends Presenter {
             : FontAwesomeIcon.HOURGLASS_START);
   }
 
+  public FontAwesomeIconView getDoneButtonIcon() {
+    return DisplayUtils.createStyledIcon(FontAwesomeIcon.REFRESH);
+  }
+
   public Tooltip getTimingButtonTooltipText() {
     return DisplayUtils.createTooltip(getActiveLog().isPresent() ?
         TooltipConstants.TOOLTIP_TEXT_ACTIVITY_TIMING_CONTROL_STOP :
@@ -448,7 +447,7 @@ public class ActivityPresenter extends Presenter {
   }
 
   public void makeAllFieldsStaticAndRefresh() {
-    this.editable = true;
+    this.editable = false;
     view.getNameField().makeStatic();
     view.getPriorityField().makeStatic();
     view.getLocationField().makeStatic();
