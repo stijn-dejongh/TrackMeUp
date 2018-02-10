@@ -5,8 +5,10 @@ import be.doji.productivity.trambuapp.components.elements.OverlayPane;
 import be.doji.productivity.trambuapp.components.elements.Switchable;
 import be.doji.productivity.trambuapp.components.presenter.ActivityPagePresenter;
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
+import be.doji.productivity.trambucore.managers.NoteManager;
 import be.doji.productivity.trambucore.managers.TimeTrackingManager;
 import be.doji.productivity.trambucore.model.tasks.Activity;
+import be.doji.productivity.trambucore.model.tasks.Note;
 import be.doji.productivity.trambucore.model.tracker.ActivityLog;
 import be.doji.productivity.trambucore.testutil.ActivityTestData;
 import java.io.IOException;
@@ -21,9 +23,11 @@ import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.GridPane;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -40,6 +44,7 @@ public class ActivityViewTest extends TrambuAppTest {
   private static final String CHANGED_PROJECT_TEXT = "NewProject";
   private static final String TEST_LOCATION = "TestLocation";
   private static final String ACTIVITY_WITH_LOCATION_ID = "283b6298-b513-4e89-b757-10e98c9078ea";
+  private static final String TEST_NOTE_STRING = "This is a note. Please respect my authority";
 
   @Mock
   private ActivityPagePresenter mockPagePresenter;
@@ -310,6 +315,54 @@ public class ActivityViewTest extends TrambuAppTest {
         castedGrid.getChildren().isEmpty());
     // 3 logpoints and the information header line => 4 children
     Assert.assertEquals(4, castedGrid.getChildren().size());
+  }
+
+  @Test
+  public void failIfNotesOverlayIsFaulty() throws ParseException {
+    getActivityManager().addActivity(ActivityTestData.DATA_LINE_NO_DEADLINE);
+    Optional<Activity> activity = getActivityManager().getSavedActivityById(ACTIVITY_ONE_ID);
+    Assert.assertTrue(activity.isPresent());
+    ActivityView view = new ActivityView(activity.get());
+
+    view.getPresenter().openNotes();
+
+    OverlayPane overlay = view.getOverlay();
+    Assert.assertNotNull("Expect the overlay to exist", overlay);
+    Node overlayContent = overlay.getContent();
+    Assert.assertNotNull("Expect the overlay to be populated", overlayContent);
+    Assert.assertTrue("Expect the overlay to contain a note grid",
+        overlayContent instanceof TextArea);
+    TextArea castedOverlayContent = (TextArea) overlayContent;
+    Assert.assertTrue("Expect the initial note to be empty",
+        StringUtils.isBlank(castedOverlayContent.getText()));
+  }
+
+  @Test
+  public void failIfNotesOverlayIsEmpty() throws ParseException, IOException {
+    getActivityManager().addActivity(ActivityTestData.DATA_LINE_NO_DEADLINE);
+    Optional<Activity> activity = getActivityManager().getSavedActivityById(ACTIVITY_ONE_ID);
+    Assert.assertTrue(activity.isPresent());
+    ActivityView view = new ActivityView(activity.get());
+    view.getPresenter().openNotes();
+    NoteManager noteManager = getMockActController().getNoteManager();
+    List<Note> allNotes = noteManager.getAllNotes();
+    Assert.assertFalse("Expect there to be a note", allNotes.isEmpty());
+    Assert.assertEquals(1, allNotes.size());
+    Optional<Note> note = noteManager
+        .findNoteForActivity(UUID.fromString("283b6271-b513-4e89-b757-10e98c9078ea"));
+    Assert.assertTrue(note.isPresent());
+    Node overlayContent = view.getOverlay().getContent();
+    Assert.assertNotNull("Expect the overlay to be populated", overlayContent);
+    TextArea castedOverlayContent = (TextArea) overlayContent;
+
+    castedOverlayContent.setText(TEST_NOTE_STRING);
+    view.getPresenter().saveNote(note.get(), (TextArea) view.getOverlay().getContent());
+
+    view.getPresenter().openNotes();
+    overlayContent = view.getOverlay().getContent();
+    Assert.assertNotNull("Expect the overlay to be populated", overlayContent);
+    castedOverlayContent = (TextArea) overlayContent;
+    Assert.assertEquals(TEST_NOTE_STRING, castedOverlayContent.getText());
   }
 
 

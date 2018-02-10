@@ -278,8 +278,7 @@ public class ActivityPresenter extends Presenter {
         .setTooltip(DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_ACTIVITY_SAVE_NOTE));
     saveButton.setOnAction(event -> {
       try {
-        noteToSave.setContent(Arrays.asList(textField.getText().split(System.lineSeparator())));
-        noteToSave.save();
+        saveNote(noteToSave, textField);
       } catch (IOException e) {
         LOG.error("Error saving note to file: " + e.getMessage());
       }
@@ -287,6 +286,11 @@ public class ActivityPresenter extends Presenter {
     List<Button> controls = new ArrayList<>();
     controls.add(saveButton);
     return controls;
+  }
+
+  public void saveNote(Note noteToSave, TextArea textField) throws IOException {
+    noteToSave.setContent(Arrays.asList(textField.getText().split(System.lineSeparator())));
+    noteToSave.save();
   }
 
   public List<String> getPossibleParents() {

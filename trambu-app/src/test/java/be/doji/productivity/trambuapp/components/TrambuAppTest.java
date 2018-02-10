@@ -1,10 +1,11 @@
 package be.doji.productivity.trambuapp.components;
 
+import be.doji.productivity.trambuapp.components.presenter.ActivityPagePresenter;
 import be.doji.productivity.trambuapp.components.presenter.ManagerContainer;
 import be.doji.productivity.trambuapp.components.presenter.ManagerContainer.Factory;
-import be.doji.productivity.trambuapp.components.presenter.ActivityPagePresenter;
 import be.doji.productivity.trambuapp.userconfiguration.UserConfigurationManager;
 import be.doji.productivity.trambucore.managers.ActivityManager;
+import be.doji.productivity.trambucore.managers.NoteManager;
 import be.doji.productivity.trambucore.managers.TimeTrackingManager;
 import be.doji.productivity.trambucore.testutil.FileUtils;
 import java.io.IOException;
@@ -36,6 +37,7 @@ public abstract class TrambuAppTest extends ApplicationTest {
   private Path activityTestFile;
   private Path timeTrackingTestFile;
   private UserConfigurationManager userConfigManager;
+  private NoteManager noteManager;
 
   @Before
   public void setUp() throws Exception {
@@ -44,11 +46,13 @@ public abstract class TrambuAppTest extends ApplicationTest {
     this.activityManager = new ActivityManager(activityTestFile.toString());
     this.timeTrackingManager = new TimeTrackingManager(timeTrackingTestFile.toString());
     this.userConfigManager = new UserConfigurationManager("rommel.txt");
+    this.noteManager = new NoteManager(activityTestFile.getParent());
     MockitoAnnotations.initMocks(this);
     Mockito.when(mockPagePresenter.getActivityController()).thenReturn(mockActController);
     Mockito.when(mockActController.getActivityManager()).thenReturn(activityManager);
     Mockito.when(mockActController.getTimeTrackingManager()).thenReturn(timeTrackingManager);
     Mockito.when(mockActController.getConfigManager()).thenReturn(userConfigManager);
+    Mockito.when(mockActController.getNoteManager()).thenReturn(noteManager);
 
     Factory.setInstance(mockActController);
 
