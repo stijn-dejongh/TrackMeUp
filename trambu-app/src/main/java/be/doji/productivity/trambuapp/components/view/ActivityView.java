@@ -227,9 +227,7 @@ public class ActivityView extends TitledPane {
     showLogs.setGraphic(DisplayUtils.createStyledIcon(FontAwesomeIcon.INFO_CIRCLE));
     showLogs.setTooltip(
         DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_ACTIVITY_LOGPOINT_EXPAND));
-    showLogs.setOnAction(event -> {
-      presenter.openLog();
-    });
+    showLogs.setOnAction(event -> presenter.openLog());
     return showLogs;
   }
 
