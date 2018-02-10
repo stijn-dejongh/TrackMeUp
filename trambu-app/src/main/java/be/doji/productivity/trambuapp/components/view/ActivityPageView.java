@@ -118,17 +118,11 @@ public class ActivityPageView extends View {
     return controlAccordion;
   }
 
-  public void setControlAccordion(ActivityControlAccordion controlAccordion) {
-    this.controlAccordion = controlAccordion;
-  }
 
   public Accordion getActivityAccordion() {
     return activityAccordion;
   }
 
-  public void setActivityAccordion(Accordion activityAccordion) {
-    this.activityAccordion = activityAccordion;
-  }
 
   public List<TitledPane> getPanes() {
     return activityPanes;
@@ -145,11 +139,11 @@ public class ActivityPageView extends View {
         .collect(Collectors.toList());
   }
 
-  public void setActivityPanes(List<TitledPane> activityPanes) {
-    this.activityPanes = activityPanes;
-  }
-
   public void addPane(TitledPane pane) {
     this.activityPanes.add(pane);
+  }
+
+  public ActivityPagePresenter getPresenter() {
+    return this.presenter;
   }
 }

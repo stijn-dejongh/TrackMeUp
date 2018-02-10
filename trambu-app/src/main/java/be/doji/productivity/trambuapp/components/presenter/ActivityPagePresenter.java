@@ -4,16 +4,13 @@ import be.doji.productivity.trambuapp.components.view.ActivityPageView;
 import be.doji.productivity.trambuapp.components.view.ActivityView;
 import be.doji.productivity.trambuapp.utils.DisplayConstants;
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
-import be.doji.productivity.trambucore.managers.NoteManager;
 import be.doji.productivity.trambucore.model.tasks.Activity;
-import be.doji.productivity.trambucore.model.tracker.ActivityLog;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,19 +67,19 @@ public class ActivityPagePresenter extends Presenter {
     return filteredActivities;
   }
 
-  public boolean shouldBeFiltered(Activity activity) {
+  private boolean shouldBeFiltered(Activity activity) {
     boolean shouldFilterBasedOnProject = shouldBeFilteredOnProject(activity);
     boolean shouldFilterBasedOnTag = shouldBeFilteredOnTag(activity);
     boolean shouldFilterBasedOnCompletion = filterDone && activity.isCompleted();
     return shouldFilterBasedOnProject || shouldFilterBasedOnTag || shouldFilterBasedOnCompletion;
   }
 
-  public boolean shouldBeFilteredOnProject(Activity activity) {
+  private boolean shouldBeFilteredOnProject(Activity activity) {
     return StringUtils.isNotBlank(projectFilter) && !activity.getProjects().parallelStream()
         .anyMatch(project -> StringUtils.equalsIgnoreCase(project, getProjectFilter()));
   }
 
-  public boolean shouldBeFilteredOnTag(Activity activity) {
+  private boolean shouldBeFilteredOnTag(Activity activity) {
     return StringUtils.isNotBlank(tagFilter) && !activity.getTags().isEmpty() && !activity.getTags()
         .parallelStream()
         .anyMatch(tag -> StringUtils.equalsIgnoreCase(tag, getTagFilter()));
@@ -93,7 +90,7 @@ public class ActivityPagePresenter extends Presenter {
     return tagFilter;
   }
 
-  public void setTagFilter(String tagFilter) {
+  void setTagFilter(String tagFilter) {
     this.resetFilter();
     this.tagFilter = tagFilter;
     view.getControlAccordion().updateFilterLabel();
@@ -103,7 +100,7 @@ public class ActivityPagePresenter extends Presenter {
     return projectFilter;
   }
 
-  public void setProjectFilter(String projectFilter) {
+  void setProjectFilter(String projectFilter) {
     this.resetFilter();
     this.projectFilter = projectFilter;
     view.getControlAccordion().updateFilterLabel();
@@ -149,10 +146,6 @@ public class ActivityPagePresenter extends Presenter {
     this.refresh();
   }
 
-  public ActivityLog getLogForActivityId(UUID id) {
-    return this.model.getTimeTrackingManager().getLogForActivityId(id);
-  }
-
   public void saveActivity(Activity newActivity) {
     try {
       this.model.getActivityManager().save(newActivity);
@@ -161,26 +154,6 @@ public class ActivityPagePresenter extends Presenter {
       LOG.error("Error creation new activity", exception);
     }
 
-  }
-
-  public List<String> getExistingLocations() {
-    return this.model.getActivityManager().getExistingLocations();
-  }
-
-  public List<String> getExistingTags() {
-    return this.model.getActivityManager().getExistingTags();
-  }
-
-  public List<String> getExistingProjects() {
-    return this.model.getActivityManager().getExistingProjects();
-  }
-
-  public List<String> getAllActivityNames() {
-    return this.model.getActivityManager().getAllActivityNames();
-  }
-
-  public NoteManager getNoteManager() {
-    return this.model.getNoteManager();
   }
 
   public ActivityManagerContainer getActivityController() {

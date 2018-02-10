@@ -2,8 +2,14 @@ package be.doji.productivity.trambuapp.components.view;
 
 import be.doji.productivity.trambuapp.components.TrambuAppTest;
 import be.doji.productivity.trambuapp.utils.DisplayConstants;
+import be.doji.productivity.trambucore.testutil.ActivityTestData;
+import java.text.ParseException;
+import java.util.List;
+import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.control.Accordion;
+import javafx.scene.control.TitledPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import org.apache.commons.lang3.StringUtils;
@@ -53,7 +59,30 @@ public class ActivityPageViewTest extends TrambuAppTest {
     Assert.assertEquals(3, castedBottomRoot.getChildren().size());
   }
 
-  
+  @Test
+  public void failIfActivityAccordeonIsFaulty() throws ParseException {
+    // Add two activities, one has a deadline, one has not
+    getActivityManager().addActivity(ActivityTestData.ACTIVITY_DATA_LINE);
+    getActivityManager().addActivity(ActivityTestData.DATA_LINE_NO_DEADLINE);
+    Assert.assertEquals(2, getActivityManager().getAllActivityNames().size());
+    ActivityPageView pageView = new ActivityPageView();
+    Assert.assertNotNull(pageView);
+    Accordion activityAccordion = pageView.getActivityAccordion();
+    Assert.assertNotNull(activityAccordion);
+
+    pageView.getPresenter().refresh();
+
+    ObservableList<TitledPane> panes = activityAccordion.getPanes();
+    Assert.assertNotNull(panes);
+    Assert.assertFalse("Expect the ActivityPageView to contain panes", panes.isEmpty());
+    Assert.assertEquals(4, panes.size());
+    List<TitledPane> headingPanes = pageView.getHeadingPanes();
+    Assert.assertFalse("Expect there to be heading panes", headingPanes.isEmpty());
+    Assert.assertEquals(2, headingPanes.size());
+    List<ActivityView> activityPanes = pageView.getActivityPanes();
+    Assert.assertFalse("Expect there to be acitvity panes", activityPanes.isEmpty());
+    Assert.assertEquals(2, activityPanes.size());
+  }
 
 
 }
