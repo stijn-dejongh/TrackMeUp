@@ -384,5 +384,30 @@ public class ActivityViewTest extends TrambuAppTest {
     Assert.assertEquals(DisplayConstants.BUTTON_TEXT_IS_NOT_DONE, doneButton.getText());
   }
 
+  @Test
+  public void failIfActivityWithParentNotSaved() throws ParseException {
+    getActivityManager().addActivity(ActivityTestData.SUPER_ACTIVITY);
+    getActivityManager().addActivity(ActivityTestData.SUB_ACTIVITY_WIITH_PROJECTS_ONE);
+    getActivityManager().addActivity(ActivityTestData.SUB_ACTIVITY_WIITH_PROJECTS_TWO);
+    Optional<Activity> superActivity = getActivityManager()
+        .getSavedActivityById(SUPER_ACTIVITY_ID);
+    Assert.assertTrue("Expect activities to be added", superActivity.isPresent());
+    List<Activity> subActivities = superActivity.get().getSubActivities();
+    Assert.assertEquals(2, subActivities.size());
+    Activity activity = subActivities.get(0);
+    ActivityView view = new ActivityView(activity);
+    Assert.assertNotNull("Expect activityView to be created", view);
+
+    view.getPresenter().doneClicked(); //Make a change to the subactivity
+    view.getPresenter().editButtonClicked(); //Save the activity
+
+    Assert.assertFalse("Expect the activity to be not completed", view.getPresenter().getModel().isCompleted());
+    superActivity = getActivityManager().getSavedActivityById(SUPER_ACTIVITY_ID);
+    List<Activity> updatedSubs = superActivity.get().getSubActivities();
+    Assert.assertEquals(2, updatedSubs.size());
+    Activity shouldBeUpdated = updatedSubs.get(0);
+    Assert.assertFalse(shouldBeUpdated.isCompleted());
+  }
+
 
 }

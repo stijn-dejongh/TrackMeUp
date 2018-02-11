@@ -462,4 +462,8 @@ public class ActivityPresenter extends Presenter {
     view.getOverlay().refreshContent();
     view.getOverlay().setVisible(true);
   }
+
+  public Activity getModel() {
+    return this.model;
+  }
 }
