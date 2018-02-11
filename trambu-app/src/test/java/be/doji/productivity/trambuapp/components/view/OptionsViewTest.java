@@ -1,12 +1,17 @@
 package be.doji.productivity.trambuapp.components.view;
 
 import be.doji.productivity.trambuapp.components.TrambuAppTest;
+import java.io.IOException;
+import java.nio.file.Path;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import org.junit.Assert;
 import org.junit.Test;
 
+/**
+ * Tests for the OptionsView MVP model. Testing both OptionsView and OptionsPresenter classes
+ */
 public class OptionsViewTest extends TrambuAppTest {
 
   private static final int AMOUNT_OF_CONTROL_BUTTONS = 4;
@@ -26,7 +31,6 @@ public class OptionsViewTest extends TrambuAppTest {
 
   }
 
-  //GridPane
   @Test
   public void failOnFaultyContentInitialization() {
     OptionsView view = new OptionsView();
@@ -45,5 +49,32 @@ public class OptionsViewTest extends TrambuAppTest {
         castedContent.getChildren().size() > AMOUNT_OF_CONTROL_BUTTONS);
   }
 
-  
+  @Test
+  public void failIfTodoFileLocationNotUpdated() throws IOException {
+    OptionsView view = new OptionsView();
+    Assert.assertNotNull("Expect a view to be created", view);
+    Path tempFile = createTempFile();
+    Assert.assertTrue("Expect the temp file to exist", tempFile.toFile().exists());
+
+    view.getPresenter().todoFileSelectClicked(tempFile.toFile());
+
+    Path todoFileLocation = getMockActController().getActivityManager().getTodoFileLocation();
+    Assert.assertNotNull(todoFileLocation);
+    Assert.assertEquals("Todo file location should be updated", tempFile, todoFileLocation);
+  }
+
+  @Test
+  public void failIfTimeFileLocationNotUpdated() throws IOException {
+    OptionsView view = new OptionsView();
+    Assert.assertNotNull("Expect a view to be created", view);
+    Path tempDirectory = createTempDirectory();
+    Assert.assertTrue("Expect the temp directory to exist", tempDirectory.toFile().exists());
+
+    view.getPresenter().noteDirectorySelectClicked(tempDirectory.toFile());
+
+    Path noteDirectory = getMockActController().getNoteManager().getNoteDirectory();
+    Assert.assertNotNull(noteDirectory);
+    Assert.assertEquals("Note directory location should be updated", tempDirectory, noteDirectory);
+  }
+
 }

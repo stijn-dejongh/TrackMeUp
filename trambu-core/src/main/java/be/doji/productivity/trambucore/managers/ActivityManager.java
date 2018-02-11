@@ -325,4 +325,8 @@ public class ActivityManager {
         .filter(Objects::nonNull)
         .collect(Collectors.toList());
   }
+
+  public Path getTodoFileLocation() {
+    return todoFile;
+  }
 }

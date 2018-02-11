@@ -76,6 +76,10 @@ public abstract class TrambuAppTest extends ApplicationTest {
     return Files.createTempFile(directoryPath, "temp", "txt");
   }
 
+  public Path createTempDirectory() throws IOException {
+    return Files.createTempDirectory("temp");
+  }
+
   public ActivityManager getActivityManager() {
     return activityManager;
   }

@@ -113,9 +113,7 @@ public class OptionsView extends View {
 
     Button notesDirectoryButton = createOpenDirectoryButton("Select notes directory",
         notesDirectoryChooser,
-        file -> {
-          this.presenter.noteDirectorySelectClicked(file);
-        });
+        file -> this.presenter.noteDirectorySelectClicked(file));
     notesDirectoryButton
         .setTooltip(
             DisplayUtils.createTooltip(TooltipConstants.TOOLTIP_TEXT_OPTIONS_TIME_FILE_SELECT));
@@ -179,5 +177,9 @@ public class OptionsView extends View {
   @Override
   public Parent getRoot() {
     return root;
+  }
+
+  public OptionsPresenter getPresenter() {
+    return this.presenter;
   }
 }
