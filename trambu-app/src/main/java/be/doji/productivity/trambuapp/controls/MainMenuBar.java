@@ -2,7 +2,7 @@ package be.doji.productivity.trambuapp.controls;
 
 import be.doji.productivity.trambuapp.components.view.ActivityPageView;
 import be.doji.productivity.trambuapp.components.view.OptionsView;
-import be.doji.productivity.trambuapp.components.view.TimesheetPageView;
+import be.doji.productivity.trambuapp.components.view.TimesheetView;
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
 import be.doji.productivity.trambuapp.utils.TooltipConstants;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
@@ -56,8 +56,8 @@ public class MainMenuBar extends UIComponent {
     FontAwesomeIconView timesheetIcon = DisplayUtils.createStyledIcon(FontAwesomeIcon.CLOCK_ALT);
     timesheetPage.setGraphic(timesheetIcon);
     timesheetPage.setOnAction(event -> {
-      if (!superView.getClass().equals(TimesheetPageView.class)) {
-        superView.replaceWith(JvmClassMappingKt.getKotlinClass(TimesheetPageView.class),
+      if (!superView.getClass().equals(TimesheetView.class)) {
+        superView.replaceWith(JvmClassMappingKt.getKotlinClass(TimesheetView.class),
             new ViewTransition.Slide(Duration.seconds(0.3), ViewTransition.Direction.RIGHT), true,
             true);
       }
