@@ -60,19 +60,10 @@ public class OptionsPresenter extends Presenter {
 
 
   public void savePreferencesClicked() {
-    if (StringUtils.isNotBlank(configuredTodoLocation)) {
-      this.managers.getConfigManager()
-          .addProperty(DisplayConstants.NAME_PROPERTY_TODO_LOCATION, configuredTodoLocation);
-    }
-    if (StringUtils.isNotBlank(configuredTimeLocation)) {
-      this.managers.getConfigManager()
-          .addProperty(DisplayConstants.NAME_PROPERTY_TIME_LOCATION, configuredTimeLocation);
-    }
+    saveTodoFileSettings();
+    saveTimeFileSettings();
+    saveNoteDirectorySettings();
 
-    if (StringUtils.isNotBlank(configuredNoteLocation)) {
-      this.managers.getConfigManager()
-          .addProperty(DisplayConstants.NAME_PROPERTY_NOTES_LOCATION, configuredNoteLocation);
-    }
     try {
       this.managers.getConfigManager().writeToFile();
     } catch (IOException e) {
@@ -80,6 +71,29 @@ public class OptionsPresenter extends Presenter {
     }
 
   }
+
+  private void saveTodoFileSettings() {
+    if (StringUtils.isNotBlank(configuredTodoLocation)) {
+      this.managers.getConfigManager()
+          .addProperty(DisplayConstants.NAME_PROPERTY_TODO_LOCATION, configuredTodoLocation);
+    }
+  }
+
+
+  private void saveTimeFileSettings() {
+    if (StringUtils.isNotBlank(configuredTimeLocation)) {
+      this.managers.getConfigManager()
+          .addProperty(DisplayConstants.NAME_PROPERTY_TIME_LOCATION, configuredTimeLocation);
+    }
+  }
+
+  private void saveNoteDirectorySettings() {
+    if (StringUtils.isNotBlank(configuredNoteLocation)) {
+      this.managers.getConfigManager()
+          .addProperty(DisplayConstants.NAME_PROPERTY_NOTES_LOCATION, configuredNoteLocation);
+    }
+  }
+
 
   @Override
   void refresh() {
