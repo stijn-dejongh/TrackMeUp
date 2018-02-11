@@ -8,7 +8,6 @@ import be.doji.productivity.trambuapp.utils.TooltipConstants;
 import be.doji.productivity.trambucore.TrackMeConstants;
 import be.doji.productivity.trambucore.model.tracker.ActivityLog;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
-import java.util.Formatter;
 import java.util.List;
 import javafx.geometry.Orientation;
 import javafx.scene.Parent;
@@ -20,13 +19,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import org.jetbrains.annotations.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import tornadofx.View;
 
 public class TimesheetView extends View {
-
-  private static final Logger LOG = LoggerFactory.getLogger(TimesheetView.class);
 
   private BorderPane root;
   private TimesheetPresenter presenter;
@@ -155,8 +150,6 @@ public class TimesheetView extends View {
     grid.add(entrieTitle, 0, row++);
     grid.add(DisplayUtils.createHorizontalSpacer(), 0, row++, 3, 1);
 
-    LOG.debug(new Formatter().format("Found {%d} timelog entries", activityLogsInInterval.size())
-        .toString());
     for (ActivityLog log : activityLogsInInterval) {
       Label activityLabel = new Label();
       activityLabel.setText(this.presenter.getActivityName(log.getActivityId()));
