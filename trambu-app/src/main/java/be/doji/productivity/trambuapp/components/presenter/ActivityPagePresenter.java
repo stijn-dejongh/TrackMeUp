@@ -100,7 +100,7 @@ public class ActivityPagePresenter extends Presenter {
     return projectFilter;
   }
 
-  void setProjectFilter(String projectFilter) {
+  public void setProjectFilter(String projectFilter) {
     this.resetFilter();
     this.projectFilter = projectFilter;
     view.getControlAccordion().updateFilterLabel();

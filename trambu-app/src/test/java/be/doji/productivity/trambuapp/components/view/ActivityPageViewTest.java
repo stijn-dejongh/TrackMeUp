@@ -97,5 +97,44 @@ public class ActivityPageViewTest extends TrambuAppTest {
     Assert.assertEquals("The should currently be one control pane", 1, controlPanes.size());
   }
 
+  @Test
+  public void failIfProjectFilterIsFaulty() throws ParseException {
+    getActivityManager().addActivity(ActivityTestData.ACTIVITY_DATA_LINE);
+    getActivityManager().addActivity(ActivityTestData.NO_PREFIX_DATA_LINE);
+    getActivityManager().addActivity(ActivityTestData.COMPLETED_ACTIVITY);
+    Assert.assertEquals(3, getActivityManager().getAllActivityNames().size());
+    ActivityPageView pageView = new ActivityPageView();
+    pageView.getPresenter().refresh();
+    Assert.assertNotNull("Expect a PageView to be created", pageView);
+    Assert.assertEquals(3, pageView.getActivityPanes().size());
+
+    pageView.getPresenter().setProjectFilter("OverarchingProject");
+    pageView.getPresenter().refresh();
+
+    Assert.assertEquals(1, pageView.getActivityPanes().size());
+  }
+
+  @Test
+  public void failIfProjectFilterResetIsFaulty() throws ParseException {
+    getActivityManager().addActivity(ActivityTestData.ACTIVITY_DATA_LINE);
+    getActivityManager().addActivity(ActivityTestData.NO_PREFIX_DATA_LINE);
+    getActivityManager().addActivity(ActivityTestData.COMPLETED_ACTIVITY);
+    Assert.assertEquals(3, getActivityManager().getAllActivityNames().size());
+    ActivityPageView pageView = new ActivityPageView();
+    pageView.getPresenter().refresh();
+    Assert.assertNotNull("Expect a PageView to be created", pageView);
+    Assert.assertEquals(3, pageView.getActivityPanes().size());
+    pageView.getPresenter().setProjectFilter("OverarchingProject");
+    pageView.getPresenter().refresh();
+    Assert.assertEquals(1, pageView.getActivityPanes().size());
+
+    pageView.getPresenter().resetFilter();
+    pageView.getPresenter().refresh();
+
+    Assert.assertEquals(3, pageView.getActivityPanes().size());
+  }
+
+  
+
 
 }

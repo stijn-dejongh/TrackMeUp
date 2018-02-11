@@ -1,6 +1,5 @@
 package be.doji.productivity.trambuapp.utils;
 
-import be.doji.productivity.trambucore.model.tasks.Activity;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import java.text.DateFormat;
@@ -39,7 +38,6 @@ public final class DisplayUtils {
       GregorianCalendar calendarOfToday) {
     return calendarOfHeader.get(Calendar.YEAR) - calendarOfToday.get(Calendar.YEAR) < 25;
   }
-
 
 
   public static Separator createHorizontalSpacer() {
