@@ -83,7 +83,8 @@ public class TimesheetViewTest extends TrambuAppTest {
     Assert
         .assertFalse("Expect the timelogGrid to have content", timeLogGrid.getChildren().isEmpty());
     Assert.assertTrue("Expect the timelogGrid to contain at least the logs",
-        timeLogGrid.getChildren().size() > logActivityOne.getLogpoints().size());
+        timeLogGrid.getChildren().size() > view.getPresenter().getLogs().size()
+            * 2); // One child for the log, one for the title label
   }
 
   private TimeLog createTimeLog(Date start, Date end) {
