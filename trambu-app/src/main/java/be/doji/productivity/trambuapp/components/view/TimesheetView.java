@@ -7,6 +7,7 @@ import be.doji.productivity.trambuapp.utils.DisplayUtils;
 import be.doji.productivity.trambuapp.utils.TooltipConstants;
 import be.doji.productivity.trambucore.TrackMeConstants;
 import be.doji.productivity.trambucore.model.tracker.ActivityLog;
+import com.sun.javafx.binding.StringFormatter;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import java.util.List;
 import javafx.geometry.Orientation;
@@ -32,6 +33,7 @@ public class TimesheetView extends View {
   private DatePicker endDatePicker;
   private DatePicker startDatePicker;
   private FileChooser exportFileChooser;
+  private GridPane timeLogGrid;
 
 
   public TimesheetView() {
@@ -40,7 +42,7 @@ public class TimesheetView extends View {
     initContent();
   }
 
-  public void initContent() {
+  private void initContent() {
     this.setTitle(DisplayConstants.TITLE_APPLICATION + " - " + DisplayConstants.TITLE_TIMESHEET);
 
     root = new BorderPane();
@@ -48,6 +50,8 @@ public class TimesheetView extends View {
     root.setPrefWidth(DisplayConstants.UI_DEFAULT_WINDOW_WIDTH);
     root.setCenter(createTimesheetPane());
     root.setBottom(new MainMenuBar(this).getRoot());
+
+    this.timeLogGrid = initTimeLogGrid(presenter.getLogs());
   }
 
   private SplitPane createTimesheetPane() {
@@ -57,7 +61,7 @@ public class TimesheetView extends View {
     splitPane.setOrientation(Orientation.HORIZONTAL);
     splitPane.setDividerPosition(0, 0.65);
 
-    splitPane.getItems().add(createTimeLogGrid(presenter.getLogs()));
+    splitPane.getItems().add(this.timeLogGrid);
     splitPane.getItems().add(createTimesheetControls());
     return splitPane;
   }
@@ -131,11 +135,12 @@ public class TimesheetView extends View {
     exportFileChooser.setInitialFileName("Timesheet_export" + ".csv");
   }
 
-  private void refresh() {
+  void refresh() {
+    this.timeLogGrid = initTimeLogGrid(presenter.getLogs());
     root.setCenter(createTimesheetPane());
   }
 
-  private GridPane createTimeLogGrid(List<ActivityLog> activityLogsInInterval) {
+  private GridPane initTimeLogGrid(List<ActivityLog> activityLogsInInterval) {
     GridPane grid = new GridPane();
     grid.setHgap(5);
     grid.setVgap(5);
@@ -150,7 +155,8 @@ public class TimesheetView extends View {
     grid.add(entrieTitle, 0, row++);
     grid.add(DisplayUtils.createHorizontalSpacer(), 0, row++, 3, 1);
 
-    LOG.debug("Found {0} timelog entries", activityLogsInInterval.size());
+    LOG.debug(StringFormatter.format("Found {%d} timelog entries", activityLogsInInterval.size())
+        .getValue());
     for (ActivityLog log : activityLogsInInterval) {
       Label activityLabel = new Label();
       activityLabel.setText(this.presenter.getActivityName(log.getActivityId()));
@@ -173,6 +179,10 @@ public class TimesheetView extends View {
     return startDatePicker;
   }
 
+  GridPane getTimeLogGrid() {
+    return timeLogGrid;
+  }
+
   @NotNull
   @Override
   public Parent getRoot() {
@@ -186,5 +196,9 @@ public class TimesheetView extends View {
 
   public FileChooser getExportFileChooser() {
     return this.exportFileChooser;
+  }
+
+  public TimesheetPresenter getPresenter() {
+    return this.presenter;
   }
 }
