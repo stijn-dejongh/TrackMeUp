@@ -1,7 +1,7 @@
 package be.doji.productivity.trambuapp.controls;
 
 import be.doji.productivity.trambuapp.components.view.ActivityPageView;
-import be.doji.productivity.trambuapp.components.view.OptionsPageView;
+import be.doji.productivity.trambuapp.components.view.OptionsView;
 import be.doji.productivity.trambuapp.components.view.TimesheetPageView;
 import be.doji.productivity.trambuapp.utils.DisplayUtils;
 import be.doji.productivity.trambuapp.utils.TooltipConstants;
@@ -73,8 +73,8 @@ public class MainMenuBar extends UIComponent {
     FontAwesomeIconView optionIcon = DisplayUtils.createStyledIcon(FontAwesomeIcon.GEARS);
     options.setGraphic(optionIcon);
     options.setOnAction(event -> {
-      if (!superView.getClass().equals(OptionsPageView.class)) {
-        superView.replaceWith(JvmClassMappingKt.getKotlinClass(OptionsPageView.class),
+      if (!superView.getClass().equals(OptionsView.class)) {
+        superView.replaceWith(JvmClassMappingKt.getKotlinClass(OptionsView.class),
             new ViewTransition.Slide(Duration.seconds(0.3), ViewTransition.Direction.DOWN), true,
             true);
       }
