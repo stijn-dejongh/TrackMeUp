@@ -134,7 +134,76 @@ public class ActivityPageViewTest extends TrambuAppTest {
     Assert.assertEquals(3, pageView.getActivityPanes().size());
   }
 
-  
+  @Test
+  public void failIfTagFilterIsFaulty() throws ParseException {
+    getActivityManager().addActivity(ActivityTestData.ACTIVITY_DATA_LINE_WITH_WARNING);
+    getActivityManager().addActivity(ActivityTestData.ACTIVITY_NO_PREFIX_LOCATION_SPACE_LINE);
+    Assert.assertEquals(2, getActivityManager().getAllActivityNames().size());
+    ActivityPageView pageView = new ActivityPageView();
+    pageView.getPresenter().refresh();
+    Assert.assertNotNull("Expect a PageView to be created", pageView);
+    Assert.assertEquals(2, pageView.getActivityPanes().size());
 
+    pageView.getPresenter().setTagFilter("Tag");
+    pageView.getPresenter().refresh();
+
+    Assert.assertEquals(1, pageView.getActivityPanes().size());
+  }
+
+  @Test
+  public void failIfTagResetFilterIsFaulty() throws ParseException {
+    getActivityManager().addActivity(ActivityTestData.ACTIVITY_DATA_LINE_WITH_WARNING);
+    getActivityManager().addActivity(ActivityTestData.ACTIVITY_NO_PREFIX_LOCATION_SPACE_LINE);
+    Assert.assertEquals(2, getActivityManager().getAllActivityNames().size());
+    ActivityPageView pageView = new ActivityPageView();
+    pageView.getPresenter().refresh();
+    Assert.assertNotNull("Expect a PageView to be created", pageView);
+    Assert.assertEquals(2, pageView.getActivityPanes().size());
+    pageView.getPresenter().setTagFilter("Tag");
+    pageView.getPresenter().refresh();
+    Assert.assertEquals(1, pageView.getActivityPanes().size());
+
+    pageView.getPresenter().resetFilter();
+    pageView.getPresenter().refresh();
+
+    Assert.assertEquals(2, pageView.getActivityPanes().size());
+  }
+
+  @Test
+  public void failIfCompletedFilterIsFaulty() throws ParseException {
+    getActivityManager().addActivity(ActivityTestData.ACTIVITY_DATA_LINE_WITH_WARNING);
+    getActivityManager().addActivity(ActivityTestData.ACTIVITY_NO_PREFIX_LOCATION_SPACE_LINE);
+    getActivityManager().addActivity(ActivityTestData.COMPLETED_ACTIVITY);
+    Assert.assertEquals(3, getActivityManager().getAllActivityNames().size());
+    ActivityPageView pageView = new ActivityPageView();
+    pageView.getPresenter().refresh();
+    Assert.assertNotNull("Expect a PageView to be created", pageView);
+    Assert.assertEquals(3, pageView.getActivityPanes().size());
+
+    pageView.getPresenter().setFilterDone(true);
+    pageView.getPresenter().refresh();
+
+    Assert.assertEquals(2, pageView.getActivityPanes().size());
+  }
+
+  @Test
+  public void failIfResetCompletedFilterIsFaulty() throws ParseException {
+    getActivityManager().addActivity(ActivityTestData.ACTIVITY_DATA_LINE_WITH_WARNING);
+    getActivityManager().addActivity(ActivityTestData.ACTIVITY_NO_PREFIX_LOCATION_SPACE_LINE);
+    getActivityManager().addActivity(ActivityTestData.COMPLETED_ACTIVITY);
+    Assert.assertEquals(3, getActivityManager().getAllActivityNames().size());
+    ActivityPageView pageView = new ActivityPageView();
+    pageView.getPresenter().refresh();
+    Assert.assertNotNull("Expect a PageView to be created", pageView);
+    Assert.assertEquals(3, pageView.getActivityPanes().size());
+    pageView.getPresenter().setFilterDone(true);
+    pageView.getPresenter().refresh();
+    Assert.assertEquals(2, pageView.getActivityPanes().size());
+
+    pageView.getPresenter().resetFilter();
+    pageView.getPresenter().refresh();
+
+    Assert.assertEquals(3, pageView.getActivityPanes().size());
+  }
 
 }

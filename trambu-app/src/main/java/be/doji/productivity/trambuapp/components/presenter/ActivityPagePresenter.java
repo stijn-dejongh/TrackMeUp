@@ -90,7 +90,7 @@ public class ActivityPagePresenter extends Presenter {
     return tagFilter;
   }
 
-  void setTagFilter(String tagFilter) {
+  public void setTagFilter(String tagFilter) {
     this.resetFilter();
     this.tagFilter = tagFilter;
     view.getControlAccordion().updateFilterLabel();
