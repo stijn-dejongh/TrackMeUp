@@ -72,16 +72,16 @@ public class TimesheetView extends View {
     controls.setVgap(5);
     controls.setHgap(3);
 
-    DatePicker startDatePicker = createStartDatePicker();
+    this.startDatePicker = createStartDatePicker();
     Label startDateLabel = new Label("Start Date");
     controls.add(startDateLabel, 0, 0);
-    controls.add(startDatePicker, 1, 0);
+    controls.add(this.startDatePicker, 1, 0);
 
-    DatePicker endDatePicker = initEndDatePicker();
+    this.endDatePicker = initEndDatePicker();
 
     Label endDateLabel = new Label("End Date");
     controls.add(endDateLabel, 0, 1);
-    controls.add(endDatePicker, 1, 1);
+    controls.add(this.endDatePicker, 1, 1);
 
     controls.add(DisplayUtils.createHorizontalSpacer(), 0, 2, 2, 1);
 
@@ -135,7 +135,7 @@ public class TimesheetView extends View {
     exportFileChooser.setInitialFileName("Timesheet_export" + ".csv");
   }
 
-  void refresh() {
+  public void refresh() {
     this.timeLogGrid = initTimeLogGrid(presenter.getLogs());
     root.setCenter(createTimesheetPane());
   }

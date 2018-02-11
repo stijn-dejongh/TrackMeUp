@@ -42,12 +42,14 @@ public class TimesheetPresenter extends Presenter {
 
   @Override
   void refresh() {
-
+    this.logs = managers.getTimeTrackingManager()
+        .getActivityLogsInInterval(startDate, endDate);
   }
 
   @Override
   void populate() {
-
+    this.refresh();
+    this.view.refresh();
   }
 
   /**
@@ -57,8 +59,7 @@ public class TimesheetPresenter extends Presenter {
    * getEndDate
    */
   public List<ActivityLog> getLogs() {
-    this.logs = managers.getTimeTrackingManager()
-        .getActivityLogsInInterval(startDate, endDate);
+    this.refresh();
     return this.logs;
   }
 
@@ -90,20 +91,20 @@ public class TimesheetPresenter extends Presenter {
   }
 
   public void exportClicked() {
-    {
-      File file = view.getExportFileChooser().showSaveDialog(null);
-      if (file != null) {
 
-        try {
-          TimesheetToCSVExporter exporter = new TimesheetToCSVExporter(
-              managers.getActivityManager());
-          List<String> convert = exporter.convert(logs);
-          Files.write(Paths.get(file.getAbsolutePath()), convert);
-          LOG.info("Export completed");
-        } catch (IOException e) {
-          LOG.error("Error while exporting timesheet");
-        }
+    File file = view.getExportFileChooser().showSaveDialog(null);
+    if (file != null) {
+
+      try {
+        TimesheetToCSVExporter exporter = new TimesheetToCSVExporter(
+            managers.getActivityManager());
+        List<String> convert = exporter.convert(logs);
+        Files.write(Paths.get(file.getAbsolutePath()), convert);
+        LOG.info("Export completed");
+      } catch (IOException e) {
+        LOG.error("Error while exporting timesheet");
       }
     }
+
   }
 }
