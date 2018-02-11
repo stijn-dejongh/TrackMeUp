@@ -7,8 +7,8 @@ import be.doji.productivity.trambuapp.utils.DisplayUtils;
 import be.doji.productivity.trambuapp.utils.TooltipConstants;
 import be.doji.productivity.trambucore.TrackMeConstants;
 import be.doji.productivity.trambucore.model.tracker.ActivityLog;
-import com.sun.javafx.binding.StringFormatter;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
+import java.util.Formatter;
 import java.util.List;
 import javafx.geometry.Orientation;
 import javafx.scene.Parent;
@@ -155,8 +155,8 @@ public class TimesheetView extends View {
     grid.add(entrieTitle, 0, row++);
     grid.add(DisplayUtils.createHorizontalSpacer(), 0, row++, 3, 1);
 
-    LOG.debug(StringFormatter.format("Found {%d} timelog entries", activityLogsInInterval.size())
-        .getValue());
+    LOG.debug(new Formatter().format("Found {%d} timelog entries", activityLogsInInterval.size())
+        .toString());
     for (ActivityLog log : activityLogsInInterval) {
       Label activityLabel = new Label();
       activityLabel.setText(this.presenter.getActivityName(log.getActivityId()));
