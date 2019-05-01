@@ -1,20 +1,25 @@
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertTrue;
 
-import java.text.ParseException;
-import java.time.LocalDateTime;
+import be.doji.productivity.activity.Activity;
+import be.doji.productivity.time.TimePoint;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class ActivityTest {
 
   @Test
-  public void activity_builder_creates_object() throws ParseException {
+  public void activity_basic_construction_test() {
     Activity activity = Activity.builder()
         .name("Start design practise")
-        .plannedStartAt(LocalDateTime.of(2019, 05, 01, 11, 00))
-        .plannedEndAt(LocalDateTime.of(2019, 05, 31, 18, 00))
+        .plannedStartAt(TimePoint.fromString("01/05/2019"))
+        .plannedEndAt(TimePoint.fromString("31/05/2019"))
         .build();
 
     assertThat(activity).isNotNull();
+    assertTrue(activity.getAssignedTimeSlot().startsOn(TimePoint.fromString("01/05/2019")));
+    assertTrue(activity.getAssignedTimeSlot().endsOn(TimePoint.fromString("31/05/2019")));
+    Assert.assertThat(activity.getName()).equals("Start design practise");
   }
 
 }
