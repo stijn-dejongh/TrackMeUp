@@ -15,8 +15,6 @@ Naive, simple initial view
   * Data storage                
     ** major technological/vision concern, but not functionaly "core"
 
-
-
 # Proposed structure:
 **Dependencies from top to bottom**
   * top-level module for infrastructure
