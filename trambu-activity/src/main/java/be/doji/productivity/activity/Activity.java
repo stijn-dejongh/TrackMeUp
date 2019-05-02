@@ -1,6 +1,7 @@
 package be.doji.productivity.activity;
 
 import be.doji.productivity.time.TimePoint;
+import be.doji.productivity.time.TimeSlot;
 
 /**
  * An activity is something you do at a certain time. Activities have a link to times spent on it
@@ -32,6 +33,14 @@ public class Activity {
 
   public static ActivityBuilder builder() {
     return new ActivityBuilder();
+  }
+
+  public TimeSlot getAssignedTimeSlot() {
+    return new TimeSlot(plannedStart, plannedEnd);
+  }
+
+  public String getName() {
+    return this.name;
   }
 
 

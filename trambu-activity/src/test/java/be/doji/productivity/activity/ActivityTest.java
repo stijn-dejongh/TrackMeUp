@@ -1,9 +1,8 @@
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertTrue;
+package be.doji.productivity.activity;
 
-import be.doji.productivity.activity.Activity;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import be.doji.productivity.time.TimePoint;
-import org.junit.Assert;
 import org.junit.Test;
 
 public class ActivityTest {
@@ -16,10 +15,13 @@ public class ActivityTest {
         .plannedEndAt(TimePoint.fromString("31/05/2019"))
         .build();
 
-    assertThat(activity).isNotNull();
-    assertTrue(activity.getAssignedTimeSlot().startsOn(TimePoint.fromString("01/05/2019")));
-    assertTrue(activity.getAssignedTimeSlot().endsOn(TimePoint.fromString("31/05/2019")));
-    Assert.assertThat(activity.getName()).equals("Start design practise");
+    assertThat(activity).isNotNull().as("Activity after creation was null");
+    assertThat(activity.getAssignedTimeSlot().startsOn(TimePoint.fromString("01/05/2019"))).isTrue()
+        .as("Created activity has wrong start date");
+    assertThat(activity.getAssignedTimeSlot().endsOn(TimePoint.fromString("31/05/2019"))).isTrue()
+        .as("Created activity has wrong start date");
+    assertThat(activity.getName()).isEqualTo("Start design practise")
+        .as("Created activity has wrong title");
   }
 
 }

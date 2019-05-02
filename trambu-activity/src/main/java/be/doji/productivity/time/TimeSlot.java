@@ -17,4 +17,12 @@ public class TimeSlot {
   public TimePoint getEnd() {
     return this.end;
   }
+
+  public boolean startsOn(TimePoint reference) {
+    return TimePoint.sameDate(this.start, reference);
+  }
+
+  public boolean endsOn(TimePoint reference) {
+    return TimePoint.sameDate(this.end, reference);
+  }
 }
