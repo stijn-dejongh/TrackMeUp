@@ -6,7 +6,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.regex.Matcher;
+import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 /**
  * Wrapper class for date/time representation as I am very frustrated with Java's built in
@@ -17,7 +18,17 @@ import java.util.regex.Matcher;
 public class TimePoint {
 
   public static final String BASIC_DATE_PATTERN = "dd/MM/uuuu";
-  private static final Map<Matcher, DateTimeFormatter> CONVERTER_MAP = createConverters();
+  public static final String BASIC_DATE_REGEX = "\\d\\d/\\d\\d/\\d\\d\\d\\d";
+
+  public static final String BASIC_DATE_TIME_PATTERN = "dd/MM/uuuu HH:mm:ss";
+  public static final String BASIC_DATE_TIME_REGEX = "\\d\\d/\\d\\d/\\d\\d\\d\\d \\d\\d:\\d\\d:\\d\\d";
+
+  public static final String EXTENDED_DATE_TIME_PATTERN = "dd/MM/uuuu HH:mm:ss:SSS";
+  public static final String EXTENDED_DATE_TIME_REGEX = "\\d\\d/\\d\\d/\\d\\d\\d\\d \\d\\d:\\d\\d:\\d\\d:\\d\\d\\d";
+
+  private static final Map<Pattern, DateTimeFormatter> DATE_CONVERTERS = createDateConverters();
+  private static final Map<Pattern, DateTimeFormatter> DATE_TIME_CONVERTERS = createDateTimeConverters();
+
 
   private LocalDateTime internalRepresentation;
 
@@ -26,30 +37,54 @@ public class TimePoint {
     this.internalRepresentation = dateTime;
   }
 
-  private static Map<Matcher, DateTimeFormatter> createConverters() {
-    Map<Matcher, DateTimeFormatter> converters = new HashMap<>();
+  private static Map<Pattern, DateTimeFormatter> createDateConverters() {
+    Map<Pattern, DateTimeFormatter> converters = new HashMap<>();
+    converters.put(Pattern.compile(BASIC_DATE_REGEX),
+        DateTimeFormatter.ofPattern(BASIC_DATE_PATTERN, Locale.FRANCE));
 
     return converters;
   }
-  
-  /* Conversion magic happens here */
-  public static TimePoint fromString(String timeString) {
-    //TODO: switch between date only and time here
-    // using converters
 
-    DateTimeFormatter formatter = DateTimeFormatter
-        .ofPattern(BASIC_DATE_PATTERN, Locale.FRANCE);
-    LocalDate dateOnly = LocalDate.parse(timeString, formatter);
+  private static Map<Pattern, DateTimeFormatter> createDateTimeConverters() {
+    Map<Pattern, DateTimeFormatter> converters = new HashMap<>();
+    converters.put(Pattern.compile(BASIC_DATE_TIME_REGEX),
+        DateTimeFormatter.ofPattern(BASIC_DATE_TIME_PATTERN, Locale.FRANCE));
+    converters.put(Pattern.compile(EXTENDED_DATE_TIME_REGEX),
+        DateTimeFormatter.ofPattern(EXTENDED_DATE_TIME_PATTERN, Locale.FRANCE));
 
-    return new TimePoint(dateOnly.atStartOfDay());
+    return converters;
   }
 
-  public static boolean isSameDate(TimePoint start, TimePoint reference) {
-    //TODO
-    return false;
+  /* Conversion magic happens here */
+  public static TimePoint fromString(String timeString) {
+
+    for (Entry<Pattern, DateTimeFormatter> entry : DATE_TIME_CONVERTERS.entrySet()) {
+      if (entry.getKey().matcher(timeString).matches()) {
+        return new TimePoint(LocalDateTime.parse(timeString, entry.getValue()));
+      }
+    }
+
+    for (Entry<Pattern, DateTimeFormatter> entry : DATE_CONVERTERS.entrySet()) {
+      if (entry.getKey().matcher(timeString).matches()) {
+        return new TimePoint(LocalDate.parse(timeString, entry.getValue()).atStartOfDay());
+      }
+    }
+    throw new IllegalArgumentException(
+        "Could not parse given Date string: No matching parsers found for string [" + timeString
+            + "] ");
   }
 
   public LocalDateTime toLocalDateTime() {
     return this.internalRepresentation;
+  }
+
+  private LocalDate toLocalDate() {
+    return this.internalRepresentation.toLocalDate();
+  }
+
+  public static boolean isSameDate(TimePoint start, TimePoint reference) {
+    LocalDate o1 = start.toLocalDate();
+    LocalDate o2 = reference.toLocalDate();
+    return o1.isEqual(o2);
   }
 }

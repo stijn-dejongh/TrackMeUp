@@ -25,14 +25,14 @@ public class TimePointTest {
   public void isSameDate_same_dates_match() {
     TimePoint day1 = TimePoint.fromString("18/12/1989");
     TimePoint day2 = TimePoint.fromString("18/12/1989");
-    TimePoint.isSameDate(day1, day2);
+    assertThat(TimePoint.isSameDate(day1, day2)).isTrue();
   }
 
   @Test
   public void isSameDate_same_dates_different_hours_match() {
     TimePoint day1 = TimePoint.fromString("18/12/1989 12:00:00");
     TimePoint day2 = TimePoint.fromString("18/12/1989 18:30:00");
-    TimePoint.isSameDate(day1, day2);
+    assertThat(TimePoint.isSameDate(day1, day2)).isTrue();
   }
 
 }
