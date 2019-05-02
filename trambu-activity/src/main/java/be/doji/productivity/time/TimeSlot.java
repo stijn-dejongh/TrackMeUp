@@ -19,10 +19,10 @@ public class TimeSlot {
   }
 
   public boolean startsOn(TimePoint reference) {
-    return TimePoint.sameDate(this.start, reference);
+    return TimePoint.isSameDate(this.start, reference);
   }
 
   public boolean endsOn(TimePoint reference) {
-    return TimePoint.sameDate(this.end, reference);
+    return TimePoint.isSameDate(this.end, reference);
   }
 }
