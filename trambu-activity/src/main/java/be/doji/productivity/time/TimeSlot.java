@@ -27,10 +27,10 @@ public class TimeSlot {
   }
 
   public static TimeSlot between(TimePoint from, TimePoint to) {
-    return TimePoint.isBefore(to, from) ? new TimeSlot(from, to) : new TimeSlot(to, from);
+    return TimePoint.isBefore(from, to) ? new TimeSlot(from, to) : new TimeSlot(to, from);
   }
 
-  public boolean isInRange(TimePoint toCheck) {
-    return TimePoint.isBefore(toCheck, end) && TimePoint.isBefore(start, toCheck);
+  public boolean contains(TimePoint toCheck) {
+    return TimePoint.isBeforeOrEqual(toCheck, end) && TimePoint.isBeforeOrEqual(start, toCheck);
   }
 }

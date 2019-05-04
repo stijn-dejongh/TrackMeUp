@@ -16,7 +16,7 @@ public class ExpectedEndPriorityCalculator implements PriorityCalculator {
     double priorityCalculator = RANGE_MAX;
     TimePoint addedOffset = TimePoint.now();
 
-    while (activity.getAssignedTimeSlot().isInRange(addedOffset) && priorityCalculator > 0) {
+    while (activity.getAssignedTimeSlot().contains(addedOffset) && priorityCalculator > 0) {
       addedOffset = addedOffset.add(OFFSET_IN_DAYS, ChronoUnit.DAYS);
       priorityCalculator += INCREMENT;
     }

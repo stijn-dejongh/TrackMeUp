@@ -92,10 +92,20 @@ public class TimePoint {
             + "] ");
   }
 
-  public static boolean isBefore(TimePoint plannedEnd, TimePoint plannedStart) {
-    return plannedEnd != null &&
-        plannedStart != null &&
-        plannedEnd.toLocalDateTime().isBefore(plannedStart.toLocalDateTime());
+  public static boolean isBefore(TimePoint toCheck, TimePoint reference) {
+    return toCheck != null &&
+        reference != null &&
+        toCheck.toLocalDateTime().isBefore(reference.toLocalDateTime());
+  }
+
+  public static boolean isBeforeOrEqual(TimePoint toCheck, TimePoint reference) {
+    return isBefore(toCheck, reference) || isEqual(toCheck, reference);
+  }
+
+  private static boolean isEqual(TimePoint toCheck, TimePoint reference) {
+    return toCheck != null &&
+        reference != null &&
+        toCheck.toLocalDateTime().isEqual(reference.toLocalDateTime());
   }
 
   public static boolean isSameDate(TimePoint start, TimePoint reference) {
