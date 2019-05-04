@@ -1,4 +1,4 @@
-package be.doji.productivity.activity.priority;
+package be.doji.productivity.priority;
 
 import be.doji.productivity.activity.Activity;
 import be.doji.productivity.time.TimePoint;

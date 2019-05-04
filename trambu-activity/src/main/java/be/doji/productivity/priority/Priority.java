@@ -1,4 +1,4 @@
-package be.doji.productivity.activity.priority;
+package be.doji.productivity.priority;
 
 public enum Priority {
 

@@ -1,4 +1,4 @@
-package be.doji.productivity.activity.priority;
+package be.doji.productivity.priority;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
