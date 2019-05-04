@@ -15,15 +15,15 @@ public class Activity {
   private TimePoint plannedStart;
   private TimePoint plannedEnd;
 
-  private void setName(String activityName) {
+  void setName(String activityName) {
     this.name = activityName;
   }
 
-  private void setPlannedStart(TimePoint plannedStart) {
+  void setPlannedStart(TimePoint plannedStart) {
     this.plannedStart = plannedStart;
   }
 
-  private void setPlannedEnd(TimePoint plannedEnd) {
+  void setPlannedEnd(TimePoint plannedEnd) {
     this.plannedEnd = plannedEnd;
   }
 

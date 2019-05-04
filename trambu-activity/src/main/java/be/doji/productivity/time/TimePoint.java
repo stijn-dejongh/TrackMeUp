@@ -30,7 +30,7 @@ public class TimePoint {
   private static final Map<Pattern, DateTimeFormatter> DATE_TIME_CONVERTERS = createDateTimeConverters();
 
 
-  private LocalDateTime internalRepresentation;
+  private final LocalDateTime internalRepresentation;
 
 
   public TimePoint(LocalDateTime dateTime) {
