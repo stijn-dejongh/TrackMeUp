@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
  */
 public class TimePoint {
 
-  public static Clock CLOCK = Clock.systemDefaultZone();
+  private static Clock clock = Clock.systemDefaultZone();
 
   private static final String BASIC_DATE_PATTERN = "dd/MM/uuuu";
   private static final String BASIC_DATE_REGEX = "\\d\\d/\\d\\d/\\d\\d\\d\\d";
@@ -60,7 +60,7 @@ public class TimePoint {
   }
 
   public static TimePoint now() {
-    return new TimePoint(LocalDateTime.ofInstant(CLOCK.instant(), CLOCK.getZone()));
+    return new TimePoint(LocalDateTime.ofInstant(clock.instant(), clock.getZone()));
   }
 
   public LocalDateTime toLocalDateTime() {
@@ -108,7 +108,7 @@ public class TimePoint {
    * static setter for testing purposes
    */
   public static void setTimePointClock(Clock toSet) {
-    CLOCK = toSet;
+    clock = toSet;
   }
 
   public TimePoint add(int amount, TemporalUnit unit) {
