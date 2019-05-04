@@ -1,8 +1,11 @@
 # Activity Domain
 
 ## Domain Properties
-Name: Activity
-Importance: Core
+| | |
+|---|---
+|Name| Activity  
+|Importance| Core  
+|Type| Functional
 
 ## Context
 

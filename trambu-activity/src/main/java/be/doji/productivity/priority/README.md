@@ -1,12 +1,16 @@
 # Priority Domain
 
 ## Domain Properties
-Name: Activity
-Importance: Non-Core
+| | |
+|---|---
+|Name| Priority  
+|Importance| Non-Core  
+|Type| Functional
+
 
 ## Context
 Moved from Activity to it's own domain, since it is mostly a placeholder for nice-to-have functionality.
-This makes it **Non-Core** by definition.ó
+This makes it **Non-Core** by definition.
 
 # Thesaurius
 

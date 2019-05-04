@@ -1,5 +1,6 @@
 package be.doji.productivity.activity;
 
+import be.doji.productivity.timelog.TimeLog;
 import be.doji.productivity.time.TimePoint;
 import be.doji.productivity.time.TimeSlot;
 import java.util.Optional;
@@ -18,6 +19,7 @@ public class Activity {
   private TimePoint plannedEnd;
   private Importance importance;
   private TimePoint deadline;
+  private TimeLog log;
 
   void setName(String activityName) {
     this.name = activityName;
