@@ -15,7 +15,7 @@ public class Activity {
   private String name;
   private TimePoint plannedStart;
   private TimePoint plannedEnd;
-  private Priority priority;
+  private Importance importance;
 
   void setName(String activityName) {
     this.name = activityName;
@@ -29,8 +29,8 @@ public class Activity {
     this.plannedEnd = plannedEnd;
   }
 
-  void setPriority(Priority priority) {
-    this.priority = priority;
+  void setImportance(Importance importance) {
+    this.importance = importance;
   }
 
   private Activity() {
@@ -48,8 +48,8 @@ public class Activity {
     return this.name;
   }
 
-  Priority getPriority() {
-    return this.priority;
+  Importance getImportance() {
+    return this.importance;
   }
 
 
@@ -58,7 +58,7 @@ public class Activity {
     private String activityName;
     private TimePoint plannedStart;
     private TimePoint plannedEnd;
-    private Priority priority = new Priority();
+    private Importance importance = Importance.NORMAL;
 
     public ActivityBuilder name(String activityName) {
       this.activityName = activityName;
@@ -75,8 +75,8 @@ public class Activity {
       return this;
     }
 
-    public ActivityBuilder priority(Priority prio) {
-      this.priority = prio;
+    public ActivityBuilder priority(Importance prio) {
+      this.importance = prio;
       return this;
     }
 
@@ -87,7 +87,7 @@ public class Activity {
       result.setName(this.activityName);
       result.setPlannedStart(this.plannedStart);
       result.setPlannedEnd(this.plannedEnd);
-      result.setPriority(this.priority);
+      result.setImportance(this.importance);
       return result;
     }
 

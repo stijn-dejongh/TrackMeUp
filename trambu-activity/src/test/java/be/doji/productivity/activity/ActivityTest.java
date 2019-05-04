@@ -59,7 +59,7 @@ public class ActivityTest {
     Activity activity = Activity.builder()
         .name("Start design practise")
         .build();
-    assertThat(activity.getPriority()).isNotNull();
+    assertThat(activity.getImportance()).isNotNull();
   }
 
   /**
@@ -69,10 +69,10 @@ public class ActivityTest {
   public void builder_has_customPriority() {
     Activity activity = Activity.builder()
         .name("Start design practise")
-        .priority(Priority.NORMAL)
+        .priority(Importance.NORMAL)
         .build();
-    assertThat(activity.getPriority()).isNotNull();
-    assertThat(activity.getPriority()).isEqualTo(Priority.NORMAL);
+    assertThat(activity.getImportance()).isNotNull();
+    assertThat(activity.getImportance()).isEqualTo(Importance.NORMAL);
   }
 
 }
