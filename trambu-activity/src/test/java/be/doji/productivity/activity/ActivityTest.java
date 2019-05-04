@@ -52,7 +52,7 @@ public class ActivityTest {
   }
 
   /**
-   * As a user, I want to be able to know the priority of my activities
+   * As a user, I want to be able to know the importance of my activities
    */
   @Test
   public void builder_has_defaultPriority() {
@@ -63,13 +63,13 @@ public class ActivityTest {
   }
 
   /**
-   * As a user, I want to be able to know the priority of my activities
+   * As a user, I want to be able to know the importance of my activities
    */
   @Test
   public void builder_has_customPriority() {
     Activity activity = Activity.builder()
         .name("Start design practise")
-        .priority(Importance.NORMAL)
+        .importance(Importance.NORMAL)
         .build();
     assertThat(activity.getImportance()).isNotNull();
     assertThat(activity.getImportance()).isEqualTo(Importance.NORMAL);
@@ -83,7 +83,7 @@ public class ActivityTest {
   public void isDeadlineExceeded_default() {
     Activity activity = Activity.builder()
         .name("Start design practise")
-        .priority(Importance.NORMAL)
+        .importance(Importance.NORMAL)
         .build();
     assertThat(activity.isDeadlineExceeded()).isFalse();
   }
@@ -96,7 +96,7 @@ public class ActivityTest {
   public void isDeadlineExceeded_withDeadlineIn1900() {
     Activity activity = Activity.builder()
         .name("Start design practise")
-        .priority(Importance.NORMAL)
+        .importance(Importance.NORMAL)
         .deadline(TimePoint.fromString("01/01/1865"))
         .build();
     assertThat(activity.isDeadlineExceeded()).isFalse();

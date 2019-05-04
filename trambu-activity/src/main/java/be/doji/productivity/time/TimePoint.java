@@ -4,6 +4,7 @@ import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalUnit;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -18,7 +19,7 @@ import java.util.regex.Pattern;
  */
 public class TimePoint {
 
-  private static Clock clock = Clock.systemDefaultZone();
+  public static Clock CLOCK = Clock.systemDefaultZone();
 
   private static final String BASIC_DATE_PATTERN = "dd/MM/uuuu";
   private static final String BASIC_DATE_REGEX = "\\d\\d/\\d\\d/\\d\\d\\d\\d";
@@ -59,14 +60,14 @@ public class TimePoint {
   }
 
   public static TimePoint now() {
-    return new TimePoint(LocalDateTime.ofInstant(clock.instant(), clock.getZone()));
+    return new TimePoint(LocalDateTime.ofInstant(CLOCK.instant(), CLOCK.getZone()));
   }
 
   public LocalDateTime toLocalDateTime() {
     return this.internalRepresentation;
   }
 
-  private LocalDate toLocalDate() {
+  public LocalDate toLocalDate() {
     return this.internalRepresentation.toLocalDate();
   }
 
@@ -106,7 +107,12 @@ public class TimePoint {
   /**
    * static setter for testing purposes
    */
-  protected static void setTimePointClock(Clock toSet) {
-    clock = toSet;
+  public static void setTimePointClock(Clock toSet) {
+    CLOCK = toSet;
+  }
+
+  public TimePoint add(int amount, TemporalUnit unit) {
+    LocalDateTime result = LocalDateTime.from(this.toLocalDateTime().plus(amount, unit));
+    return new TimePoint(result);
   }
 }

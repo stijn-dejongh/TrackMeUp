@@ -25,4 +25,12 @@ public class TimeSlot {
   public boolean endsOn(TimePoint reference) {
     return TimePoint.isSameDate(this.end, reference);
   }
+
+  public static TimeSlot between(TimePoint from, TimePoint to) {
+    return TimePoint.isBefore(to, from) ? new TimeSlot(from, to) : new TimeSlot(to, from);
+  }
+
+  public boolean isInRange(TimePoint toCheck) {
+    return TimePoint.isBefore(toCheck, end) && TimePoint.isBefore(start, toCheck);
+  }
 }

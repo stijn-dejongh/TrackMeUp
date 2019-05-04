@@ -2,6 +2,7 @@ package be.doji.productivity.activity;
 
 import be.doji.productivity.time.TimePoint;
 import be.doji.productivity.time.TimeSlot;
+import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -57,6 +58,19 @@ public class Activity {
     return this.importance;
   }
 
+  public Optional<TimePoint> getDeadline() {
+    return this.deadline == null ? Optional.empty() : Optional.of(this.deadline);
+  }
+
+  public Optional<TimePoint> getPlannedEnd() {
+    return this.plannedEnd == null ? Optional.empty() : Optional.of(this.plannedEnd);
+  }
+
+  public Optional<TimePoint> getPlannedStart() {
+    return this.plannedStart == null ? Optional.empty() : Optional.of(this.plannedStart);
+  }
+
+
   public boolean isDeadlineExceeded() {
     return TimePoint.isBefore(TimePoint.now(), this.deadline);
   }
@@ -85,7 +99,7 @@ public class Activity {
       return this;
     }
 
-    public ActivityBuilder priority(Importance prio) {
+    public ActivityBuilder importance(Importance prio) {
       this.importance = prio;
       return this;
     }

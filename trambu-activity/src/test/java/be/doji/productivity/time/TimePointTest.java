@@ -7,6 +7,7 @@ import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.Month;
 import java.time.ZoneOffset;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +22,7 @@ public class TimePointTest {
 
   private static final String DOJI_BIRTHDAY = "18/12/1989";
 
-  private static final LocalDateTime NOW = LocalDateTime.of(2019, 05, 04, 14, 13, 00);
+  private static final LocalDateTime NOW = LocalDateTime.of(2019, 5, 4, 14, 13, 0);
 
   @Before
   public void setUp() {
@@ -145,5 +146,10 @@ public class TimePointTest {
   @Test
   public void now_isToday() {
     assertThat(TimePoint.now().toLocalDateTime()).isEqualTo(NOW);
+  }
+
+  @After
+  public void cleanUp() {
+    TimePoint.setTimePointClock(Clock.systemDefaultZone());
   }
 }
