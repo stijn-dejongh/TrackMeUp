@@ -1,29 +1,0 @@
-
-4be.doji.productivity.activity.Importance#hashCode()I}
-sD:\Documents\_development\git\TrackMeUp\trambu-activity\src\main\java\be\doji\productivity\activity\Importance.java9 9("1*š
-1}
-sD:\Documents\_development\git\TrackMeUp\trambu-activity\src\main\java\be\doji\productivity\activity\Importance.java: :(!ìé
-}
-sD:\Documents\_development\git\TrackMeUp\trambu-activity\src\main\java\be\doji\productivity\activity\Importance.java: :(6
-%00org.apache.commons.lang3.builder.HashCodeBuilder"0org.apache.commons.lang3.builder.HashCodeBuilderŒ
-‰
-}
-sD:\Documents\_development\git\TrackMeUp\trambu-activity\src\main\java\be\doji\productivity\activity\Importance.java: :(&
-%1"<org.apache.commons.lang3.builder.HashCodeBuilder#<init>(II)V*8
-6
-%00org.apache.commons.lang3.builder.HashCodeBuilder*2*2õò
-}
-sD:\Documents\_development\git\TrackMeUp\trambu-activity\src\main\java\be\doji\productivity\activity\Importance.java: <(6
-%20org.apache.commons.lang3.builder.HashCodeBuilder"lorg.apache.commons.lang3.builder.HashCodeBuilder#append(I)Lorg/apache/commons/lang3/builder/HashCodeBuilder;*8
-6
-%00org.apache.commons.lang3.builder.HashCodeBuilder*
-""2	append(I)•’
-}
-sD:\Documents\_development\git\TrackMeUp\trambu-activity\src\main\java\be\doji\productivity\activity\Importance.java: =(	
-%3int">org.apache.commons.lang3.builder.HashCodeBuilder#toHashCode()I*8
-6
-%20org.apache.commons.lang3.builder.HashCodeBuilder2toHashCode()"‡
-}
-sD:\Documents\_development\git\TrackMeUp\trambu-activity\src\main\java\be\doji\productivity\activity\Importance.java: =(
-""B,*
-(be.doji.productivity.activity.Importance

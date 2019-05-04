@@ -1,68 +1,0 @@
-
-Ibe.doji.productivity.time.TimePoint#createDateConverters()Ljava/util/Map;x
-nD:\Documents\_development\git\TrackMeUp\trambu-activity\src\main\java\be\doji\productivity\time\TimePoint.java(1 ((E"1*á
-1x
-nD:\Documents\_development\git\TrackMeUp\trambu-activity\src\main\java\be\doji\productivity\time\TimePoint.java)1 )(@©¦
-x
-nD:\Documents\_development\git\TrackMeUp\trambu-activity\src\main\java\be\doji\productivity\time\TimePoint.java)5 )(>
-%0java.util.HashMap"java.util.HashMap»
-¸
-x
-nD:\Documents\_development\git\TrackMeUp\trambu-activity\src\main\java\be\doji\productivity\time\TimePoint.java)1 )(@
-%1"java.util.HashMap#<init>()V*
-
-%0java.util.HashMap»
-¸
-x
-nD:\Documents\_development\git\TrackMeUp\trambu-activity\src\main\java\be\doji\productivity\time\TimePoint.java) )(A
-
-convertersjava.util.Map"__id*
-
-%0java.util.HashMap£
- 
-x
-nD:\Documents\_development\git\TrackMeUp\trambu-activity\src\main\java\be\doji\productivity\time\TimePoint.java*# *(3
-%2java.lang.String"__id*
-""¡
-ž
-x
-nD:\Documents\_development\git\TrackMeUp\trambu-activity\src\main\java\be\doji\productivity\time\TimePoint.java* *(4
-%3java.util.regex.Pattern"Ljava.util.regex.Pattern#compile(Ljava/lang/String;)Ljava/util/regex/Pattern;*"
-java.util.regex.Pattern*
-
-%2java.lang.String£
- 
-x
-nD:\Documents\_development\git\TrackMeUp\trambu-activity\src\main\java\be\doji\productivity\time\TimePoint.java+$ +(6
-%4java.lang.String"__id*
-""£
- 
-x
-nD:\Documents\_development\git\TrackMeUp\trambu-activity\src\main\java\be\doji\productivity\time\TimePoint.java+8 +(E
-%5java.util.Locale"__id*
-""û
-ø
-x
-nD:\Documents\_development\git\TrackMeUp\trambu-activity\src\main\java\be\doji\productivity\time\TimePoint.java+ +(F(
-%6"java.time.format.DateTimeFormatter"vjava.time.format.DateTimeFormatter#ofPattern(Ljava/lang/String;Ljava/util/Locale;)Ljava/time/format/DateTimeFormatter;*&"$
-"java.time.format.DateTimeFormatter*
-
-%4java.lang.String*
-
-%5java.util.Locale‰†
-x
-nD:\Documents\_development\git\TrackMeUp\trambu-activity\src\main\java\be\doji\productivity\time\TimePoint.java* +(G(
-%7"java.time.format.DateTimeFormatter"Ijava.util.Map#put(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;*
-
-
-convertersjava.util.Map*
-
-%3java.util.regex.Pattern**
-(
-%6"java.time.format.DateTimeFormatter2)put(Ljava/lang/Object;Ljava/lang/Object;)"™
-x
-nD:\Documents\_development\git\TrackMeUp\trambu-activity\src\main\java\be\doji\productivity\time\TimePoint.java- -(
-
-
-convertersjava.util.MapB'"%
-#be.doji.productivity.time.TimePoint
