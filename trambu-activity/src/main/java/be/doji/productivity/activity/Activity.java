@@ -91,7 +91,7 @@ public class Activity {
       return result;
     }
 
-    private void throwExceptionIfInvalidParameters() throws IllegalStateException {
+    private void throwExceptionIfInvalidParameters() {
       if (StringUtils.isBlank(this.activityName)) {
         throw new IllegalStateException("The activity name can not be empty");
       }

@@ -43,4 +43,11 @@ public class ImportanceTest {
     assertThat(Importance.NORMAL.equals(Importance.NORMAL)).isTrue();
   }
 
+  @Test
+  public void importance_hash() {
+    assertThat(Importance.NORMAL.hashCode()).isEqualTo(Importance.NORMAL.hashCode());
+    assertThat(Importance.NORMAL.hashCode()).isNotEqualTo(Importance.HIGH.hashCode());
+    assertThat(Importance.NORMAL.hashCode()).isNotEqualTo(Importance.LOW.hashCode());
+  }
+
 }
