@@ -16,6 +16,7 @@ public class Activity {
   private TimePoint plannedStart;
   private TimePoint plannedEnd;
   private Importance importance;
+  private TimePoint deadline;
 
   void setName(String activityName) {
     this.name = activityName;
@@ -31,6 +32,10 @@ public class Activity {
 
   void setImportance(Importance importance) {
     this.importance = importance;
+  }
+
+  void setDeadline(TimePoint deadline) {
+    this.deadline = deadline;
   }
 
   private Activity() {
@@ -52,6 +57,10 @@ public class Activity {
     return this.importance;
   }
 
+  public boolean isDeadlineExceeded() {
+    return TimePoint.isBefore(TimePoint.now(), this.deadline);
+  }
+
 
   public static class ActivityBuilder {
 
@@ -59,6 +68,7 @@ public class Activity {
     private TimePoint plannedStart;
     private TimePoint plannedEnd;
     private Importance importance = Importance.NORMAL;
+    private TimePoint deadline;
 
     public ActivityBuilder name(String activityName) {
       this.activityName = activityName;
@@ -88,6 +98,8 @@ public class Activity {
       result.setPlannedStart(this.plannedStart);
       result.setPlannedEnd(this.plannedEnd);
       result.setImportance(this.importance);
+      result.setDeadline(this.deadline);
+
       return result;
     }
 
@@ -98,6 +110,11 @@ public class Activity {
       if (TimePoint.isBefore(this.plannedEnd, this.plannedStart)) {
         throw new IllegalStateException("The activity end date must be after the start date");
       }
+    }
+
+    public ActivityBuilder deadline(TimePoint deadline) {
+      this.deadline = deadline;
+      return this;
     }
   }
 }

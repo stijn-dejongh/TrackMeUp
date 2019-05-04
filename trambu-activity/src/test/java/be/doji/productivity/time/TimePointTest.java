@@ -3,15 +3,33 @@ package be.doji.productivity.time;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.time.Clock;
 import java.time.LocalDateTime;
 import java.time.Month;
+import java.time.ZoneOffset;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({TimePoint.class})
 public class TimePointTest {
 
+  private static final String DOJI_BIRTHDAY = "18/12/1989";
 
-  public static final String DOJI_BIRTHDAY = "18/12/1989";
+  private static final LocalDateTime NOW = LocalDateTime.of(2019, 05, 04, 14, 13, 00);
+
+  @Before
+  public void setUp() {
+    Clock clockMock = PowerMockito.mock(Clock.class);
+    TimePoint.setTimePointClock(clockMock);
+    PowerMockito.when(clockMock.instant()).thenReturn(NOW.toInstant(ZoneOffset.UTC));
+    PowerMockito.when(clockMock.getZone()).thenReturn(ZoneOffset.UTC);
+  }
 
   @Test
   public void fromString_toLocalDateTime_dateOnly() {
@@ -88,7 +106,7 @@ public class TimePointTest {
   public void isBefore_startBeforeEnd() {
     TimePoint early = TimePoint.fromString(DOJI_BIRTHDAY);
     TimePoint late = TimePoint.fromString("04/05/2019");
-    
+
     assertThat(TimePoint.isBefore(early, late)).isTrue();
   }
 
@@ -122,5 +140,10 @@ public class TimePointTest {
     TimePoint late = null;
 
     assertThat(TimePoint.isBefore(late, early)).isFalse();
+  }
+
+  @Test
+  public void now_isToday() {
+    assertThat(TimePoint.now().toLocalDateTime()).isEqualTo(NOW);
   }
 }

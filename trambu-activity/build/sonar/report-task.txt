@@ -1,0 +1,8 @@
+organization=justdoji-github
+projectKey=be.doji.productivity:trambu
+serverUrl=https://sonarcloud.io
+serverVersion=7.8.0.24466
+branch=ddd_redesign
+dashboardUrl=https://sonarcloud.io/dashboard?id=be.doji.productivity%3Atrambu&branch=ddd_redesign&resolved=false
+ceTaskId=AWqCqsK0neK5oxBtVsnR
+ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AWqCqsK0neK5oxBtVsnR

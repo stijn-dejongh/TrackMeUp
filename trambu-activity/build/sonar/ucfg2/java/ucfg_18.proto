@@ -1,0 +1,62 @@
+
+Dbe.doji.productivity.activity.Importance#equals(Ljava/lang/Object;)Z}
+sD:\Documents\_development\git\TrackMeUp\trambu-activity\src\main\java\be\doji\productivity\activity\Importance.java' '("paramAnnotations*Œ
+2}
+sD:\Documents\_development\git\TrackMeUp\trambu-activity\src\main\java\be\doji\productivity\activity\Importance.java, ,("‡
+}
+sD:\Documents\_development\git\TrackMeUp\trambu-activity\src\main\java\be\doji\productivity\activity\Importance.java, ,(
+""*Œ
+4}
+sD:\Documents\_development\git\TrackMeUp\trambu-activity\src\main\java\be\doji\productivity\activity\Importance.java) )("‡
+}
+sD:\Documents\_development\git\TrackMeUp\trambu-activity\src\main\java\be\doji\productivity\activity\Importance.java) )(
+""*š
+paramAnnotations}
+sD:\Documents\_development\git\TrackMeUp\trambu-activity\src\main\java\be\doji\productivity\activity\Importance.java' '(#Ç
+Ä
+}
+sD:\Documents\_development\git\TrackMeUp\trambu-activity\src\main\java\be\doji\productivity\activity\Importance.java& &(
+%0"
+__annotate*
+java.lang.Override*
+
+objjava.lang.Object±
+®
+}
+sD:\Documents\_development\git\TrackMeUp\trambu-activity\src\main\java\be\doji\productivity\activity\Importance.java' '("
+objjava.lang.Object"__annotation*
+
+%0*	
+2
+4
+1*‚
+1}
+sD:\Documents\_development\git\TrackMeUp\trambu-activity\src\main\java\be\doji\productivity\activity\Importance.java/ /(èå
+}
+sD:\Documents\_development\git\TrackMeUp\trambu-activity\src\main\java\be\doji\productivity\activity\Importance.java/ /(4
+%1.org.apache.commons.lang3.builder.EqualsBuilder".org.apache.commons.lang3.builder.EqualsBuilderú
+÷
+}
+sD:\Documents\_development\git\TrackMeUp\trambu-activity\src\main\java\be\doji\productivity\activity\Importance.java/ /(
+%2"8org.apache.commons.lang3.builder.EqualsBuilder#<init>()V*6
+4
+%1.org.apache.commons.lang3.builder.EqualsBuilder÷ô
+}
+sD:\Documents\_development\git\TrackMeUp\trambu-activity\src\main\java\be\doji\productivity\activity\Importance.java/ 0(:4
+%3.org.apache.commons.lang3.builder.EqualsBuilder"iorg.apache.commons.lang3.builder.EqualsBuilder#append(II)Lorg/apache/commons/lang3/builder/EqualsBuilder;*6
+4
+%1.org.apache.commons.lang3.builder.EqualsBuilder*
+""*
+""2
+append(II)‘Ž
+}
+sD:\Documents\_development\git\TrackMeUp\trambu-activity\src\main\java\be\doji\productivity\activity\Importance.java/ 1(
+%4boolean":org.apache.commons.lang3.builder.EqualsBuilder#isEquals()Z*6
+4
+%3.org.apache.commons.lang3.builder.EqualsBuilder2
+isEquals()"‡
+}
+sD:\Documents\_development\git\TrackMeUp\trambu-activity\src\main\java\be\doji\productivity\activity\Importance.java/ 1(
+"":
+objjava.lang.ObjectB,*
+(be.doji.productivity.activity.Importance

@@ -75,4 +75,31 @@ public class ActivityTest {
     assertThat(activity.getImportance()).isEqualTo(Importance.NORMAL);
   }
 
+  /**
+   * The instance in time at which the activity has to end.
+   * When this is exceeded, we expect bad stuff to happen
+   */
+  @Test
+  public void isDeadlineExceeded_default() {
+    Activity activity = Activity.builder()
+        .name("Start design practise")
+        .priority(Importance.NORMAL)
+        .build();
+    assertThat(activity.isDeadlineExceeded()).isFalse();
+  }
+
+  /**
+   * The instance in time at which the activity has to end.
+   * When this is exceeded, we expect bad stuff to happen
+   */
+  @Test
+  public void isDeadlineExceeded_withDeadlineIn1900() {
+    Activity activity = Activity.builder()
+        .name("Start design practise")
+        .priority(Importance.NORMAL)
+        .deadline(TimePoint.fromString("01/01/1865"))
+        .build();
+    assertThat(activity.isDeadlineExceeded()).isFalse();
+  }
+
 }

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="be.doji.productivity.activity.ImportanceTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2019-05-04T11:46:23" hostname="Raiko" time="0.011">
+  <properties/>
+  <testcase name="importance_hash" classname="be.doji.productivity.activity.ImportanceTest" time="0.006"/>
+  <testcase name="importance_compare_transitive" classname="be.doji.productivity.activity.ImportanceTest" time="0.0"/>
+  <testcase name="importance_compare_identity" classname="be.doji.productivity.activity.ImportanceTest" time="0.0"/>
+  <testcase name="importance_compare_order" classname="be.doji.productivity.activity.ImportanceTest" time="0.0"/>
+  <testcase name="importance_equality" classname="be.doji.productivity.activity.ImportanceTest" time="0.004"/>
+  <testcase name="importance_compare_symmetry" classname="be.doji.productivity.activity.ImportanceTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

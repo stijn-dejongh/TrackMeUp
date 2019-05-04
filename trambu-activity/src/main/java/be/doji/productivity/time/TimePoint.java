@@ -1,5 +1,6 @@
 package be.doji.productivity.time;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -17,14 +18,16 @@ import java.util.regex.Pattern;
  */
 public class TimePoint {
 
-  public static final String BASIC_DATE_PATTERN = "dd/MM/uuuu";
-  public static final String BASIC_DATE_REGEX = "\\d\\d/\\d\\d/\\d\\d\\d\\d";
+  private static Clock clock = Clock.systemDefaultZone();
 
-  public static final String BASIC_DATE_TIME_PATTERN = "dd/MM/uuuu HH:mm:ss";
-  public static final String BASIC_DATE_TIME_REGEX = "\\d\\d/\\d\\d/\\d\\d\\d\\d \\d\\d:\\d\\d:\\d\\d";
+  private static final String BASIC_DATE_PATTERN = "dd/MM/uuuu";
+  private static final String BASIC_DATE_REGEX = "\\d\\d/\\d\\d/\\d\\d\\d\\d";
 
-  public static final String EXTENDED_DATE_TIME_PATTERN = "dd/MM/uuuu HH:mm:ss:SSS";
-  public static final String EXTENDED_DATE_TIME_REGEX = "\\d\\d/\\d\\d/\\d\\d\\d\\d \\d\\d:\\d\\d:\\d\\d:\\d\\d\\d";
+  private static final String BASIC_DATE_TIME_PATTERN = "dd/MM/uuuu HH:mm:ss";
+  private static final String BASIC_DATE_TIME_REGEX = "\\d\\d/\\d\\d/\\d\\d\\d\\d \\d\\d:\\d\\d:\\d\\d";
+
+  private static final String EXTENDED_DATE_TIME_PATTERN = "dd/MM/uuuu HH:mm:ss:SSS";
+  private static final String EXTENDED_DATE_TIME_REGEX = "\\d\\d/\\d\\d/\\d\\d\\d\\d \\d\\d:\\d\\d:\\d\\d:\\d\\d\\d";
 
   private static final Map<Pattern, DateTimeFormatter> DATE_CONVERTERS = createDateConverters();
   private static final Map<Pattern, DateTimeFormatter> DATE_TIME_CONVERTERS = createDateTimeConverters();
@@ -33,7 +36,7 @@ public class TimePoint {
   private final LocalDateTime internalRepresentation;
 
 
-  public TimePoint(LocalDateTime dateTime) {
+  private TimePoint(LocalDateTime dateTime) {
     this.internalRepresentation = dateTime;
   }
 
@@ -53,6 +56,10 @@ public class TimePoint {
         DateTimeFormatter.ofPattern(EXTENDED_DATE_TIME_PATTERN, Locale.FRANCE));
 
     return converters;
+  }
+
+  public static TimePoint now() {
+    return new TimePoint(LocalDateTime.ofInstant(clock.instant(), clock.getZone()));
   }
 
   public LocalDateTime toLocalDateTime() {
@@ -94,5 +101,12 @@ public class TimePoint {
     LocalDate o1 = start.toLocalDate();
     LocalDate o2 = reference.toLocalDate();
     return o1.isEqual(o2);
+  }
+
+  /**
+   * static setter for testing purposes
+   */
+  protected static void setTimePointClock(Clock toSet) {
+    clock = toSet;
   }
 }

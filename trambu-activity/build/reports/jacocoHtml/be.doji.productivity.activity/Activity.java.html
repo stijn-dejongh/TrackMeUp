@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Activity.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">trambu-activity</a> &gt; <a href="index.source.html" class="el_package">be.doji.productivity.activity</a> &gt; <span class="el_source">Activity.java</span></div><h1>Activity.java</h1><pre class="source lang-java linenums">package be.doji.productivity.activity;
+
+import be.doji.productivity.time.TimePoint;
+import be.doji.productivity.time.TimeSlot;
+import org.apache.commons.lang3.StringUtils;
+
+/**
+ * An activity is something you do at a certain time. Activities have a link to times spent on it
+ *
+ * An be.doji.productivity.activity.Activity has a configurable set of properties. These can be
+ * configured.
+ */
+public class Activity {
+
+  private String name;
+  private TimePoint plannedStart;
+  private TimePoint plannedEnd;
+  private Importance importance;
+
+  void setName(String activityName) {
+<span class="fc" id="L21">    this.name = activityName;</span>
+<span class="fc" id="L22">  }</span>
+
+  void setPlannedStart(TimePoint plannedStart) {
+<span class="fc" id="L25">    this.plannedStart = plannedStart;</span>
+<span class="fc" id="L26">  }</span>
+
+  void setPlannedEnd(TimePoint plannedEnd) {
+<span class="fc" id="L29">    this.plannedEnd = plannedEnd;</span>
+<span class="fc" id="L30">  }</span>
+
+  void setImportance(Importance importance) {
+<span class="fc" id="L33">    this.importance = importance;</span>
+<span class="fc" id="L34">  }</span>
+
+  private Activity() {
+  }
+
+  public static ActivityBuilder builder() {
+<span class="fc" id="L40">    return new ActivityBuilder();</span>
+  }
+
+  public TimeSlot getAssignedTimeSlot() {
+<span class="fc" id="L44">    return new TimeSlot(plannedStart, plannedEnd);</span>
+  }
+
+  public String getName() {
+<span class="fc" id="L48">    return this.name;</span>
+  }
+
+  Importance getImportance() {
+<span class="fc" id="L52">    return this.importance;</span>
+  }
+
+
+<span class="fc" id="L56">  public static class ActivityBuilder {</span>
+
+    private String activityName;
+    private TimePoint plannedStart;
+    private TimePoint plannedEnd;
+<span class="fc" id="L61">    private Importance importance = Importance.NORMAL;</span>
+
+    public ActivityBuilder name(String activityName) {
+<span class="fc" id="L64">      this.activityName = activityName;</span>
+<span class="fc" id="L65">      return this;</span>
+    }
+
+    public ActivityBuilder plannedStartAt(TimePoint startDate) {
+<span class="fc" id="L69">      this.plannedStart = startDate;</span>
+<span class="fc" id="L70">      return this;</span>
+    }
+
+    public ActivityBuilder plannedEndAt(TimePoint plannedEnd) {
+<span class="fc" id="L74">      this.plannedEnd = plannedEnd;</span>
+<span class="fc" id="L75">      return this;</span>
+    }
+
+    public ActivityBuilder priority(Importance prio) {
+<span class="fc" id="L79">      this.importance = prio;</span>
+<span class="fc" id="L80">      return this;</span>
+    }
+
+    public Activity build() {
+<span class="fc" id="L84">      throwExceptionIfInvalidParameters();</span>
+
+<span class="fc" id="L86">      Activity result = new Activity();</span>
+<span class="fc" id="L87">      result.setName(this.activityName);</span>
+<span class="fc" id="L88">      result.setPlannedStart(this.plannedStart);</span>
+<span class="fc" id="L89">      result.setPlannedEnd(this.plannedEnd);</span>
+<span class="fc" id="L90">      result.setImportance(this.importance);</span>
+<span class="fc" id="L91">      return result;</span>
+    }
+
+    private void throwExceptionIfInvalidParameters() {
+<span class="fc bfc" id="L95" title="All 2 branches covered.">      if (StringUtils.isBlank(this.activityName)) {</span>
+<span class="fc" id="L96">        throw new IllegalStateException(&quot;The activity name can not be empty&quot;);</span>
+      }
+<span class="fc bfc" id="L98" title="All 2 branches covered.">      if (TimePoint.isBefore(this.plannedEnd, this.plannedStart)) {</span>
+<span class="fc" id="L99">        throw new IllegalStateException(&quot;The activity end date must be after the start date&quot;);</span>
+      }
+<span class="fc" id="L101">    }</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.1.201803210924</span></div></body></html>
