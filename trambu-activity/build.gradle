@@ -1,6 +1,8 @@
 plugins {
     id 'java'
+    id 'jacoco'
     id "org.sonarqube" version "2.7"
+
 }
 
 group 'be.doji.productivity.trambu'
@@ -8,24 +10,6 @@ version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
 
-sourceSets {
-    main {
-        java {
-            srcDirs 'src/main/java'
-        }
-        resources {
-            srcDir 'src/main/resources'
-        }
-    }
-    test {
-        java {
-            srcDirs 'src/test/java'
-        }
-        resources {
-            srcDir 'src/test/resources'
-        }
-    }
-}
 repositories {
     mavenCentral()
 }
@@ -37,13 +21,26 @@ dependencies {
 
 }
 
+test.finalizedBy jacocoTestReport
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+        xml.destination file("${buildDir}/jacocoXml")
+        csv.enabled false
+        html.destination file("${buildDir}/jacocoHtml")
+    }
+}
+
+
 sonarqube {
     properties {
         property "sonar.branch.name", "ddd_redesign"
         property "sonar.sourceEncoding", "UTF-8"
         property "sonar.projectKey", "be.doji.productivity:trambu"
         property "sonar.language", "java"
-        property "sonar.sources",  sourceSets.main.allSource.srcDirs
-        property "sonar.tests",  sourceSets.test.allSource.srcDirs
+        property "sonar.sources", './src/main/java'
+        property "sonar.tests", './src/test/java'
+        property "sonar.coverage.jacoco.xmlReportPaths", "build/jacocoXml"
     }
 }

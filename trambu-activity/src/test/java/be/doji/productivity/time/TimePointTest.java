@@ -1,5 +1,8 @@
 package be.doji.productivity.time;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import java.time.LocalDateTime;
 import java.time.Month;
 import org.junit.Assert;
@@ -72,6 +75,13 @@ public class TimePointTest {
     TimePoint day1 = TimePoint.fromString("18/12/1989 12:00:00");
     TimePoint day2 = TimePoint.fromString("18/12/1989 18:30:00");
     Assert.assertTrue(TimePoint.isSameDate(day1, day2));
+  }
+
+  @Test
+  public void fromString_notADate() {
+    assertThatThrownBy(() -> TimePoint.fromString("Jos is machtig"))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessageContaining("No matching parsers");
   }
 
 }
