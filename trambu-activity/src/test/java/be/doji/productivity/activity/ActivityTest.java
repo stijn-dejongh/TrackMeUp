@@ -8,7 +8,7 @@ import org.junit.Test;
 public class ActivityTest {
 
   @Test
-  public void activity_basic_construction_test() {
+  public void activityBuilderBasic() {
     Activity activity = Activity.builder()
         .name("Start design practise")
         .plannedStartAt(TimePoint.fromString("01/05/2019"))

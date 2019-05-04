@@ -8,6 +8,24 @@ version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
 
+sourceSets {
+    main {
+        java {
+            srcDirs 'src/main/java'
+        }
+        resources {
+            srcDir 'src/main/resources'
+        }
+    }
+    test {
+        java {
+            srcDirs 'src/test/java'
+        }
+        resources {
+            srcDir 'src/test/resources'
+        }
+    }
+}
 repositories {
     mavenCentral()
 }
@@ -25,6 +43,7 @@ sonarqube {
         property "sonar.sourceEncoding", "UTF-8"
         property "sonar.projectKey", "be.doji.productivity:trambu"
         property "sonar.language", "java"
-
+        property "sonar.sources",  sourceSets.main.allSource.srcDirs
+        property "sonar.tests",  sourceSets.test.allSource.srcDirs
     }
 }
