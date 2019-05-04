@@ -4,7 +4,7 @@ import be.doji.productivity.activity.Activity;
 import be.doji.productivity.time.TimePoint;
 import java.time.temporal.ChronoUnit;
 
-public class ExpectedEndPriorityCalculator extends PriorityCalculator {
+public class ExpectedEndPriorityCalculator implements PriorityCalculator {
 
   private static final int OFFSET_IN_DAYS = 2;
   private static final int RANGE_MAX = 150;
