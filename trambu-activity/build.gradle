@@ -24,6 +24,7 @@ sonarqube {
         property "sonar.branch.name", "ddd_redesign"
         property "sonar.sourceEncoding", "UTF-8"
         property "sonar.projectKey", "be.doji.productivity:trambu"
-        property "sonar.organization", "justdoji-github"
+        property "sonar.language", "java"
+
     }
 }
