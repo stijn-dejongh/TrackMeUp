@@ -27,9 +27,9 @@ test.finalizedBy jacocoTestReport
 jacocoTestReport {
     reports {
         xml.enabled true
-        xml.destination file("${buildDir}/jacocoXml")
+        xml.destination file("${buildDir}/reports/jacocoXml.xml")
         csv.enabled false
-        html.destination file("${buildDir}/jacocoHtml")
+        html.destination file("${buildDir}/reports/jacocoHtml")
     }
 }
 
@@ -42,6 +42,6 @@ sonarqube {
         property "sonar.language", "java"
         property "sonar.sources", './src/main/java'
         property "sonar.tests", './src/test/java'
-        property "sonar.coverage.jacoco.xmlReportPaths", "build/jacocoXml"
+        property "sonar.coverage.jacoco.xmlReportPaths", "build/reports/jacocoXml.xml"
     }
 }
