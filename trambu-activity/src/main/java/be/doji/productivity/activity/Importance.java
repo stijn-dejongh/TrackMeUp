@@ -1,5 +1,8 @@
 package be.doji.productivity.activity;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 public class Importance implements Comparable<Importance> {
 
   public static final Importance LOW = new Importance(10);
@@ -29,17 +32,32 @@ public class Importance implements Comparable<Importance> {
     return Integer.compare(this.innerValue, o.innerValue);
   }
 
+  /* Reference for overriding equals and hashcode:
+   * https://stackoverflow.com/questions/27581/what-issues-should-be-considered-when-overriding-equals-and-hashcode-in-java
+   */
   @Override
   public boolean equals(Object obj) {
-    if (super.equals(obj)) {
+    if (!(obj instanceof Importance)) {
+      return false;
+    }
+    if (obj == this) {
       return true;
     }
 
-    if (obj instanceof Importance) {
-      Importance casted = (Importance) obj;
-      return this.compareTo(casted) == 0;
-    } else {
-      return false;
-    }
+    return new EqualsBuilder()
+        .append(innerValue, ((Importance) obj).innerValue)
+        .isEquals();
+
+  }
+
+  /* Reference for overriding equals and hashcode:
+   * https://stackoverflow.com/questions/27581/what-issues-should-be-considered-when-overriding-equals-and-hashcode-in-java
+   */
+  @Override
+  public int hashCode() {
+    return new HashCodeBuilder(17, 31). // two randomly chosen prime numbers
+        // if deriving: appendSuper(super.hashCode()).
+            append(innerValue).
+            toHashCode();
   }
 }
