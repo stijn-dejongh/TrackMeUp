@@ -136,11 +136,58 @@ public class TimePointTest {
   }
 
   @Test
-  public void isBefore_startIsNull_endIsNull() {
+  public void isBefore_startIsNull_bothNull() {
     TimePoint early = null;
     TimePoint late = null;
 
     assertThat(TimePoint.isBefore(late, early)).isFalse();
+  }
+
+  @Test
+  public void isBeforeOrEqual_startBeforeEnd() {
+    TimePoint early = TimePoint.fromString(DOJI_BIRTHDAY);
+    TimePoint late = TimePoint.fromString("04/05/2019");
+
+    assertThat(TimePoint.isBeforeOrEqual(early, late)).isTrue();
+  }
+
+  @Test
+  public void isBeforeOrEqual_endBeforeStart() {
+    TimePoint early = TimePoint.fromString(DOJI_BIRTHDAY);
+    TimePoint late = TimePoint.fromString("04/05/2019");
+
+    assertThat(TimePoint.isBeforeOrEqual(late, early)).isFalse();
+  }
+
+  @Test
+  public void isBeforeOrEqual_sameDate() {
+    TimePoint birthday = TimePoint.fromString(DOJI_BIRTHDAY);
+
+    assertThat(TimePoint.isBeforeOrEqual(birthday, birthday)).isTrue();
+  }
+
+  @Test
+  public void isBeforeOrEqual_startIsNull() {
+    TimePoint early = null;
+    TimePoint late = TimePoint.fromString("04/05/2019");
+
+    assertThat(TimePoint.isBeforeOrEqual(late, early)).isFalse();
+  }
+
+  @Test
+  public void isBeforeOrEqual_endIsNull() {
+    TimePoint early = TimePoint.fromString(DOJI_BIRTHDAY);
+    TimePoint late = null;
+
+    assertThat(TimePoint.isBeforeOrEqual(late, early)).isFalse();
+  }
+
+  @Test
+  public void isBeforeOrEqual_startIsNull_bothNull() {
+    TimePoint early = null;
+    TimePoint late = null;
+
+    assertThat(TimePoint.isBeforeOrEqual(late, early)).isFalse();
   }
 
   @Test
