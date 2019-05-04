@@ -55,7 +55,17 @@ public class TimePoint {
     return converters;
   }
 
-  /* Conversion magic happens here */
+  public LocalDateTime toLocalDateTime() {
+    return this.internalRepresentation;
+  }
+
+  private LocalDate toLocalDate() {
+    return this.internalRepresentation.toLocalDate();
+  }
+
+
+  /* Utility Methods */
+
   public static TimePoint fromString(String timeString) {
 
     for (Entry<Pattern, DateTimeFormatter> entry : DATE_TIME_CONVERTERS.entrySet()) {
@@ -74,12 +84,10 @@ public class TimePoint {
             + "] ");
   }
 
-  public LocalDateTime toLocalDateTime() {
-    return this.internalRepresentation;
-  }
-
-  private LocalDate toLocalDate() {
-    return this.internalRepresentation.toLocalDate();
+  public static boolean isBefore(TimePoint plannedEnd, TimePoint plannedStart) {
+    return plannedEnd != null &&
+        plannedStart != null &&
+        plannedEnd.toLocalDateTime().isBefore(plannedStart.toLocalDateTime());
   }
 
   public static boolean isSameDate(TimePoint start, TimePoint reference) {
